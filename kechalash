@@ -1,0 +1,130 @@
+
+
+int main()
+try {
+   
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
+
+
+
+
+
+
+
+
+
+
+
+void calculate()
+{
+    while (cin)
+        try {
+        cout << prompt;
+        Token t = ts.get();
+        while (t.kind == print) t = ts.get();    // first discard all "prints"
+        if (t.kind == quit) return;        // quit
+        ts.putback(t);
+        cout << result << statement() << endl;
+    }
+    catch (exception& e) {
+        cerr << e.what() << endl;        // write error message
+        clean_up_mess();
+    }
+}
+
+
+
+
+
+
+void Token_stream::ignore(char c)
+// c represents the kind of a Token
+{
+    // first look in buffer:
+    if (full && c == buffer.kind) {
+        full = false;
+        return;
+    }
+    full = false;
+
+    // now search input:
+    char ch = 0;
+    while (cin >> ch)
+        if (ch == c) return;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+bool IsPrime(int i_nNumber, vector<int> i_naPrimes)
+{
+    for (int prime : i_naPrimes)
+    {
+        if ( i_nNumber % prime == 0)
+            return false;
+    }
+    return true;
+}
+
+int main() {
+
+    vector<int> naPrimes{ 2 };
+
+    for (int nNumber = 2; nNumber <= 100; ++nNumber)
+    {
+        if (IsPrime(nNumber, naPrimes))
+        {
+            naPrimes.push_back(nNumber);
+        }
+    }
+
+    cout << "Found prime numbers between 1 and 100: \n";
+    for (int nPrime : naPrimes)
+    {
+        cout << nPrime << " ";
+    }
+    cout << '\n';
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
