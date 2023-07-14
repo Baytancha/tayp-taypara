@@ -18,6 +18,38 @@ catch (...) {
 }
 
 
+int main()
+try {
+   
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+catch (out_of_range) {
+    cerr << "OUT OF RANGE ERROR" << endl;
+    keep_window_open("~~");
+    return 1;
+}
+
+catch (runtime_error& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -71,6 +103,53 @@ void Token_stream::ignore(char c)
 
 
 
+vector<string> numbers 
+{"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+
+
+
+
+
+int main()
+{
+    cout << "Enter a series of temperatures to get the median (followed by '|' or a another non double/integer character):\n";
+
+    vector<double> temps; // temperatures
+    for (double temp; cin >> temp; ) // read into temp
+        temps.push_back(temp);  // put temp into vector
+
+
+    // compute mean temperature:
+    double sum = 0;
+    for (double x : temps)  sum += x;
+    cout << "Average temperature: " << sum / temps.size() << '\n';
+
+    // compute median temperature:
+    sort(temps); // sort temperatures
+
+    double median = -1;
+    if (temps.size() > 1 && 0 == temps.size() % 2)
+        median = (temps[temps.size() / 2 - 1] + temps[temps.size() / 2]) / 2.0;
+    else
+        median = temps[temps.size() / 2];
+
+    cout << "Median temperature: " << median << '\n';
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -117,7 +196,47 @@ int main() {
 
 
 
+string digit;
+    int value;
+    bool validinput{ true };
+    while (validinput )
+    {
+        if (cin >> value) 
+        {
+            string result  = convertIntToString(value);
+            if (" " != result) 
+                cout << result << '\n';
 
+        }
+        else
+        {
+            cin.clear (); // To use cin again after a failed read, you need to use a function call "cin.clear();" to "clear" it.
+            cin >> digit;
+            if (digit == "|")
+                validinput = false;
+             else 
+            {
+                int result = convertStringToInt(digit); 
+                if (-1 != result)
+                    cout << result <<  '\n';
+            }
+
+        }
+
+    }
+
+    return 0;
+}
+
+
+
+
+
+
+
+for (int i = 0; i < numbers.size(); ++i)	
+			if (numbers[i] == s) vall = i;
+		return vall;
 
 
 
