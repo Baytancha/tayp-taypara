@@ -1,0 +1,42 @@
+int main()
+try {
+    vector<double> numbers {1,1};
+ 
+    cout << "Enter an integer greater than 1 that defines the number of the values of the Fibonacci series.\n";
+    const int diff{ 3 };
+    double nMax {0};
+    cin >> nMax;
+    double Ncycles = nMax - diff;
+    if (Ncycles < 0) {  }
+    else {  
+    for (int i = 0; i <= Ncycles; ++i) {
+        double next {0};
+        next = numbers[i] + numbers[i + 1];
+        numbers.push_back(next);
+    }
+    }
+
+    cout << "Here's a vector containing the first " << nMax << " Fibonacci numbers: \n";
+    for (double x : numbers) {
+        cout << x << " ";
+    }
+    cout << "\n";
+
+    
+
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+
+
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
