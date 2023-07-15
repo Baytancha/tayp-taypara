@@ -1,0 +1,101 @@
+#include "std_lib_facilities.h"
+
+/*  Write a program that reads and stores a series of integers and then computes
+the sum of the first N integers. First ask for N, then read the values
+into a vector, then calculate the sum of the first N values. For example:
+“Please enter the number of values you want to sum:”
+3
+“Please enter some integers (press '|' to stop):”
+12 23 13 24 15 |
+“The sum of the fi rst 3 numbers ( 12 23 13 ) is 48.”
+
+Handle all inputs. For example, make sure to give an error message if the
+user asks for a sum of more numbers than there are in the vector.
+9. Modify the program from exercise 8 to write out an error if the result
+cannot be represented as an int.
+10. Modify the program from exercise 8 to use double instead of int. Also,
+make a vector of doubles containing the N–1 differences between adjacent
+values and write out that vector of differences.
+
+*/
+
+int main()
+try {
+    vector<double> numbers;
+    vector <double> differences;
+  
+    double N{ 0 };
+    cout << "Please enter the number of values you want to sum: \n";
+    cin >> N;
+    cout << "Please enter some integers(press '|' to stop): \n";
+    bool switch_off {true};
+    double push{ 0 };
+    string stop;
+    while (switch_off) {
+        if (cin >> push) numbers.push_back(push);
+        else {
+            cin.clear();
+            cin >> stop;
+            if (stop == "|") switch_off = false;
+        }
+    }
+    int sum = 0;
+    for (int i = 0; i < N; ++i) {
+        
+        sum += numbers[i];
+
+    }
+
+    cout << "The sum of the first " << N << " numbers ( ";
+    for (int i = 0; i < N; ++i) {
+
+        cout<< numbers[i] <<" ";
+
+    }
+
+    cout<< ") is " << sum << "\n";
+
+    cout << "Here are all the values representing the"<<
+    " differences between the adjacent numbers: \n";
+    
+    for (int i = 0; i < (numbers.size() - 1); ++i) {
+
+        double diff = 0;
+        if (numbers[i] > numbers[i + 1]) {
+            diff = (numbers[i] - numbers[i+1]);
+            differences.push_back(diff);
+        }
+
+        else if (numbers[i] < numbers[i + 1]) {
+            diff = (numbers[i+1] - numbers[i]);
+            differences.push_back(diff);
+        }
+        
+    }
+
+    for (double x : differences) {
+       cout << x << " ";
+    }
+    cout << "\n";
+
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+
+catch (out_of_range) {
+    cerr << "OUT OF RANGE ERROR" << endl;
+    keep_window_open("~~");
+    return 1;
+}
+
+catch (runtime_error& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
