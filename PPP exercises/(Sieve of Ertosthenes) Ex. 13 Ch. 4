@@ -1,0 +1,124 @@
+#include "std_lib_facilities.h"
+
+int main()
+{
+    cout << "Enter an upper limit up to that primes are searched.\n";
+
+
+    int nMax {100};
+    cin >> nMax;
+
+    vector<int> baMarked(nMax+1); // Plus 1 because nMax should also be check if it is prime
+ 
+    for (int nIdx = 0; nIdx < baMarked.size(); ++nIdx)
+    {
+        baMarked[nIdx] = false;
+    }
+
+    int nMultiple {0};
+    for (int nNumber = 2; nNumber < nMax; ++nNumber)
+    {
+        // If the number is not marked (false), it is a prime number
+        if (false == baMarked[nNumber])
+        {
+            // Calculate all the multiples of that number and mark them as being a composite (not prime)
+            nMultiple = {2 * nNumber};
+            while (nMultiple <= nMax)
+            {
+                baMarked[nMultiple] = true;
+                nMultiple += nNumber;
+            }
+        }
+    }
+
+    cout << "The prime numbers between 1 and " << nMax << " are:\n";
+    for (int nNumber = 2; nNumber < nMax; ++nNumber)
+    {
+        if (!baMarked[nNumber])
+            cout << nNumber << " ";
+    }
+    cout << '\n';
+
+    return 0;
+}   
+
+
+
+
+
+int main()
+try {
+    
+    cout << "Enter a vector range.\n";
+  
+    double nMax {0};
+    cin >> nMax;
+    vector<double> numbers(nMax+1);
+
+     
+    for (int i = 2; i <= nMax; ++i) {
+        int d{ 0 };
+        if (numbers[i] == 0) {
+            for (int z = i; d <= nMax; ++z) {
+               numbers[d] = 1;
+               d = z * i;
+                
+            }
+        }
+        
+    }
+    
+    cout << "Here's a vector containing the first " << nMax << " Fibonacci numbers: \n";
+    for (int i = 2; i <= nMax; ++i) {
+        
+        if (numbers[i] == 0)
+            cout << i << " ";
+
+    }
+
+    cout << "\n";
+
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+
+
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
