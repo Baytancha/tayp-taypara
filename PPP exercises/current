@@ -1,0 +1,100 @@
+bool is_Bulls(int position, vector<int> sequence)
+{
+    
+        if (sequence[position] == 1)
+            return true;
+    
+        sequence[position] = 1;
+        return false;
+}
+
+bool is_Cows(int value, vector<int> sequence)
+{
+    for (int x: sequence)
+    if (x == value)
+        return true;
+
+    sequence.push_back(value); 
+    return false;
+}
+
+int main()
+try {  
+
+    char newcycle;
+    cout << "To start a new cycle of the game press 'y' or press any other button to exit the game\n";
+
+    while (cin>> newcycle && newcycle == 'y') {
+        vector<int> sequence;
+        vector<int> guess;
+        vector <int> check_bulls (4);
+        vector <int> check_cows;
+        const int nWins{ 4 };
+        int Bulls{ 0 };
+        int Cows{ 0 };
+    
+        while (Bulls< nWins) {
+            int n{ 0 };
+            cout << "Enter a random number:\n";
+            cin >> n;
+            srand(n);
+
+            for (int i = 0; i <= 3; ++i) {
+                int x = randint(10);
+                sequence.push_back(x);
+            }
+
+            cout << "THE VECTOR: ";
+            for (int x : sequence) {
+                cout << x;
+            }
+
+
+            cout << "Enter a sequence of four digits:\n";
+            while (guess.size() <= 4) {
+                int x{ 0 };
+                if (cin >> x) guess.push_back(x);
+                else cin.clear();
+                cout << "Wrong input. Try again\n";
+            } 
+            
+
+            for (int i = 0; i < guess.size(); ++i) {
+
+                for (int z = 0; z < sequence.size(); ++z) {
+                    if (z==i && guess[i] == sequence[z]) 
+                    { if (!is_Bulls(i, check_bulls)) ++Bulls; }
+                    else if (guess[i] == sequence[z]) { 
+                      if (!is_Cows(guess[i], check_cows) )
+                          ++Cows;
+                    }
+
+                }
+                
+            }
+
+
+        }
+    
+        cout << "You've guessed the number! The number is: "; 
+         for (int x : sequence) {
+             cout << x;
+         }
+    
+    }
+
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
