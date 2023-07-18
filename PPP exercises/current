@@ -20,8 +20,6 @@ bool is_Cows(int value, int position, vector<int> sequence)
     if (sequence[position] == value) {
         cout << "TRUE!!\n";
         
-
-
         return true;
     }
     sequence[position] = value;
@@ -70,9 +68,10 @@ try {
         }
         cout << "\n";
 
-        
 
         while (Bulls< nWins) {
+            int Cows_now{ 0 };
+            int Bulls_now{ 0 };
             vector<int> guess;
             
             cout << "Enter a new sequence of four digits:\n";
@@ -100,7 +99,8 @@ try {
                     {
                         
                         if (!is_Bulls(sequence[z], z, check_bulls)) { cout << "Bull?\n"; 
-                        check_bulls[z] = sequence[z]; ++Bulls; }
+                        check_bulls[z] = sequence[z]; ++Bulls; ++Bulls_now;
+                        }
                     }
                     else if (guess[i] == sequence[z] && !is_Bulls(sequence[z], z, check_bulls)) {
                         
@@ -110,7 +110,7 @@ try {
                             for (int x : check_cows) {
                                 cout << x << " ";
                             }
-                            ++Cows;
+                            ++Cows; ++Cows_now;
                         }
                         
                     }
@@ -119,8 +119,8 @@ try {
                 
             }
 
-            cout << "The number of Cows in this round: " << Cows << "\n";
-            cout << "The number of Bulls in this round: " << Bulls << "\n";
+            cout << "The number of Cows in this round: " << Cows_now << "\n";
+            cout << "The number of Bulls in this round: " << Bulls_now << "\n";
 
         }
     
