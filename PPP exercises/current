@@ -167,3 +167,51 @@ catch (...) {
     keep_window_open("~~");
     return 2;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+for (int i = 0; i <= 3; ++i) {
+            int x = randint(10);
+            if (x > 9) {
+                while (x > 9) {
+                 x = randint(10);
+                }
+            }
+                sequence.push_back(x);   
+        }
+
+        for (int i = 0; i <= 2; ++i) {
+           
+            if (sequence[i] == sequence[i + 1]) {
+            int x = randint(10);
+            while (sequence[i] == sequence[i + 1]) {
+                    x = randint(10);
+                    sequence[i+1] = x;
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
