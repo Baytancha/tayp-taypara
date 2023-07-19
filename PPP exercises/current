@@ -23,7 +23,7 @@ bool is_Cows(int value, int position, vector<int> sequence)
         return true;
     }
     sequence[position] = value;
-    cout << "THE COW VECTOR: ";
+    cout << "THE FALSE VECTOR: ";
     for (int x : sequence) {
         cout << x << " "; 
     }
@@ -42,8 +42,8 @@ try {
         
         ++cycle_count;
         vector<int> sequence;
-        vector <int> check_bulls (4);
-        vector <int> check_cows (4);
+        vector <int> check_bulls{ 99,99,99,99 };
+        vector <int> check_cows{ 99,99,99,99 };
         const int nWins{ 4 };
         int Bulls{ 0 };
         int Cows{ 0 };
@@ -57,10 +57,27 @@ try {
         srand(n);
 
         for (int i = 0; i <= 3; ++i) {
-            int x = randint(9);
-
-            sequence.push_back(x);
+            int x = randint(10);
+            if (x > 9) {
+                while (x > 9) {
+                 x = randint(10);
+                }
+            }
+                sequence.push_back(x);   
         }
+
+        for (int i = 0; i <= 2; ++i) {
+           
+            if (sequence[i] == sequence[i + 1]) {
+            int x = randint(10);
+            while (sequence[i] == sequence[i + 1]) {
+                    x = randint(10);
+                    sequence[i+1] = x;
+                }
+            }
+        }
+        
+            
 
         cout << "THE VECTOR: ";
         for (int x : sequence) {
@@ -95,7 +112,7 @@ try {
                 cout << "Are we here\n";
 
                 for (int z = 0; z < sequence.size(); ++z) {
-                    if (z == i && guess[i] == sequence[z])
+                    if (z == i && guess[i] == sequence[z] )
                     {
                         
                         if (!is_Bulls(sequence[z], z, check_bulls)) { cout << "Bull?\n"; 
