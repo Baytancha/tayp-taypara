@@ -1,156 +1,62 @@
 #include "std_lib_facilities.h"
 
-bool is_Bulls(int value, int position, vector<int> sequence)
-{
-        if (sequence[position] == value)
-            return true;
-        sequence[position] = value;
-        return false;
+class Date {
+public:
+    class Invalid { };
+    Date(int yy, int mm, int dd); // constructor // note: member initializers               
+    void add_day(int n); // increase the Date by n days
+    int month() { return m; }
+    int day() { return d; }
+    int year() { return y; }
+private: 
+    int y, m, d; // year, month, day
+    bool is_valid();
+};
+
+Date::Date(int yy, int mm, int dd) // constructor
+    :y{ yy }, m{ mm }, d{ dd } 
+
+{        // note: member initializers
+    if (!is_valid()) throw Invalid{};
 }
 
-bool is_Cows(int value, int position, vector<int> sequence)
-{
-    cout << "THE COW VECTOR: ";
-    for (int x : sequence) {
-        cout << x << " ";
-    }
 
-    cout << "\n";
-    cout << sequence[position] << "  "<< value<< "\n";
-    if (sequence[position] == value) {
-        cout << "TRUE!!\n";
-        
-        return true;
-    }
-    sequence[position] = value;
-    cout << "THE FALSE VECTOR: ";
-    for (int x : sequence) {
-        cout << x << " "; 
-    }
-    cout << "\n";
-    return false;
+bool Date::is_valid() // return true if date is valid
+{
+    if (m < 1 || 12 < m) return false;
+    // . . .
 }
+
+Date y{ 10, 8, 30 };
+
+void init_day(Date& dd, int y, int m, int d)
+{
+    // check that (y,m,d) is a valid date
+    // if it is, use it to initialize dd
+}
+
+void add_day(Date& dd, int n)
+{
+    // increase dd by n days
+}
+
+void f()
+try {
+    Date birthday{ 1970, 10, 30 }; // OK
+
+    cout << birthday.month() << ' ' << y.month() << '\n';
+}
+
+catch (Date::Invalid) {
+    error("invalid date"); // error() defined in §5.6.3
+}
+
 
 int main()
 try {  
-
-    char newcycle;
-    int cycle_count{ 0 };
-    cout << "To start a new cycle of the game press 'y' or press any other button to exit the game\n";
-
-    while (cin>> newcycle && newcycle == 'y' || newcycle == 'Y') {
-        
-        ++cycle_count;
-        vector<int> sequence;
-        vector <int> check_bulls{ 99,99,99,99 };
-        vector <int> check_cows{ 99,99,99,99 };
-        const int nWins{ 4 };
-        int Bulls{ 0 };
-        int Cows{ 0 };
-        int n{ 0 };
-
-        cout << "Game " << cycle_count << " begins\n";
-
-        cout << "Enter a random number:\n";
-        cin >> n;
-        if (!cin) error("INPUT ERROR. PLEASE RESTART THE PROGRAM");
-        srand(n);
-
-        for (int i = 0; i <= 3; ++i) {
-            int x = randint(10);
-            if (x > 9) {
-                while (x > 9) {
-                 x = randint(10);
-                }
-            }
-                sequence.push_back(x);   
-        }
-
-        for (int i = 0; i <= 2; ++i) {
-           
-            if (sequence[i] == sequence[i + 1]) {
-            int x = randint(10);
-            while (sequence[i] == sequence[i + 1]) {
-                    x = randint(10);
-                    sequence[i+1] = x;
-                }
-            }
-        }
-        
-            
-
-        cout << "THE VECTOR: ";
-        for (int x : sequence) {
-            cout << x;
-        }
-        cout << "\n";
-
-
-        while (Bulls< nWins) {
-            int Cows_now{ 0 };
-            int Bulls_now{ 0 };
-            vector<int> guess;
-            
-            cout << "Enter a new sequence of four digits:\n";
-            while (true) {
-                int x{ 0 };
-                if (guess.size() == 4) break;
-                if (cin >> x) guess.push_back(x);
-                else {
-                    cin.clear();
-                    cin.ignore();
-                    cout << "Wrong input. Try again\n";
-                }
-            } 
-            
-            cout << "NEXT STAGE\n";
-
-
-
-            for (int i = 0; i < guess.size(); ++i) {
-
-                cout << "Are we here\n";
-
-                for (int z = 0; z < sequence.size(); ++z) {
-                    if (z == i && guess[i] == sequence[z] )
-                    {
-                        
-                        if (!is_Bulls(sequence[z], z, check_bulls)) { cout << "Bull?\n"; 
-                        check_bulls[z] = sequence[z]; ++Bulls; ++Bulls_now;
-                        }
-                    }
-                    else if (guess[i] == sequence[z] && !is_Bulls(sequence[z], z, check_bulls)) {
-                        
-                        if (!is_Cows(sequence[z], z, check_cows)) {
-
-                            check_cows[z] = sequence[z];
-                            for (int x : check_cows) {
-                                cout << x << " ";
-                            }
-                            ++Cows; ++Cows_now;
-                        }
-                        
-                    }
-
-                }
-                
-            }
-
-            cout << "The number of Cows in this round: " << Cows_now << "\n";
-            cout << "The number of Bulls in this round: " << Bulls_now << "\n";
-
-        }
     
-        cout << "You've guessed the number! The number is: "; 
-         for (int x : sequence) {
-             cout << x;
-         }
-         cout << "\n";
-         cout << "The number of Cows: " << Cows << "\n";
-         cout << "The number of Bulls: " << Bulls << "\n";
-    
-         cout << "To start a new cycle of the game press 'y' or press any other button to exit the game\n";
-    }
+    f();
+
 
     keep_window_open();    
     return 0;
@@ -162,50 +68,12 @@ catch (exception& e) {
     return 1;
 }
 
+
 catch (...) {
     cerr << "exception \n";
     keep_window_open("~~");
     return 2;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-for (int i = 0; i <= 3; ++i) {
-            int x = randint(10);
-            if (x > 9) {
-                while (x > 9) {
-                 x = randint(10);
-                }
-            }
-                sequence.push_back(x);   
-        }
-
-        for (int i = 0; i <= 2; ++i) {
-           
-            if (sequence[i] == sequence[i + 1]) {
-            int x = randint(10);
-            while (sequence[i] == sequence[i + 1]) {
-                    x = randint(10);
-                    sequence[i+1] = x;
-                }
-            }
-        }
-
-
-
-
-
-
-
 
 
 
