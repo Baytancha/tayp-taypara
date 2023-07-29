@@ -179,6 +179,72 @@ catch (...) {
     return 2;
 }
 
+Ver.2
+enum class Month {
+    Jan = 1, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+};
+
+Month operator++(Month& m) // prefix increment operator
+{
+    m = (m == Month::Dec) ? Month::Jan : Month(int(m) + 1); // “wrap around”
+    return m;
+}
+
+vector<string> month_tbl{ "zero", "Jan", "Feb", "Mar", "Apr", "May",
+"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
+ostream& operator<<(ostream& os, Month m)
+{
+    return os << month_tbl[int(m)];
+}
+
+struct Date {
+    int y; // year
+    Month m; // month in year
+    int d; // day of month
+    Date(Month m, int d, int y);
+    void add_day(int n); // introducing member functions
+};
+
+Date::Date(Month m, int d, int y) : m(m), d(d), y(y) {}
+
+
+void Date::add_day(int n) {
+    int x = d;
+    x += n;
+    d = x;
+}
+
+void f()
+{
+    Date today{ Month::Jul, 25, 1978 };
+
+    cout << today.d << ' ' << today.m << ' ' << today.y << '\n';
+    Date tomorrow = today;
+    tomorrow.add_day(1);
+    cout << tomorrow.d << ' ' << tomorrow.m << ' ' << tomorrow.y << '\n';
+}
+
+
+int main()
+try {
+
+    f();
+
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
+
 
 
 
@@ -241,6 +307,200 @@ catch (...) {
 
 
 
+The version from §9.7.1
+
+#include "std_lib_facilities.h"
+
+enum class Month {
+    Jan = 1, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+};
+
+Month operator++(Month& m) // prefix increment operator
+{
+    m = (m == Month::Dec) ? Month::Jan : Month(int(m) + 1); // “wrap around”
+    return m;
+}
+
+vector<string> month_tbl{ "zero", "Jan", "Feb", "Mar", "Apr", "May",
+"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
+ostream& operator<<(ostream& os, Month m)
+{
+    return os << month_tbl[int(m)];
+}
+
+class Date {
+    int y;
+    Month m;
+    int d;  
+    string com{ "," };              // year, month, day
+public:
+    class Invalid { };
+    Date(Month m, int d, int y); // check for valid date and initialize
+    
+    void add_day(int n);              // increase the Date by n days
+    Month month() { return m; }
+    int day() { return d; }
+    int year() { return y; }
+    string comma() { return com; }
+};
+
+//------------------------------------------------------------------------------
+
+Date::Date(Month m, int d, int y) : y(y), m(m), d(d) {
+    if (d < 1 or d>31)
+        throw Invalid{ };
+}
+
+void Date::add_day(int n) {
+    if (n< 1 or n>31)
+    throw Invalid { };
+    int x = d;
+    x += n;
+    d = x;
+}
+
+void f()
+{
+    Date today{ Month::Jul, 21, 1978 };
+
+    cout << today.day() << ' ' << today.month() << today.comma() << ' ' << today.year() << '\n';
+    Date tomorrow {today};
+
+    tomorrow.add_day(1);
+    cout << tomorrow.day() << ' ' << tomorrow.month() << today.comma() << ' ' << tomorrow.year() << '\n';
+}
+
+
+int main()
+try {
+
+    f();
+
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
+
+
+The version from §9.7.4
+enum class Month {
+    Jan = 1, Feb, Mar, Apr, May, Jun, Jul, Aug, Sep, Oct, Nov, Dec
+};
+
+Month operator++(Month& m) // prefix increment operator
+{
+    m = (m == Month::Dec) ? Month::Jan : Month(int(m) + 1); // “wrap around”
+    return m;
+}
+
+vector<string> month_tbl{ "zero", "Jan", "Feb", "Mar", "Apr", "May",
+"Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
+
+ostream& operator<<(ostream& os, Month m)
+{
+    return os << month_tbl[int(m)];
+}
+
+class Date {
+    int y;
+    Month m;
+    int d;  
+    string com{ "," };   // year, month, day
+    bool is_valid();
+public:
+    class Invalid { };
+    Date();
+    Date(Month m, int d, int y); // check for valid date and initialize
+    Date(int y);
+    void add_day(int n);              // increase the Date by n days
+    Month month() const { return m; }
+    int day() const { return d; }
+    int year() const { return y; }
+    string comma() const { return com; }
+};
+
+
+bool Date::is_valid() // return true if date is valid
+{
+    if (y < 4 || 3000 < y) return false;
+    // . . .
+}
+
+const Date& default_date()
+{
+    static Date dd{ Month::Jan,1, 2001 };
+    return dd;
+}
+
+Date::Date()
+    :y{ default_date().year() },
+    m{ default_date().month() },
+    d{ default_date().day() }
+{
+}
+
+
+Date::Date(Month m, int d, int y) : y(y), m(m), d(d) {
+    if (d < 1 or d>31)
+        throw Invalid{ };
+    if (!is_valid()) 
+        throw Invalid{ };
+}
+
+Date::Date(int y) // January 1 of year y
+    :y{ y }
+{
+    if (!is_valid()) throw Invalid{}; // check for validity
+}
+
+void Date::add_day(int n) {
+    if (n< 1 or n>31)
+    throw Invalid { };
+    int x = d;
+    x += n;
+    d = x;
+}
+
+void f()
+{
+    Date today{ Month::Jul, 21, 1978 };
+
+    cout << today.day() << ' ' << today.month() << today.comma() << ' ' << today.year() << '\n';
+    Date tomorrow {today};
+
+    tomorrow.add_day(1);
+    cout << tomorrow.day() << ' ' << tomorrow.month() << today.comma() << ' ' << tomorrow.year() << '\n';
+}
+
+
+int main()
+try {
+
+    f();
+
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
 
 
 
