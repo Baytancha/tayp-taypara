@@ -123,7 +123,7 @@ namespace Chrono {
 
     bool year_is_valid(int y) // return true if date is valid
     {
-        if (y < 1700 || 3000 < y) return false;
+        if (y < 1900 || 3000 < y) return false;
         // . . .
     }
 
@@ -210,18 +210,95 @@ namespace Chrono {
 
     //------------------------------------------------------------------------------
 
+    int find_index(int y, Date::Month m, int d) {
+        int year_sum{ 0 };
+        int month_sum { 0 };
+
+        for (int i = 1900; i < y; ++i) {
+
+            if (leapyear(i)) year_sum += 366;
+            else year_sum += 365;
+            }
+
+        for (int i = 0; i < int(m); ++i) {
+
+            switch (i) {
+            case 2:                        // the length of February varies
+                month_sum += (leapyear(y)) ? 29 : 28;
+                break;
+            case 4: case 6: case 9: case 11:
+                month_sum += 30;             // the rest have 30 days
+                break;
+                month_sum += 31;
+            }
+
+        }
+
+        return year_sum + month_sum + d;
+    }
+
     Day day_of_week(const Date& d)
     {
+        
+        int index = find_index(d.year(), d.month(), d.day());
         // ...
-        return sunday;
+        int y = index % 7;
+        int day_index = int(Day::monday);
+        for (int i = 1; i < (y + 1); ++i) {
+
+            if (day_index == 7) { day_index = 0; }
+            ++day_index;
+
+        }
+        
+        return Day(day_index);
     }
 
     //------------------------------------------------------------------------------
+    
 
+    //------------------------------------------------------------------------------
     Date next_Sunday(const Date& d)
     {
-        // ...
-        return d;
+        int new_year{ 0 };
+        Date::Month new_m;
+        Day current = day_of_week(d);
+        int sunday = 0;
+        int day_count{ 0 };
+        int week_count = int(current);
+        while (true) {
+
+            if (week_count == 7) {week_count = 0; ++sunday; }
+                ++week_count;
+                ++day_count;
+            if (sunday == 2) break;
+        }
+        int diff = day_count + d.day();
+
+        if (diff > 31) {
+
+            switch (d.month()) {
+            case Date::dec:
+                new_year = d.year() + 1; new_m = Date::jan;
+                break;
+                new_m = Date::Month(int(d.month()) + 1);
+            }
+            int rem_days{ 0 };
+            switch (d.month()) {
+            case Date::feb:                        // the length of February varies
+                int x = (leapyear(d.year())) ? 29 : 28; rem_days = x - d.day() - day_count;
+                break;
+            case Date::apr: case Date::jun: case Date::sep: case Date::nov:
+                rem_days = 30 - d.day() - day_count;            // the rest have 30 days
+                break;
+                rem_days = 31 - d.day() - day_count;
+            }
+
+            return Date{ new_year, new_m, rem_days };
+
+        }
+        else return Date{ d.year(), d.month(), diff };
+        
 
     }
 
@@ -229,10 +306,24 @@ namespace Chrono {
 
     Date next_weekday(const Date& d)
     {
-        // ...
-        return d;
-    }
+        int next_day;
+        Day current = day_of_week(d);
 
+        if (current == Day::saturday || current == Day::sunday) {
+
+            switch (current) {
+            case Day::saturday:                        // the length of February varies
+                month_sum += (leapyear(y)) ? 29 : 28;
+                break;
+            case Day::sunday:
+                month_sum += 30;             // the rest have 30 days
+                break;
+                month_sum += 31;
+            }
+            // ...
+            return d;
+        }
+    }
     //------------------------------------------------------------------------------
 
 } // Chrono
@@ -260,5 +351,3 @@ catch (...) {
     cerr << "Oops: unknown exception!\n";
     return 2;
 }
-
-
