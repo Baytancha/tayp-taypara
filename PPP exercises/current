@@ -213,11 +213,6 @@ namespace Chrono {
         monday =1, tuesday, wednesday, thursday, friday, saturday, sunday
     };
 
-    ostream& operator<<(ostream& os, const Day& d)
-    {
-        return os << d;
-    }
-
     //------------------------------------------------------------------------------
 
     int find_index(int y, Date::Month m, int d) {
@@ -285,22 +280,22 @@ namespace Chrono {
         }
 
     }
+    
+  //------------------------------------------------------------------------------
 
-
-    //------------------------------------------------------------------------------
     Date next_Sunday(const Date& d)
     {
         int new_year{ 0 };
         Date::Month new_m;
-        Day current = day_of_week(d);
         int Nsundays = 0;
         int day_count{ 0 };
-        int week_count = int(current);
+        int week_count = int(day_of_week(d));
         while (true) {
             if (week_count == 7) { week_count = 0; ++Nsundays; }
+            if (Nsundays == 2) break;
             ++week_count;
             ++day_count;
-            if (Nsundays == 2) break;
+            
         }
         int diff = day_count + d.day();
         int rem_days{ 0 };
@@ -337,13 +332,13 @@ namespace Chrono {
                 return Date{ new_year, new_m, rem_days };
             }
             break;
-            if (diff > 31) {
+        default:
+            if (diff > 31) { 
                 new_m = Date::Month(int(d.month()) + 1);
                 rem_days = day_count - (31 - d.day());
                 ++new_date;
             }
             break;
-
         }
 
         if (new_date > 0) { return Date{ d.year(), new_m, rem_days }; }
@@ -371,19 +366,29 @@ namespace Chrono {
         }
         int rem_days{ 0 };
         int new_date{ 0 };
+        cout << next_day << "\n";
         switch (d.month()) {
         case Date::feb:                        // the length of February varies
             if (leapyear(d.year()) && next_day > 29)
             {
+                cout << "LEAP!\n";
                 new_m = Date::Month(int(d.month()) + 1);
 
                 ++new_date;
             }
+            else if ((leapyear(d.year()) && next_day > 28))
+            {
+               
+                next_day = 29;
+                
+                return Date{ d.year(), d.month(), next_day };
+            }
             else if (next_day > 28)
             {
+                cout << "NOTLEAP!\n";
                 new_m = Date::Month(int(d.month()) + 1);
-
                 ++new_date;
+               
             }
 
             break;
@@ -411,6 +416,7 @@ namespace Chrono {
 
             }
             break;
+        default:
             if (next_day > 31) {
                 new_m = Date::Month(int(d.month()) + 1);
 
@@ -434,7 +440,6 @@ namespace Chrono {
         else return Date{ d.year(), d.month(), next_day };
 
     }
-
 }
 
  // Chrono
@@ -444,15 +449,15 @@ namespace Chrono {
 int main()
 try
 {
-    Chrono::Date holiday(2023, Chrono::Date::nov, 10);// initialization
+    Chrono::Date holiday(2000, Chrono::Date::feb, 28);// initialization
     
-    
-    //Chrono::Date d2 = holiday;
-    Chrono::Day  d = day_of_week(holiday); int day = int(d);
+    Chrono::Date d2 = next_Sunday(holiday);
+    Chrono::Date d3 = next_weekday(holiday);
     string x = day_of_week_string(holiday);
     //holiday.add_month(1);
     //holiday.add_year(1);
-    cout << "holiday is " << holiday << " Day is "<< x  << endl;
+    cout << "Today's date  " << holiday << " is on "<< x << 
+      " Next Sunday is " << d2 <<  " Next weekday is " << d3 << endl;
     
 }
 catch (Chrono::Date::Invalid&) {
