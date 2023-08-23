@@ -1,0 +1,471 @@
+#include "std_lib_facilities.h"
+
+// file Chrono.h
+
+// not all member functions are modifying; not all helper functions are non-modifying 
+// (they modify through references). Only the most essential functions are member functins
+
+namespace Chrono {
+
+    class Date {
+    public:
+        enum Month {
+            jan = 1, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec
+        };
+
+        class Invalid { };                 // to throw as exception
+
+        Date(int y, Month m, int d);       // check for valid date and initialize
+        Date();                            // default constructor
+        // the default copy operations are fine
+
+        // non-modifying operations:
+        int   day()   const { return d; }
+        Month month() const { return m; }
+        int   year()  const { return y; }
+
+        // modifying operations:
+        void add_day(int n);
+        void add_month(int n);
+        void add_year(int n);
+    private:
+        int   y;
+        Month m;
+        int   d;
+    };
+
+    //helper function declarations--------------------------------------------------
+
+    bool is_date(int y, Date::Month m, int d); // true for valid date
+
+    //------------------------------------------------------------------------------
+
+    bool leapyear(int y);                  // true if y is a leap year
+
+    //------------------------------------------------------------------------------
+
+    bool operator==(const Date& a, const Date& b);
+    bool operator!=(const Date& a, const Date& b);
+
+    //------------------------------------------------------------------------------
+
+    ostream& operator<<(ostream& os, const Date& d);
+    istream& operator>>(istream& is, Date& dd);
+
+    //Functions and enum declared in header file defined in cpp. file,
+    enum Day;
+    int find_index(int y, Date::Month m, int d);
+    Day day_of_week(const Date& d);
+    string day_of_week_string(const Date& d);
+    Date next_Sunday(const Date& d); // Those two are helper functions but they produce new objects
+    Date next_weekday(const Date& d);
+
+
+} // Chrono.h
+
+//------------------------------------------------------------------------------
+
+//The definitions go into Chrono.cpp:
+
+// Chrono.cpp
+
+namespace Chrono {
+
+    // member function definitions:
+
+    //------------------------------------------------------------------------------
+
+    Date::Date(int yy, Month mm, int dd)
+        : y(yy), m(mm), d(dd)
+    {
+        if (!is_date(yy, mm, dd))  throw Invalid{ };
+    }
+
+    //------------------------------------------------------------------------------
+
+    const Date& default_date()
+    {
+        static const Date dd(2001, Date::jan, 1); // start of 21st century
+        return dd;
+    }
+
+    //------------------------------------------------------------------------------
+
+    Date::Date()
+        :y(default_date().year()),
+        m(default_date().month()),
+        d(default_date().day())
+    {
+    }
+
+    //------------------------------------------------------------------------------
+
+    void Date::add_day(int n)
+    {
+        if (n < 1 or n>31)
+            throw Invalid{ };
+
+        d += n;
+    }
+
+    //------------------------------------------------------------------------------
+
+    void Date::add_month(int n)
+    {
+        m = (m == Date::Month::dec) ? Month::jan : Month(int(m) + 1);
+        // ..
+        if (m == Date::Month::jan) add_year(1);
+
+    }
+    //------------------------------------------------------------------------------
+
+    void Date::add_year(int n)
+    {
+        if (m == feb && d == 29 && !leapyear(y + n)) { // beware of leap years!
+            m = mar;        // use March 1 instead of February 29
+            d = 1;
+        }
+        y += n;
+    }
+
+    //------------------------------------------------------------------------------
+
+    // helper functions:
+
+    bool year_is_valid(int y) // return true if date is valid
+    {
+        if (y < 1900 || 3000 < y) return false;
+        return true;
+        // . . .
+    }
+
+    bool is_date(int y, Date::Month  m, int d)
+    {
+        // assume that y is valid
+        if (!year_is_valid(y)) return false;
+        if (d <= 0) return false;            // d must be positive
+
+        int days_in_month = 31;            // most months have 31 days
+
+        switch (m) {
+        case Date::feb:                        // the length of February varies
+            days_in_month = (leapyear(y)) ? 29 : 28;
+            break;
+        case Date::apr: case Date::jun: case Date::sep: case Date::nov:
+            days_in_month = 30;                // the rest have 30 days
+            break;
+        }
+
+        if (days_in_month < d) return false;
+
+        return true;
+    }
+
+    //------------------------------------------------------------------------------
+
+    bool leapyear(int y)
+    {
+        if (y % 400 == 0 || (y % 4 == 0 && y % 100 != 0))
+            return true;
+
+        return false;
+    }
+
+    //------------------------------------------------------------------------------
+
+    bool operator==(const Date& a, const Date& b)
+    {
+        return a.year() == b.year()
+            && a.month() == b.month()
+            && a.day() == b.day();
+    }
+
+    //------------------------------------------------------------------------------
+
+    bool operator!=(const Date& a, const Date& b)
+    {
+        return !(a == b);
+    }
+
+    //------------------------------------------------------------------------------
+
+    ostream& operator<<(ostream& os, const Date& d)
+    {
+        return os << '(' << d.year()
+            << ',' << d.month()
+            << ',' << d.day()
+            << ')';
+    }
+
+    //------------------------------------------------------------------------------
+
+    istream& operator>>(istream& is, Date& dd)
+    {
+        int y, m, d;
+        char ch1, ch2, ch3, ch4;
+        is >> ch1 >> y >> ch2 >> m >> ch3 >> d >> ch4;
+        if (!is) return is;
+        if (ch1 != '(' || ch2 != ',' || ch3 != ',' || ch4 != ')') { // oops: format error
+            is.clear(ios_base::failbit);                    // set the fail bit
+            return is;
+        }
+        dd = Date(y, Date::Month(m), d);     // update dd
+        return is;
+    }
+
+    //------------------------------------------------------------------------------
+
+    enum Day {
+        monday = 1, tuesday, wednesday, thursday, friday, saturday, sunday
+    };
+
+    //------------------------------------------------------------------------------
+
+    int find_index(int y, Date::Month m, int d) {
+        int year_sum{ 0 };
+        int month_sum{ 0 };
+
+        for (int i = 1900; i < y; ++i) {
+
+            if (leapyear(i)) year_sum += 366;
+            else year_sum += 365;
+        }
+
+        for (int i = 1; i < int(m); ++i) {
+
+            switch (i) {
+            case 2:                        // the length of February varies
+                month_sum += (leapyear(y)) ? 29 : 28;
+                break;
+            case 4: case 6: case 9: case 11:
+                month_sum += 30;             // the rest have 30 days
+                break;
+             default:
+                month_sum += 31;
+                break;
+            }
+            
+        }
+
+        return year_sum + month_sum + d;
+    }
+    //------------------------------------------------------------------------------
+
+    Day day_of_week(const Date& d)
+    {
+        int index = find_index(d.year(), d.month(), d.day());
+        // ...
+        int y = index % 7;
+        if ( y == index) {  return Day(y); }
+        else if (y == 0) {return Day::sunday; }
+        else {
+            int day_index = int(Day::sunday); //Jan 1st 1900 was a Monday
+            for (int i = 1; i < (y + 1); ++i) {
+
+                if (day_index == 7) { day_index = 0; }
+                ++day_index;
+
+            }
+            return Day(day_index);
+        }
+    }
+
+    string day_of_week_string(const Date& d)
+    {
+        Day day = day_of_week(d);
+
+        switch (int(day)) {
+        case 1: return "Monday"; break;
+        case 2: return "Tuesday"; break;
+        case 3: return "Wednesday"; break;
+        case 4: return "Thursday"; break;
+        case 5: return "Friday"; break;
+        case 6: return "Saturday"; break;
+        case 7: return "Sunday"; break;
+        }
+
+    }
+    
+  //------------------------------------------------------------------------------
+
+    Date next_Sunday(const Date& d)
+    {
+        int new_year{ 0 };
+        Date::Month new_m;
+        int Nsundays = 0;
+        int day_count{ 0 };
+        int week_count = int(day_of_week(d));
+        while (true) {
+            if (week_count == 7) { week_count = 0; ++Nsundays; }
+            if (Nsundays == 2) break;
+            ++week_count;
+            ++day_count;
+            
+        }
+        int diff = day_count + d.day();
+        int rem_days{ 0 };
+        int new_date{ 0 };
+        switch (d.month()) {
+        case Date::feb:                        // the length of February varies
+            if (leapyear(d.year()) && diff > 29)
+            {
+                new_m = Date::Month(int(d.month()) + 1);
+                int x = (leapyear(d.year())) ? 29 : 28; rem_days = day_count - (x - d.day());
+                ++new_date;
+            }
+            else if (diff > 28)
+            {
+                new_m = Date::Month(int(d.month()) + 1);
+                int x = (leapyear(d.year())) ? 29 : 28; rem_days = day_count - (x - d.day());
+                ++new_date;
+            }
+
+            break;
+        case Date::apr: case Date::jun: case Date::sep: case Date::nov:
+            if (diff > 30) {
+                new_m = Date::Month(int(d.month()) + 1);
+                rem_days = day_count - (30 - d.day());
+                ++new_date;
+            }
+
+            break;
+        case Date::dec:
+            if (diff > 31)
+            {
+                new_year = d.year() + 1; new_m = Date::jan;
+                rem_days = day_count - (31 - d.day());
+                return Date{ new_year, new_m, rem_days };
+            }
+            break;
+        default:
+            if (diff > 31) { 
+                new_m = Date::Month(int(d.month()) + 1);
+                rem_days = day_count - (31 - d.day());
+                ++new_date;
+            }
+            break;
+        }
+
+        if (new_date > 0) { return Date{ d.year(), new_m, rem_days }; }
+        else return Date{ d.year(), d.month(), diff };
+
+    }
+
+    //------------------------------------------------------------------------------
+
+    Date next_weekday(const Date& d)
+    {
+        int next_day{ 0 };
+        int new_year{ 0 };
+        Date::Month new_m;
+        Day current = day_of_week(d);
+
+        switch (current) {
+
+        case Day::monday:case Day::tuesday:case Day::wednesday:case Day::thursday:
+        case Day::sunday:
+            next_day = d.day() + 1; break;
+
+        case Day::friday:next_day = d.day() + 3; break;
+        case Day::saturday: next_day = d.day() + 2; break;
+        }
+        int rem_days{ 0 };
+        int last_day_of_month{ 0 };
+        int new_date{ 0 };
+        switch (d.month()) {
+        case Date::feb:                        // the length of February varies
+            if (leapyear(d.year()) && next_day > 29)
+            {
+                new_m = Date::Month(int(d.month()) + 1);
+                last_day_of_month = 29 - d.day();
+                ++new_date;
+            }
+            else if ((leapyear(d.year()) && next_day > 28))
+            {
+                next_day = 29;
+                return Date{ d.year(), d.month(), next_day };
+            }
+            else if (next_day > 28)
+            {
+                new_m = Date::Month(int(d.month()) + 1);
+                last_day_of_month = 28 - d.day();
+                ++new_date;
+            }
+            break;
+        case Date::apr: case Date::jun: case Date::sep: case Date::nov:
+            if (next_day > 30) {
+                new_m = Date::Month(int(d.month()) + 1);
+                last_day_of_month = 30 - d.day();
+                ++new_date;
+            }
+
+            break;
+        case Date::dec:
+            if (next_day > 31)
+            {
+                new_year = d.year() + 1; new_m = Date::jan;
+                last_day_of_month = 31 - d.day();
+                switch (current) {
+
+                case Day::monday:case Day::tuesday:case Day::wednesday:case Day::thursday:
+                case Day::sunday:
+                    rem_days = 1 - last_day_of_month; break;
+                case Day::friday: rem_days = 3 - last_day_of_month; break;
+                case Day::saturday: rem_days = 2 - last_day_of_month; break;
+                }
+                return Date{ new_year, new_m, rem_days };
+
+            }
+            break;
+        default:
+            if (next_day > 31) {
+                new_m = Date::Month(int(d.month()) + 1);
+                last_day_of_month = 31 - d.day();
+                ++new_date;
+            }
+            break;
+
+        }
+        if (new_date > 0) {
+
+            switch (current) {
+
+            case Day::monday:case Day::tuesday:case Day::wednesday:case Day::thursday:
+            case Day::sunday:
+                rem_days =  1 - last_day_of_month; break;
+            case Day::friday: rem_days = 3 - last_day_of_month; break;
+            case Day::saturday: rem_days = 2 - last_day_of_month; break;
+            }
+            return Date{ d.year(), new_m, rem_days };
+        }
+        else return Date{ d.year(), d.month(), next_day };
+
+    }
+}
+ // Chrono
+
+//------------------------------------------------------------------------------
+
+int main()
+try
+{
+    Chrono::Date holiday(2023, Chrono::Date::dec, 30);// initialization
+    
+    Chrono::Date d2 = next_Sunday(holiday);
+    Chrono::Date d3 = next_weekday(holiday);
+    string x = day_of_week_string(holiday);
+    //holiday.add_month(1);
+    //holiday.add_year(1);
+    cout << "Today's date  " << holiday << " is on "<< x << 
+      " Next Sunday is " << d2 <<  " Next weekday is " << d3 << endl;  
+}
+catch (Chrono::Date::Invalid&) {
+    cerr << "error: Invalid date\n";
+    return 1;
+}
+catch (...) {
+    cerr << "Oops: unknown exception!\n";
+    return 2;
+}
+
+//------------------------------------------------------------------------------
