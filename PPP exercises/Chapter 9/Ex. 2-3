@@ -1,1 +1,387 @@
+#include "std_lib_facilities.h"
+
+class Name_pairs {
+public:
+    class Invalid { };                 // 
+    Name_pairs(string name, double age);  
+    Name_pairs();
+    // modifying operations:
+    void read_names();
+    void read_ages(); 
+    // non-modifying operations:
+    string name_r() const { return name; }
+    double age_r() const { return age; }
+    void print_p();
+    void sort_p();
+private:
+    double  age;
+    string name;
+    vector <double> age_v;
+    vector <string> name_v;
+    vector <Name_pairs> pairs;
+};
+
+//------------------------------------------------------------------------------
+
+Name_pairs::Name_pairs(string name, double age) 
+    : name(name), age(age)
+
+{ 
+    name_v.push_back(name);
+    age_v.push_back(age);
+
+};
+
+Name_pairs::Name_pairs()
+    : name("John"), age(18)
+
+{
+    
+
+};
+
+
+//------------------------------------------------------------------------------
+
+istream& operator>>(istream& is, Name_pairs& dd) {
+
+    string name; double age;
+    
+    is >> name >> age;
+    if (!is) {
+        is.clear(ios_base::failbit);                    // 
+        return is;
+    }
+    
+    dd = Name_pairs(name, age);     // 
+    return is;
+
+};
+//------------------------------------------------------------------------------
+
+ostream& operator<<(ostream& os, Name_pairs& dd)
+{
+    return os << dd.name_r() << ' ' << dd.age_r();
+}
+//------------------------------------------------------------------------------
+bool operator==(const Name_pairs& a, const Name_pairs& b)
+{
+    return a.name_r() == b.name_r()
+        && a.age_r() == b.age_r();
+}
+
+//------------------------------------------------------------------------------
+
+bool operator!=(const Name_pairs& a, const Name_pairs& b)
+{
+    return !(a == b);
+}
+
+//------------------------------------------------------------------------------
+
+void Name_pairs::read_names() {
+
+    string name;
+    while (name != "|") {
+       
+        cin >> name;
+        if (name != "|")
+        {
+            name_v.push_back(name);
+        }
+
+        cout << "NAME!\n";
+    }
+
+    cout << "END!\n";
+
+};
+void Name_pairs::read_ages() {
+
+    while (cin) {
+        double age;
+        cin >> age;
+        age_v.push_back(age);
+    }
+
+    for (int i = 0; i < name_v.size(); ++i)
+    {
+        Name_pairs x{ name_v[i], age_v[i] };
+        pairs.push_back(x);
+    };
+}
+//------------------------------------------------------------------------------
+
+void Name_pairs::print_p() {
+
+    for (int i = 0; i < pairs.size(); ++i)
+    {
+        cout << pairs[i] << "\n";
+
+    }
+}
+//------------------------------------------------------------------------------
+void Name_pairs::sort_p() {
+
+    vector <string> name2 = name_v;
+    vector <double> age2 = age_v;
+   sort(name_v);
+
+
+   for (int z = 0; z < name2.size(); ++z) {
+
+   for (int i = 0; i < name_v.size(); ++i)
+   {
+       if (name2[z] == name_v[i]) {
+
+           age2[z] = age_v[i];
+
+       }
+
+   }
+   }
+
+   pairs.clear();
+
+   for (int i = 0; i < name_v.size(); ++i)
+   {
+       Name_pairs x{ name_v[i], age2[i] };
+       pairs.push_back(x);
+   };
+
+
+}
+
+
+int main()
+try {
+
+    Name_pairs obj;
+
+    obj.read_names();  
+    
+    cout << "YEAH?" << "\n";
+    
+    obj.read_ages();
+
+    obj.print_p();
+    
+    obj.sort_p();
+    
+    obj.print_p();
+
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
+
+
+
+
+
+
+
+//=============================================================================
+#include "std_lib_facilities.h" 
+
+class Name_pairs {
+public:
+    class Invalid { };                 // 
+    Name_pairs(string name, double age);
+    Name_pairs();
+    // modifying operations:
+    void read_names();
+    void read_ages();
+    // non-modifying operations:
+    string name_r() const { return name; }
+    double age_r() const { return age; }
+    vector<string> vector_s() const {return name_v; }
+    vector<double> vector_d() const { return age_v; }
+    void print_p();
+    void sort_p();
+private:
+    double  age;
+    string name;
+    vector <double> age_v;
+    vector <string> name_v;
+    
+};
+
+//------------------------------------------------------------------------------
+
+Name_pairs::Name_pairs(string name, double age)
+    : name(name), age(age)
+
+{
+    name_v.push_back(name);
+    age_v.push_back(age);
+
+};
+
+Name_pairs::Name_pairs()
+    : name("John"), age(18)
+
+{
+
+
+};
+
+
+//------------------------------------------------------------------------------
+
+istream& operator>>(istream& is, Name_pairs& dd) {
+
+    string name; double age;
+
+    is >> name >> age;
+    if (!is) {
+        is.clear(ios_base::failbit);                    // 
+        return is;
+    }
+
+    dd = Name_pairs(name, age);     // 
+    return is;
+
+};
+//------------------------------------------------------------------------------
+
+ostream& operator<<(ostream& os, Name_pairs& dd)
+{
+    return os << dd.name_r() << ' ' << dd.age_r();
+}
+//------------------------------------------------------------------------------
+bool operator==(const Name_pairs& a, const Name_pairs& b)
+{
+    return a.name_r() == b.name_r()
+        && a.age_r() == b.age_r();
+}
+
+//------------------------------------------------------------------------------
+
+bool operator!=(const Name_pairs& a, const Name_pairs& b)
+{
+    return !(a == b);
+}
+
+//------------------------------------------------------------------------------
+
+void Name_pairs::read_names() {
+
+    string name;
+    while (name != "|") {
+
+        cin >> name;
+        if (name != "|")
+        {
+            name_v.push_back(name);
+        }
+
+        cout << "NAME!\n";
+    }
+
+    cout << "END!\n";
+
+};
+void Name_pairs::read_ages() {
+
+    while (cin) {
+        double age;
+        cin >> age;
+        age_v.push_back(age);
+    }
+
+   
+}
+//------------------------------------------------------------------------------
+
+void Name_pairs::print_p() {
+
+    for (int i = 0; i < name_v.size(); ++i)
+    {
+        cout << vector_s()[i] << " " << vector_d()[i] << "\n";
+
+    }
+}
+//------------------------------------------------------------------------------
+void Name_pairs::sort_p() {
+
+    vector <string> name2 = name_v;
+    vector <double> age2 = age_v;
+    sort(name_v);
+
+
+    for (int z = 0; z < name2.size(); ++z) {
+
+        for (int i = 0; i < name_v.size(); ++i)
+        {
+            if (name2[z] == name_v[i]) {
+
+                age2[z] = age_v[i];
+
+            }
+
+        }
+    }
+    age_v.clear();
+    age_v = age2;
+
+
+}
+
+
+int main()
+try {
+
+    Name_pairs obj;
+
+    obj.read_names();
+
+    cout << "YEAH?" << "\n";
+
+    obj.read_ages();
+
+    obj.print_p();
+
+    obj.sort_p();
+
+    obj.print_p();
+
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
