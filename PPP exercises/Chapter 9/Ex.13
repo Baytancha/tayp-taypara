@@ -1,0 +1,114 @@
+#include "std_lib_facilities.h" 
+
+int comm_den(int x, int y)
+
+{
+	x = abs(x);	
+	y = abs(y);
+	int t = y;
+	while (x%t !=0 || y%t != 0) {
+		
+		if (t == 1) break;
+		--t;
+	}
+	return t;
+}
+
+
+class Rational {
+public:
+	class Invalid {};
+	Rational(int n, int d) :num(n), den(d) { normalize(); }
+	Rational() :num(0), den(1) { }
+
+	void normalize()	
+	{
+		if (den == 0) throw Invalid{};
+		if (den < 0) { den = -den; num = -num; }
+		int n = comm_den(num, den);
+		if (n > 1) { num /= n; den /= n; }
+	}
+
+	int num;
+	int den;
+};
+
+
+ostream& operator<<(ostream& os, Rational x)
+{
+	return cout << '(' << x.num << '/' << x.den << ')';
+}
+
+bool operator==(Rational x1, Rational x2)
+{
+	return x1.num * x2.den == x1.den * x2.num;
+}
+
+bool operator!=(Rational x1, Rational x2)
+{
+	return !(x1 == x2);
+}
+
+double to_double(Rational x)	
+{
+	double d = x.num;
+
+	return d / x.den;
+}
+
+//-------------------------------------------------------------
+
+Rational operator+(Rational x1, Rational x2)
+{
+	Rational r(x1.num * x2.den + x1.den * x2.num, x1.den * x2.den);
+	r.normalize();
+	return r;
+}
+
+Rational operator-(Rational x1, Rational x2)
+{
+	Rational r(x1.num * x2.den - x1.den * x2.num, x1.den * x2.den);
+	r.normalize();
+	return r;
+}
+
+Rational operator-(Rational x)	// unary minus
+{
+	return Rational(-x.num, x.den);
+}
+
+Rational operator*(Rational x1, Rational x2)
+{
+	Rational r(x1.num * x2.num, x1.den * x2.den);
+	r.normalize();
+	return r;
+}
+
+Rational operator/(Rational x1, Rational x2)
+{
+	Rational r(x1.num * x2.den, x1.den * x2.num);
+	r.normalize();
+	return r;
+}
+
+
+
+int main()
+try
+{
+
+	Rational r1(9, 20);
+	cout << r1 << "==" << to_double(r1) << '\n';
+	
+
+
+	keep_window_open("~");	
+}
+catch (runtime_error e) {	
+	cout << e.what() << '\n';
+	keep_window_open("~");	
+}
+catch (...) {	
+	cout << "exiting\n";
+	keep_window_open("~");	
+}
