@@ -266,3 +266,110 @@ catch (...) {
 	cout << "exiting\n";
 	keep_window_open("~");	
 }
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------------------------------
+
+#include "std_lib_facilities.h" 
+
+class Money {
+public:
+    Money(double);
+    Money(int);
+    Money(std::string, double);
+
+    int get_cents() const { return cents; }
+    std::string get_currency() const { return currency; }
+    double get_dollars() const { return double(cents) / 100; }
+private:
+    long int cents;
+    std::string currency = "$";
+};
+
+std::ostream& operator<<(std::ostream&, const Money&);
+//std::istream& operator>>(std::istream&, Money&);
+
+Money operator+(const Money&, const Money&);
+Money operator-(const Money&, const Money&);
+
+
+Money::Money(double d)
+{
+    double to_cents = d * 100;
+    cents = int(to_cents + 0.5);
+}
+
+Money::Money(int c)
+{
+    cents = c;
+}
+
+Money::Money(std::string s, double d)
+{
+    currency = s;
+
+    double to_cents = d * 100;
+    cents = int(to_cents + 0.5);
+}
+
+std::ostream& operator<<(std::ostream& os, const Money& m)
+{
+    return os << m.get_currency() << m.get_dollars();
+}
+
+Money operator+(const Money& a, const Money& b)
+{
+    return Money{ a.get_cents() + b.get_cents() };
+}
+
+Money operator-(const Money& a, const Money& b)
+{
+    return Money{ a.get_cents() - b.get_cents() };
+}
+
+int main()
+{
+    Money five_bucks{ 5.00 };
+    Money ten_bucks{ 10.00 };
+
+    std::cout << five_bucks << '\n'
+        << ten_bucks << '\n'
+        << five_bucks + ten_bucks << '\n';
+
+    Money loose_change{ 2.35 };
+    Money extra_deci{ 17.312 };
+    Money round_up{ 8.628 };
+
+    std::cout << loose_change << '\n'
+        << extra_deci << '\n'
+        << round_up << '\n';
+
+    // International money
+    Money canadian{ "CDN", 53.20 };
+    Money danish{ "DKK", 16.07 };
+    Money american{ "USD", 1.72 };
+
+    std::cout << canadian << '\n'
+        << danish << '\n'
+        << american << '\n';
+}
+
+
+
+
+
+
+
+
+
+
+
+
