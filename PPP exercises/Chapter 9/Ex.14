@@ -304,7 +304,7 @@ Money operator-(const Money&, const Money&);
 Money::Money(double d)
 {
     double to_cents = d * 100;
-    cents = int(to_cents + 0.5);
+    cents = int(to_cents + 0.5); //прибавить + 5 значит нащупать третью цифру после запятой (если 17,332442, то умножив на сто, останется 1733,2 и прибавив 0,5 узнаем цифру после запятой)
 }
 
 Money::Money(int c)
@@ -316,7 +316,7 @@ Money::Money(std::string s, double d)
 {
     currency = s;
 
-    double to_cents = d * 100;
+    double to_cents = d * 100; 
     cents = int(to_cents + 0.5);
 }
 
