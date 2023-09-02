@@ -1,0 +1,268 @@
+#include "std_lib_facilities.h" 
+
+int comm_den(int x, int y)
+
+{
+	x = abs(x);	
+	y = abs(y);
+	int t = y;
+	while (x%t !=0 || y%t != 0) {
+		
+		if (t == 1) break;
+		--t;
+	}
+	return t;
+}
+
+
+class Rational {
+public:
+	class Invalid {};
+	Rational(int n, int d) :num(n), den(d) { normalize(); }
+	Rational() :num(0), den(1) { }
+
+	void normalize()	
+	{
+		if (den == 0) throw Invalid{};
+		if (den < 0) { den = -den; num = -num; }
+		int n = comm_den(num, den);
+		if (n > 1) { num /= n; den /= n; }
+	}
+
+	int num;
+	int den;
+};
+
+
+ostream& operator<<(ostream& os, Rational x)
+{
+	return cout << '(' << x.num << '/' << x.den << ')';
+}
+
+bool operator==(Rational x1, Rational x2)
+{
+	return x1.num * x2.den == x1.den * x2.num;
+}
+
+bool operator!=(Rational x1, Rational x2)
+{
+	return !(x1 == x2);
+}
+
+double to_double(Rational x)	
+{
+	double d = x.num;
+
+	return d / x.den;
+}
+
+//-------------------------------------------------------------
+
+Rational operator+(Rational x1, Rational x2)
+{
+	Rational r(x1.num * x2.den + x1.den * x2.num, x1.den * x2.den);
+	r.normalize();
+	return r;
+}
+
+Rational operator-(Rational x1, Rational x2)
+{
+	Rational r(x1.num * x2.den - x1.den * x2.num, x1.den * x2.den);
+	r.normalize();
+	return r;
+}
+
+Rational operator-(Rational x)	// unary minus
+{
+	return Rational(-x.num, x.den);
+}
+
+Rational operator*(Rational x1, Rational x2)
+{
+	Rational r(x1.num * x2.num, x1.den * x2.den);
+	r.normalize();
+	return r;
+}
+
+Rational operator/(Rational x1, Rational x2)
+{
+	Rational r(x1.num * x2.den, x1.den * x2.num);
+	r.normalize();
+	return r;
+}
+
+//-------------------------------------------------------------
+
+class Money {
+public:
+	Money(int dol, int cent, Rational fr);
+	Money(int dol, int cent);
+	Money() : d{ 0 }, c{ 0 }, f(Rational()) { }
+	int get_d() const { return d; }
+	int get_c() const { return c; }
+	Rational get_f() const { return f; }
+
+private: 
+	int d;
+	int c;
+	Rational f{ 1,1 };
+
+};
+
+Money::Money(int dol, int cent) 
+	:d{ dol }, c{ cent }
+
+{
+	if (c >= 100) {
+		for (int i = 0; i < c / 100; ++i)
+		{
+			++d;
+		}
+		int rem = c % 100;
+		c = rem;
+	}
+};
+
+Money::Money(int dol, int cent, Rational fr) 
+	: d{ dol }, c{ cent }, f{ fr } 
+
+{ 
+	if (to_double(f) >= 1) {
+		Rational rem{ f.den, f.den };
+		for (int i = 0; i < int(to_double(f)); ++i)
+		{
+			++c;
+			rem = rem + Rational{ f.den, f.den };
+		}
+
+		//cout << f;
+
+		if ((rem - Rational{ f.den, f.den }) == f)
+			f = Rational{ 1,1 };
+		else f = f - (rem - Rational{ f.den, f.den });
+
+	}
+	if (1 > to_double(f) && to_double(f) >= 0.5) { ++c; f = Rational{ 1,1 }; }
+
+
+	if (c >= 100) {
+		for (int i = 0; i < c / 100; ++i)
+		{
+			++d;
+		}
+		int rem = c % 100;
+		c = rem;
+	}
+
+};
+
+Money operator+(Money m1, Money m2)
+{
+	bool var{ false };
+	int rem_c{ 0 };
+
+	int d_sum = m1.get_d() + m2.get_d();
+	int c_sum = m1.get_c() + m2.get_c();
+	
+	Rational f_sum = m1.get_f() + m2.get_f();
+	if (m1.get_f() == Rational{1, 1}) f_sum = m2.get_f();
+	else if (m2.get_f() == Rational{1, 1}) f_sum = m1.get_f();
+
+	if (1 > to_double(f_sum) && to_double(f_sum) >= 0.5) 
+	
+	{
+		  ++c_sum; f_sum = Rational{ 1,1 };
+	}
+	
+	if (c_sum >= 100) {
+		++d_sum;
+		rem_c = c_sum % 100;
+		var = true;
+	}
+
+	
+	
+	if (f_sum == Rational{1, 1}) { if (var == true) { cout << "WHAT1"; return Money{ d_sum, rem_c }; }
+	else { cout << "WHAT2";  return  Money{ d_sum, c_sum }; }
+	}
+	
+	if (var == true) { cout << "WHAT3"; return Money{ d_sum, rem_c, f_sum }; }
+	else { cout << "WHAT4"; return  Money{ d_sum, c_sum, f_sum }; }
+
+}
+
+Money operator-(Money m1, Money m2) // not completed
+{
+	bool var{ false };
+	int rem_c{ 0 };
+
+	int d_sum = m1.get_d() - m2.get_d();
+	if (d_sum < 0) error("Negative value");
+	int c_sum = m1.get_c() - m2.get_c();
+	Rational f_sum = m1.get_f() - m2.get_f();
+	if (m1.get_f() == Rational{1, 1}) f_sum = m2.get_f();
+	else if (m2.get_f() == Rational{1, 1}) f_sum = m1.get_f();
+
+	if (1 > to_double(f_sum) && to_double(f_sum) >= 0.5)
+
+	{
+		--c_sum; f_sum = Rational{ 1,1 };
+	}
+
+
+	if (c_sum <= 0) {
+		--d_sum;
+		rem_c = 99;
+		var = true;
+	}
+
+	if (f_sum == Rational{1, 1}) {
+		if (var == true) { cout << "WHAT1"; return Money{ d_sum, rem_c }; }
+		else { cout << "WHAT2";  return  Money{ d_sum, c_sum }; }
+	}
+
+	if (var == true) { cout << "WHAT3"; return Money{ d_sum, rem_c, f_sum }; }
+	else { cout << "WHAT4"; return  Money{ d_sum, c_sum, f_sum }; }
+
+}
+
+
+	
+ostream& operator<<(ostream& os, Money m)
+{
+	
+	return (to_double(m.get_f()) == 1) ? cout << '$' << m.get_d() << '.' << m.get_c() << '.' 
+		 : cout << '$' << m.get_d() << '.' << m.get_c() << '.' << m.get_f();
+
+}
+
+int main()
+try
+{
+	/*Rational r1{1, 10};
+	Rational r2{ 3,10 };
+	cout << r1 - r2 <<'\n';*/
+
+	
+	Money m{ 10,2, Rational{2, 10} };
+	Money d{ 10, 3, Rational{3, 10} };
+
+	cout << m << " " << d;
+
+	cout << "\n";
+
+	cout << m + d;
+
+	cout << "\n";
+
+	keep_window_open("~");	
+	return 0;
+}
+catch (runtime_error e) {	
+	cout << e.what() << '\n';
+	keep_window_open("~");	
+}
+catch (...) {	
+	cout << "exiting\n";
+	keep_window_open("~");	
+}
