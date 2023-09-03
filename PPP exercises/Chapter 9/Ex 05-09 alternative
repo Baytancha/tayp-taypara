@@ -1,0 +1,266 @@
+#include "std_lib_facilities.h" 
+#include "Date_class.h"  
+
+namespace Library_lib {
+
+    struct ISBN {
+        ISBN(int g, int p, int t, char c);
+        int group;
+        int publisher;
+        int title;
+        char check;
+    };
+
+    ostream& operator<<(ostream& os, const ISBN& I);
+    bool operator==(const ISBN& a, const ISBN& b);
+    bool operator!=(const ISBN& a, const ISBN& b);
+
+    enum class Genre {
+        fiction, nonfiction, periodical, biography, children
+    };
+
+    ostream& operator<<(ostream& os, const Genre g);
+
+    class Book {
+    public:
+        Book(string t, string a, int c, ISBN I, Genre g);
+        bool is_avail() { return available; }
+        void check_in() { available = true; }
+        void check_out() { available = false; }
+
+        // getters
+        string  get_title()     const { return title; }
+        string  get_author()    const { return author; }
+        int     get_copy()      const { return copyright; }
+        ISBN    get_ISBN()      const { return isbn; }
+        Genre   get_genre()     const { return genre; }
+    private:
+        string title;
+        string author;
+        int copyright;
+        ISBN isbn;
+        Genre genre;
+        bool available = true;
+    };
+
+    ostream& operator<<(ostream& os, const Book& b);
+    bool operator==(const Book& a, const Book& b);
+    bool operator!=(const Book& a, const Book& b);
+}
+
+namespace Library_lib {
+
+    // ISBN definitions
+    ISBN::ISBN(int g, int p, int t, char c)
+        : group{ g }, publisher{ p }, title{ t }, check{ c } { }
+
+    ostream& operator<<(ostream& os, const ISBN& I)
+    {
+        return os << "ISBN " << I.group
+            << "-" << I.publisher
+            << "-" << I.title
+            << "-" << I.check;
+    }
+
+    bool operator==(const ISBN& a, const ISBN& b)
+    {
+        return a.group == b.group &&
+            a.publisher == b.publisher &&
+            a.title == b.title &&
+            a.check == b.check;
+    }
+
+    bool operator!=(const ISBN& a, const ISBN& b)
+    {
+        return !(a == b);
+    }
+
+    // Genre definitions
+    ostream& operator<<(ostream& os, const Genre g)
+    {
+        vector<string> genre_tbl = {
+            "fiction", "nonfiction", "periodical", "biography", "children"
+        };
+
+        return os << genre_tbl[int(g)];
+    }
+
+    // Book definitions
+    Book::Book(string t, string a, int c, ISBN I, Genre g)
+        : title{ t }, author{ a }, copyright{ c }, isbn{ I }, genre{ g } { }
+
+    ostream& operator<<(ostream& os, const Book& b)
+    {
+        return os << b.get_title() << '\n'
+            << "  " << b.get_author() << '\n'
+            << "  " << b.get_genre() << '\n'
+            << "  " << b.get_ISBN() << '\n';
+    }
+
+    bool operator==(const Book& a, const Book& b)
+    {
+        return a.get_ISBN() == b.get_ISBN();
+    }
+
+    bool operator!=(const Book& a, const Book& b)
+    {
+        return !(a == b);
+    }
+}
+
+namespace Library_lib {
+
+    class Patron {
+    public:
+        Patron(string n, int c)
+            :name{ n }, card_num{ c } { }
+
+        void inc_fees(double fee) { fees += fee; }
+        void set_fees(double fee) { fees = fee; }
+
+        string get_name() const { return name; }
+        int get_card_num() const { return card_num; }
+        double get_fees() const { return fees; }
+        bool owes_fees() const { return fees > 0; }
+
+    private:
+        string name;
+        int card_num;
+        double fees = 0;
+    };
+
+    struct Transaction {
+        Book b;
+        Patron p;
+        Date d;
+        Transaction(Book bb, Patron pp, Date dd)
+            :b{ bb }, p{ pp }, d{ dd } { }
+    };
+
+    class Library {
+    public:
+        void add_book(Book b) { books.push_back(b); }
+        Patron add_patron(string n);
+        void check_out_book(Book& b, const Patron& p,
+            const Date& d);
+        void return_book(Book& b, Patron& p, bool on_time);
+        vector<Patron> get_fee_list();
+    private:
+        vector<Book> books;
+        vector<Patron> patrons;
+        vector<Transaction> transactions;
+
+        // private methods
+        int get_new_card_num() { return patrons.size(); }
+        bool is_patron(const Patron& p);
+        bool book_exists(const Book& b);
+    };
+}
+
+namespace Library_lib {
+
+    bool Library::is_patron(const Patron& p)
+    {
+        for (Patron lib_p : patrons)
+            if (lib_p.get_name() == p.get_name())
+                return true;
+
+        return false;
+    }
+
+    bool Library::book_exists(const Book& b)
+    {
+        for (Book lib_b : books)
+            if (lib_b.get_ISBN() == b.get_ISBN())
+                return true;
+
+        return false;
+    }
+
+    Patron Library::add_patron(string n)
+    {
+        int card_num = get_new_card_num();
+        Patron p{ n, card_num };
+        patrons.push_back(p);
+        return p;
+    }
+
+    void Library::check_out_book(Book& b, const Patron& p,
+        const Date& d)
+    {
+        if (!is_patron(p)) error("Only patrons can check out books");
+        if (!book_exists(b)) error("We don't carry that book");
+
+        if (!b.is_avail()) error("All copies of that book are out");
+        if (p.owes_fees()) error("Patron must pay outstanding fees");
+
+        b.check_out();
+        Transaction t(b, p, d);
+        transactions.push_back(t);
+    }
+
+    void Library::return_book(Book& b, Patron& p, bool on_time)
+    {
+        b.check_in();
+        if (!on_time)
+            p.inc_fees(1.23);
+    }
+
+    vector<Patron> Library::get_fee_list()
+    {
+        vector<Patron> fee_list;
+
+        for (Patron p : patrons)
+            if (p.owes_fees())
+                fee_list.push_back(p);
+
+        return fee_list;
+    }
+}
+
+int main()
+try {
+    cout << "Begin test\n";
+
+    Library_lib::Book good_parts{ "JavaScript: The Good Parts", "Douglas Crockford",
+            2008, Library_lib::ISBN{0, 596, 51774, '2'}, Library_lib::Genre::nonfiction };
+    Library_lib::Book bird_lives{ "Bird Lives!", "Ross Russell", 1973,
+        Library_lib::ISBN{0, 306, 80679, '7'}, Library_lib::Genre::biography };
+    Library_lib::Book goodnight{ "Goodnight Moon", "Margret Wise Brown", 1947,
+        Library_lib::ISBN{0, 694, 361, '7'}, Library_lib::Genre::children };
+    Library_lib::Book ejs{ "Eloquent JavaScript", "Marijn Haverbeke", 2011,
+        Library_lib::ISBN{1, 59327, 282, '~'}, Library_lib::Genre::nonfiction };
+
+    cout << ejs << '\n';
+
+    Library_lib::Library lib;
+    lib.add_book(good_parts);
+    lib.add_book(bird_lives);
+    lib.add_book(goodnight);
+    lib.add_book(ejs);
+
+    Library_lib::Patron chris = lib.add_patron("Chris");
+    Library_lib::Patron jacob = lib.add_patron("Jacob");
+    Library_lib::Patron caitlin = lib.add_patron("Caitlin");
+
+    cout << good_parts.is_avail() << '\n';
+    cout << chris.get_fees() << '\n';
+
+    lib.check_out_book(good_parts, chris,
+        Date{2017, Date::dec, 15});
+    cout << good_parts.is_avail() << '\n';
+
+    lib.return_book(good_parts, chris, false);
+    cout << good_parts.is_avail() << '\n';
+    cout << chris.get_fees() << '\n';
+
+    vector<Library_lib::Patron> outstanding = lib.get_fee_list();
+    for (Library_lib::Patron o : outstanding)
+        cout << o.get_name() << '\n';
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
