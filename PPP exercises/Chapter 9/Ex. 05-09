@@ -1,0 +1,432 @@
+#include "std_lib_facilities.h"  
+#include "Date_class.h"  
+
+
+class Book {
+public:
+    enum Genre
+    {
+        fiction = 1, nonfiction, periodical, bibliography, children
+    };
+    class Invalid { };                 // 
+    Book(string title, string author, Date copyright, bool checking);//    
+    Book();
+    // modifying operations:
+    string set_ISBN();
+    Genre set_genre();
+    void check_in();
+    void check_out();
+    // non-modifying operations:
+    bool is_checked() const;
+    string title_get() const { return title; }
+    string author_get() const { return author; }
+    string ISBN_get() const { return ISBN; }
+    Date copyright_get() const { return copyright; }
+    Genre genre_get() const { return g; }
+private:
+    bool checking {false};
+    string ISBN {"isbn"};
+    string title{ "Book" };
+    string author{ "John" };
+    Date copyright{ 1970, Date::jan, 01 };
+    Genre g = fiction;
+    
+};
+
+//------------------------------------------------------------------------------
+
+bool is_book(string title, string author, Date copyright);
+
+Book::Book()
+    
+{
+
+};
+
+Book::Book(string t, string a, Date copy, bool ch = false)
+  
+{
+    title = t;
+  
+    author = a;
+   
+    copyright = copy;
+
+    checking = ch;
+
+    if (!is_book(t, a, copy)) throw Invalid();
+    cout << "Enter ISBN: ";
+    ISBN = set_ISBN();
+    cout << "Enter genre: ";
+    g = set_genre();
+
+};
+
+//------------------------------------------------------------------------------
+
+bool Book::is_checked() const {
+    if (checking == true)
+        return true;
+    return false;
+};
+
+void Book::check_in() {
+    checking = false;
+
+};
+
+void Book::check_out() {
+    checking = true;
+
+};
+
+//--------setters-----------------------------------------------------------------
+string Book::set_ISBN () { 
+
+    int n1, n2, n3;
+    char x;
+    cin >> n1 >> n2 >> n3 >> x;
+    if (!cin) throw Invalid();
+    if (isalpha(x) == 0 && isdigit(x) == 0) throw Invalid();
+    string s1 = to_string(n1);
+    string p1 = "-";
+    string s2 = to_string(n2);
+    string p2 = "-";
+    string s3 = to_string(n3);
+    string p3 = "-";
+    string s4(1, x);
+    string result;
+    result.append(s1); result.append(p1); result.append(s2); result.append(p2);
+    result.append(s3); result.append(p3); result.append(s4);
+
+    return result;
+
+};
+
+Book::Genre Book::set_genre() {
+
+    int x; cin >> x;
+    if (1 > x || x > 5) {
+        throw Invalid();
+    }
+    return Genre(x);
+
+};
+
+ 
+//------helper functuons--------------------------------------------------------------------
+bool is_book(string title, string author,  Date copyright)
+{
+ 
+    for (int i = 0; i < title.size(); ++i)
+    {
+        if (isalpha(title[i]) == 0) return false;
+    }
+
+    for (int i = 0; i < author.size(); ++i)
+    {
+        if (isalpha(author[i]) == 0) return false;
+    }
+
+
+    return true;
+}
+
+//------------------------------------------------------------------------------
+string genre_name(const Book& d)
+{
+    switch (int(d.genre_get())) {
+    case 1: return "Fiction"; break;
+    case 2: return "Nonfiction"; break;
+    case 3: return "Periodical"; break;
+    case 4: return "Bibliography"; break;
+    case 5: return "Children"; break;
+    
+    }
+
+}
+//------------------------------------------------------------------------------
+ostream& operator<<(ostream& os, const Book& d)
+{
+    return os << "title: " << d.title_get() <<"\n"
+        << "author: " << d.author_get() << "\n"
+        << "ISBN: " << d.ISBN_get() << "\n"
+        << "copyright date: " << d.copyright_get() << "\n"
+        << "genre: " << genre_name(d) << "\n";
+}
+
+//------------------------------------------------------------------------------
+
+istream& operator>>(istream& is, Book& dd)
+{
+    cout << "Enter title: ";
+    string t;
+    is >> t;
+    cout << "Enter author: ";
+    string a;
+    is >> a;
+    cout << "Enter date: ";
+    Date copy;
+    is >> copy;
+      
+    if (!is)  {
+        is.clear(ios_base::failbit);                    
+        return is;
+    }
+
+    dd = Book(t, a, copy);   // update dd
+    return is;
+}
+
+//------------------------------------------------------------------------------
+
+bool operator==(const Book& a, const Book& b)
+{
+    return a.ISBN_get() == b.ISBN_get();
+}
+
+//------------------------------------------------------------------------------
+
+bool operator!=(const Book& a, const Book& b)
+{
+    return !(a.ISBN_get() == b.ISBN_get());
+}
+
+//------------------------------------------------------------------------------
+
+class Patron {
+public:
+    class Invalid { };                
+    Patron(string name, string card, int fee);
+    Patron(string name, string card);
+    Patron();
+    // modifying operations:
+    void set_fee();
+    void decr_fee();
+    // non-modifying operations:
+    bool fee_checked() const;
+    string name_get() const { return p_name; }
+    string card_get() const { return card; }
+    int fee_get() const { return fee; }
+  
+private:
+    string p_name{ "John" };
+    string card{"00"};
+    int fee{ 0 };
+};
+
+Patron::Patron(string name, string card, int fee)
+    :p_name{name}, card{card}, fee{fee}
+{
+
+};
+
+Patron::Patron(string name, string card)
+    :p_name{ name }, card{ card }                 
+{
+
+
+};
+
+
+Patron::Patron()                                    // don't explicitly initialize with default values
+   
+
+{ };
+
+void Patron::set_fee() {
+    ++fee;
+
+};
+
+void Patron::decr_fee() {
+
+    --fee;
+
+};
+
+
+bool Patron::fee_checked() const {
+    if (fee > 0) return true;
+    return false;
+};
+
+
+
+istream& operator>>(istream& is, Patron& dd)
+{
+    cout << "Enter name: ";
+    string t;
+    is >> t;
+    cout << "Enter card number: ";
+    string a;
+    is >> a;
+    int fee{ 0 };
+
+
+    if (!is) {
+        is.clear(ios_base::failbit);
+        return is;
+    }
+
+    dd = Patron{ t, a };   // update dd
+    return is;
+}
+
+
+ostream& operator<<(ostream& os, const Patron& p)
+{
+    return os << "name: " << p.name_get() << "\n"
+        << "card number: " << p.card_get() << "\n"
+        << "fees owed: " << p.fee_get() << "\n";
+       
+}
+
+//-------LIBRARY CLASS-------------------------------------------------------------------
+
+class Library {
+public:
+    class Invalid { };
+    struct Transaction {
+        Book b;
+        Date d{ 1970, Date::jan, 01 };
+        Patron p;
+        Transaction(Book b, Date d, Patron p) : b{ b }, d{ d }, p{ p } {};
+        Transaction() {};
+    };
+
+    // modifying operations:
+    void add_book(Book b);
+    void add_patron(Patron p);
+    void book_check_in (Book b, Patron p, Date d) const;
+    void book_check_out(Book m, Patron p, Date d);
+    // non-modifying operations:
+    vector<Transaction> get_tr() const { return transact_v; }
+
+private:
+    vector <Book> book_v;
+    vector <Patron> patron_v;
+    vector <Transaction> transact_v;
+};
+
+void Library::add_book(Book b) {
+    
+    book_v.push_back(b);
+
+};
+
+void Library::add_patron(Patron p) {
+    
+
+    patron_v.push_back(p);
+
+};
+
+void Library::book_check_in (Book b, Patron p, Date d) const{
+
+    b.check_in();
+    p.decr_fee();
+};
+
+void Library::book_check_out(Book b, Patron p, Date d) {
+
+    int found{ 0 };
+
+    for (int i = 0; i < book_v.size(); ++i)
+    {
+        if (book_v[i].title_get() == b.title_get() &&
+            book_v[i].is_checked() == false) {
+
+           book_v[i].check_out(); b.check_out(); ++found; break;
+
+        }
+    }
+    if (found==0) error("No book");
+
+    found = 0;
+
+ 
+    for (int i = 0; i < patron_v.size(); ++i) {
+        if (patron_v[i].name_get() == p.name_get()
+            && patron_v[i].card_get() == p.card_get() &&
+            patron_v[i].fee_checked() == false) {
+
+            patron_v[i].set_fee(); p.set_fee(); ++found; break;
+
+        }
+    }
+
+    if (found == 0) error("No patron found, or owing fee");
+
+    
+    Transaction tr(b, d, p);
+
+    transact_v.push_back(tr);
+
+};
+
+void patron_list(const Library& l) {
+
+    vector <Patron> owed;
+
+   for (int i = 0; i < l.get_tr().size(); ++i)
+    {
+        if (l.get_tr()[i].p.fee_checked() == true)
+            owed.push_back(l.get_tr()[i].p);
+    }
+   
+    for (Patron v : owed)
+        cout << v << "\n";
+
+};
+
+int main()
+try {
+
+    Book b;
+    cout << b;
+    cout << "\n";
+    
+    Book dd{ "Kik", "John", Date{ 2010,Date::jun, 10 } };
+    if (b.is_checked() == false) cout << "FALSE\n";
+
+
+    Patron p;
+    Patron p1{ "Jack", "12345" };
+
+    Patron p2{ "Jack", "79302" };
+
+    Library l;
+    l.add_book(b);  l.add_book(dd);
+    l.add_patron(p1); l.add_patron(p2);
+    Date d{ 2010,Date::jun, 10 };
+
+    l.book_check_out(b, p1,d );
+    l.book_check_out(dd, p1,d);
+    //l.book_check_out(dd, p2, d);
+    //l.book_check_out(b, p2, d);
+
+
+    patron_list(l);
+
+
+   /* cout << p << "\n";
+    cout << p1 << "\n";*/
+
+    Library::Transaction s; s.d; // struct is not encapsulated, access is possible
+
+
+
+    keep_window_open();    // cope with Windows console mode
+    return 0;
+}
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
