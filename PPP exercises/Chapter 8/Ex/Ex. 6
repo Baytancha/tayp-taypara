@@ -1,0 +1,93 @@
+// TestFrame.cpp : This file contains the 'main' function. Program execution begins and ends there.
+////Modify the calculator program from Chapter 7 to make the input stream
+//an explicit parameter(as shown in §8.5.8), rather than simply using cin.
+//Also give the Token_stream constructor(§7.8.2) an istream& parameter
+//so that when we figure out how to make our own istreams(e.g., attached
+//    to files), we can use the calculator for those.Hint: Don’t try to copy an
+//    istream.
+
+#include "std_lib_facilities.h" 
+
+
+
+void print(const string& label, const vector<string>& v)
+{
+    cout << label << " (" << v.size() << "): {";
+    for (int i = 0; i < v.size(); ++i) {
+        if (i % 8 == 0) cout << endl;
+        cout << v[i];
+        if (i < v.size() - 1) cout << ", ";
+    }
+    cout << "\n}\n";
+}
+
+
+vector<string> copy_reverse(vector <string> v) {
+
+    if (v.size() < 2) error("there must be at least 2 elements in the vector");
+
+    vector<string> reverse;
+    int rvers = v.size() - 1;
+
+    for (int i = 0; i < v.size(); ++i) {
+
+        reverse.push_back(v[rvers]);
+        --rvers;
+
+    }
+
+    return reverse;
+
+    }
+
+
+vector <string> swap_reverse ( vector <string>& v) {
+    if (v.size() < 2) error("there must be at least 2 elements in the vector");
+
+    int last = v.size() - 1;
+
+    for (int i = 0; i < v.size(); ++i) {
+
+        if (last == i) break;
+        if ((last - i) == 1) { 
+            
+            swap(v[i], v[last]); break; }
+        
+        swap(v[i], v[last]);
+        --last;
+    }
+
+    return v;
+
+}
+
+
+
+
+int main()
+try {
+    
+    string v{ "Vector" };
+
+    vector <string> x {"Zeda", "Gamma", "Bedda", "Goyrwb"};
+    cout << "Initial vector:\n ";
+    print(v, x);
+
+  
+   cout << "Method 1:\n ";
+   print(v, copy_reverse(x));
+   cout << "Method 2:\n ";
+   print(v, swap_reverse(x));
+
+
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
+
+
+
+
