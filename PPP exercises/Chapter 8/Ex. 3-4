@@ -1,0 +1,54 @@
+#include "std_lib_facilities.h" 
+
+
+
+void print(const string& label, const vector<int>& v)
+{
+    cout << label << " (" << v.size() << "): {";
+    for (int i = 0; i < v.size(); ++i) {
+        if (i % 8 == 0) cout << endl;
+        cout << v[i];
+        if (i < v.size() - 1) cout << ", ";
+    }
+    cout << "\n}\n";
+}
+
+
+void fibonacci(int& x, int& y, vector <int>& v, int& n) {
+
+    int lim = n - 2;
+
+    if (v.size() == 0) v.push_back(x); v.push_back(y);
+
+    for (int i = 0; i < lim; ++i) {
+
+        v.push_back(v[i] + v[i + 1]);
+
+    }
+
+
+}
+
+
+int main()
+try {
+    
+   vector <int> x;
+   int u{ 1 }; int y{ 2 }; int z{ 46 };
+
+   fibonacci(u, y, x, z);
+
+   string v{ "Vector" };
+
+   print(v, x);
+
+
+
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
+
