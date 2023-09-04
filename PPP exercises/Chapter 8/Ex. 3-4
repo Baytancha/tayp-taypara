@@ -15,7 +15,7 @@ void print(const string& label, const vector<int>& v)
 
 
 void fibonacci(int& x, int& y, vector <int>& v, int& n) {
-
+    if (n < 2) error("there must be at least 2 elements in the vector");
     int lim = n - 2;
 
     if (v.size() == 0) v.push_back(x); v.push_back(y);
