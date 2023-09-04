@@ -1,0 +1,83 @@
+#include "std_lib_facilities.h" 
+
+vector <double> age_v;
+vector <string> name_v;
+
+
+
+void sort_p(vector <string>& name_v, vector <double>& age_v) {
+
+    vector <string> name2 = name_v;
+    vector <double> age2;
+    sort(name_v);
+
+
+    for (int z = 0; z < name2.size(); ++z) {
+
+        for (int i = 0; i < name_v.size(); ++i)
+        {
+            if (name2[z] == name_v[i]) {
+
+                age2.push_back(age_v[i]);
+
+            }
+
+        }
+    }
+    
+    age_v = age2;
+
+
+}
+
+
+int main()
+try {
+    
+    cout << "Enter names: \n";
+
+    string name;
+    while (true) {
+
+        cin >> name;
+        if (name == "|") break;
+        
+        name_v.push_back(name);
+        
+     
+    }
+
+    cout << "Enter ages: \n";
+
+
+    while (cin) {
+        double age;
+        cin >> age;
+        age_v.push_back(age);
+    }
+    
+
+    for (int i = 0; i < name_v.size(); ++i) {
+
+        cout << name_v[i] << ' ' << age_v[i] << "\n";
+
+    }
+
+    cout << "Now reversal: \n";
+
+    sort_p(name_v, age_v);
+
+    for (int i = 0; i < name_v.size(); ++i) {
+
+        cout << name_v[i] << ' ' << age_v[i] << "\n";
+
+    }
+
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
+
