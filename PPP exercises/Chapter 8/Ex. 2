@@ -1,0 +1,41 @@
+#include "std_lib_facilities.h" 
+
+
+
+void print(string label, vector <int> vect) {
+
+    cin >>label;
+    int n{ 0 };
+    while (cin>>n) {
+
+       
+        vect.push_back(n);
+
+    }
+    
+    cout << label << "\n";
+
+    for (int x : vect)
+
+        cout << x << ' ';
+
+}
+
+
+
+int main()
+try {
+    
+    string n; vector <int> x;
+
+    print(n, x);
+
+
+
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
