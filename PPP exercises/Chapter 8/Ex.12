@@ -1,0 +1,49 @@
+#include "std_lib_facilities.h" 
+
+void print_until_s(vector<string> v, string quit)
+{
+    for (string s : v) {
+        if (s == quit)
+        {
+            cout << s << '\n'; return;
+        }
+        cout << s << '\n';
+    }
+}
+
+
+void print_until_ss(vector<string> v, string quit)
+{
+    int count{ 0 };
+
+    for (string s : v) {
+
+        if (count > 1) return;
+        if (s == quit) ++count; 
+        cout << s << '\n';
+    }
+}
+
+int main()
+try {
+  
+    vector <string> v{"basta", "gamma", "cometa", "zeta", "alpha", "gamma", "teta", "zeta", "neta" };
+    
+    string q{ "zeta" };
+
+
+    print_until_s(v, q);
+
+    cout << "\n";
+
+    print_until_ss(v, q);
+   
+
+
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
