@@ -1,0 +1,60 @@
+#include "std_lib_facilities.h" 
+
+vector <double> v{15, 13, 25, 1, 8};
+
+struct Vector_data {
+    double smallest{ 0 };
+    double largest{ 0 };
+    double mean{ 0 };
+    double median{ 0 };  
+};
+
+Vector_data get_data(vector<double> v) {
+    Vector_data data;
+    double sum = 0;
+
+    sort(v);
+    data.smallest = v[0];
+    data.largest = v[v.size() - 1];
+
+    for (double val : v)
+        sum += val;
+
+    data.mean = sum / v.size();
+
+    double median = 0;
+    int size = v.size();
+
+    if (size % 2 == 0) {
+
+        median = (v[(size / 2) - 1] + v[size / 2]) / 2;
+    }
+    else {
+        median = v[(size - 1) / 2];
+    }
+
+    data.median = median;
+
+    return data;
+};
+
+
+
+int main()
+try {
+  
+   get_data(v);
+
+   cout <<"Smallest: " <<get_data(v).smallest << "\n";
+   cout <<"Largest: " << get_data(v).largest << "\n";
+   cout <<"Mean: " << get_data(v).mean << "\n";
+   cout <<"Median: " << get_data(v).median << "\n";
+
+
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
