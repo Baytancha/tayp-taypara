@@ -1,0 +1,39 @@
+#include "std_lib_facilities.h" 
+
+vector <double> price{1, 2, 3};
+vector < double > weight{10, 11, 12};
+
+
+
+void index_sum(vector <double>& price, vector <double>& weight, int index) {
+
+    int sum{ 0 };
+
+    if (weight.size() != price.size()) error("Wrong vector size");
+    if (index > weight.size()) error("Entered index bigger than the number of elements");
+
+    for (int i = 0; i < index; ++i) {
+        sum += (price[i] * weight[i]);
+
+
+    }
+
+    cout << sum;
+
+}
+
+
+int main()
+try {
+    
+    cout << "Enter names: \n";
+
+    index_sum(price, weight, 3) ;
+
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
