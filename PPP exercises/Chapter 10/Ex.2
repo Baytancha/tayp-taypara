@@ -1,1 +1,57 @@
+void end_of_loop(istream& ist, char term, const string& message)
+{
+    if (ist.fail()) { // use term as terminator and/or separator
+        ist.clear();
+        char ch;
+        if (ist >> ch && ch == term) return; // all is fine
+        error(message);
+    }
+}
+
+struct Reading { // a temperature reading
+    int hour; // hour after midnight [0:23]
+    double temperature; // in Fahrenheit
+};
+
+ostream& operator<<(ostream& os, const Reading& r)
+
+{
+    os << r.hour << ' ' << r.temperature;
+    return os;
+}
+
+
+int main()
+try {
+ 
+    ofstream ost{ "Ex_2" };
+    if (!ost) error("can't open output file", "Ex-2");
+
+
+    vector<Reading> temps;
+    for (int i = 0; i < 100; ++i) {
+
+
+        temps.push_back(Reading{ randint(0,24),(double(randint(-100,200))/1.6) });
+
+
+    }
+
+   
+    for (int i = 0; i < 100; ++i) {
+
+      
+        ost << temps[i] << "\n";
+
+
+    }
+
+    cout << "Done";
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
 
