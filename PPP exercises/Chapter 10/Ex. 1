@@ -1,1 +1,58 @@
+#include "std_lib_facilities.h" 
+
+
+void end_of_loop(istream& ist, char term, const string& message)
+{
+    if (ist.fail()) { // use term as terminator and/or separator
+        ist.clear();
+        char ch;
+        if (ist >> ch && ch == term) return; // all is fine
+        error(message);
+    }
+}
+
+
+int summ(ifstream& v, int s) {
+
+    for (int n; v >> n;)
+    {
+        s += n;
+        
+    }
+
+    //end_of_loop(v, '!', "bich");
+
+    return s;
+
+}
+
+
+int main()
+try {
+ 
+    ofstream ost{ "INOUT" };
+    if (!ost) error("can't open output file", "INOUT");
+    ost << 10 << ' ' << 20 << ' ' << 30 << ' '<< 18 << ' ' << 99 << ' ' << 56;
+
+    ost.close();
+
+
+    ifstream ist{ "INOUT" }; // ist is an input stream for the file named name
+    if (!ist) error("can't open input file", "INOUT");
+    ist.exceptions(ist.exceptions() | ios_base::badbit);
+
+    int sum{ 0 };
+
+
+
+    cout << "THE SUM IS: " << summ(ist, sum);
+
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
+
 
