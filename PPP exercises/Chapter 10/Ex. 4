@@ -1,0 +1,228 @@
+
+//Code for the putput file
+
+#include "std_lib_facilities.h" 
+
+void end_of_loop(istream& ist, char term, const string& message)
+{
+    if (ist.fail()) { // use term as terminator and/or separator
+        ist.clear();
+        char ch;
+        if (ist >> ch && ch == term) return; // all is fine
+        error(message);
+    }
+}
+
+struct Reading { // a temperature reading
+    int hour; // hour after midnight [0:23]
+    double temperature; // in Fahrenheit
+    char scale{ 'f' };
+};
+
+ostream& operator<<(ostream& os, const Reading& r)
+
+{
+    os << r.hour << ' ' << r.temperature << ' ' << r.scale;
+    return os;
+}
+
+
+int main()
+try {
+
+    ofstream ost{ "Example_upd" };
+    if (!ost) error("can't open output file", "Ex-2");
+
+
+    vector<Reading> temps;
+    for (int i = 0; i < 100; ++i) {
+
+
+        temps.push_back(Reading{ randint(0,24),(double(randint(-100,200)) / 1.6) });  //implicit initialization of scale member 
+
+
+    }
+
+
+    for (int i = 0; i < 100; ++i) {
+
+
+        ost << temps[i] << "\n";
+
+
+    }
+
+    cout << "Done";
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
+
+
+
+
+
+
+
+
+
+
+
+//Code for the input file, conversion is put into a separate function
+
+#include "std_lib_facilities.h" 
+
+void end_of_loop(istream& ist, char term, const string& message)
+{
+    if (ist.fail()) { // use term as terminator and/or separator
+        ist.clear();
+        char ch;
+        if (ist >> ch && ch == term) return; // all is fine
+        error(message);
+    }
+}
+
+struct Reading { // a temperature reading
+    int hour; // hour after midnight [0:23]
+    double temperature; // in Fahrenheit
+    char scale;
+};
+
+double Fahrenheit_to_cels(double f)
+{
+    return (f - 32) * 5 / 9.0;
+
+}
+
+istream& operator>>(istream& is, Reading& r)
+
+{
+    int day;
+    double temp;
+    char scale;
+
+    is >> day >> temp >> scale;
+
+    r.hour = day; r.temperature = temp; r.scale = scale;
+
+
+    return is;
+}
+
+ostream& operator<<(ostream& os, const Reading& r)
+
+{
+    os << r.hour << ' ' << r.temperature << ' ' << r.scale;
+    return os;
+}
+
+
+
+void fill(istream& ist, Vector<Reading>& v)
+{
+    Reading r;
+
+    while (ist >> r)
+
+        v.push_back(r);
+}
+
+
+void convert_and_fill(istream& ist, Vector<Reading>& v)
+{
+    Reading r;
+    double conv{ 0 };
+    char nscale{ 'c' };
+    while (ist >> r)
+    {
+        if (r.scale == 'f')
+        {
+            conv = Fahrenheit_to_cels(r.temperature);
+            v.push_back(Reading{ r.hour, conv, nscale });
+        }
+        else  v.push_back(r);
+
+
+    }
+
+}
+
+
+void mean_med(Vector <Reading>& v) {
+
+    Vector <double> temp;
+    for (int i = 0; i < v.size(); ++i)
+        temp.push_back(v[i].temperature);
+
+   /* cout << "The list of all temperatures: \n";
+    for (double d : temp)
+        cout << d << "\n";*/
+
+    sort(temp);
+
+    int sum{ 0 };
+    for (double val : temp)
+        sum += val;
+
+    cout << "avg temp is: " << sum / temp.size();
+
+    double median = 0;
+    int size = temp.size();
+
+    if (size % 2 == 0) {
+
+        median = (temp[(size / 2) - 1] + temp[size / 2]) / 2;
+    }
+    else {
+        median = temp[(size - 1) / 2];
+    }
+
+    cout << "\ntemp median is: " << median;
+
+}
+
+
+int main()
+try {
+
+    ifstream ist{ "Example_upd" }; // first 4 readings are marked in Celsius to test the function alternative
+    if (!ist) error("can't open input file", "Example_upd");
+    ist.exceptions(ist.exceptions() | ios_base::badbit);
+
+
+    vector<Reading> temps;
+
+
+    //fill(ist, temps);
+
+    convert_and_fill(ist, temps);
+
+    mean_med(temps);
+
+     for (Reading r : temps)
+         cout << r << "\n";
+
+
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
