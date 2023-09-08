@@ -1,0 +1,113 @@
+#include "std_lib_facilities.h" 
+
+
+void end_of_loop(istream& ist, char term, const string& message)
+{
+    if (ist.fail()) { // use term as terminator and/or separator
+        ist.clear();
+        char ch;
+        if (ist >> ch && ch == term) return; // all is fine
+        error(message);
+    }
+}
+
+struct Reading { // a temperature reading
+    int hour; // hour after midnight [0:23]
+    double temperature; // in Fahrenheit
+};
+
+istream& operator>>(istream& is, Reading& r)
+
+{
+    int day;
+    double temp;
+
+    is >> day >> temp;
+    
+    r.hour = day; r.temperature = temp;
+    
+
+    return is;
+}
+
+ostream& operator<<(ostream& os, const Reading& r)
+
+{
+    os << r.hour << ' ' << r.temperature;
+    return os;
+}
+
+
+
+void fill(istream& ist, Vector<Reading>& v)
+{
+    Reading r;
+
+    while (ist >> r)
+
+        v.push_back(r);
+
+}
+
+
+void mean_med(Vector <Reading>& v) {
+
+
+    Vector <double> temp;
+    for (int i = 0; i < v.size(); ++i)
+        temp.push_back(v[i].temperature);
+
+    cout << "The list of all temperatures: \n";
+    for (double d : temp)
+        cout << d << "\n";
+
+    sort(temp);
+  
+    int sum{ 0 };
+    for (double val : temp)
+        sum += val;
+
+    cout<< "avg temp is: " << sum / temp.size();
+
+    double median = 0;
+    int size = temp.size();
+
+    if (size % 2 == 0) {
+
+        median = (temp[(size / 2) - 1] + temp[size / 2]) / 2;
+    }
+    else {
+        median = temp[(size - 1) / 2];
+    }
+
+    cout<< "\ntemp median is: " << median;
+
+}
+
+
+int main()
+try {
+ 
+    ifstream ist{ "Ex_2" };
+    if (!ist) error("can't open input file", "Ex-2");
+    ist.exceptions(ist.exceptions() | ios_base::badbit);
+
+
+    vector<Reading> temps;
+
+    fill(ist, temps);
+
+    mean_med(temps);
+
+   /* for (Reading r : temps)
+        cout << r;*/
+  
+    
+}
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
+
