@@ -1,0 +1,223 @@
+#include "std_lib_facilities.h" 
+
+string set{ "IVXLCDM" };
+
+class Roman_int {
+public:
+    Roman_int(int xx, string ss) : x{ xx }, s{ ss } { }
+    Roman_int(int xx);
+    Roman_int() : x{ 0 }, s { " " } { }
+    char get_char() const { return s[0]; }
+    string get_symb() const { return s; }
+    int get_int() const { return x; }
+    void set_int(int xx) { x = xx; }
+    void set_symb(string ss) { s = ss; }
+   
+private:
+    string s;
+    int x;
+};
+
+vector<Roman_int> numerals {Roman_int(1, "I"), Roman_int(5, "V"), Roman_int(10, "X"),
+Roman_int(50, "L"), Roman_int(100, "C"), Roman_int(500, "D"), Roman_int(1000, "M"), };
+
+Roman_int::Roman_int(int xx) : x{ xx }, s{ " " } 
+
+{
+    if (x > 3999) error("Number is too big");
+    int n = x;
+    string number;
+    int div = 1000;
+    
+    for (int i = 0; i < 7; ++i)
+    {
+        //cout << "HERE\n";
+        char last_c{ '0' };
+        bool subtract{ false };
+        
+        if (n / 1 == 4 || n / 10 == 4 || n / 100 == 4)
+        {
+            int first{ 0 };
+            for (int i = 1; i <= 100; i *= 10)
+                if (n / i == 4) first = i;
+
+            for (Roman_int r : numerals)
+                if (first == r.get_int())
+                {
+                    last_c = r.get_char();
+                    number += last_c;
+                    //cout << number << "\n";
+                }
+
+            for (Roman_int r : numerals)
+                if (first * 5 == r.get_int())
+                {
+                    last_c = r.get_char();
+                    number += last_c;
+                    //cout << number << "\n";
+                }
+
+            n -= first * 4; subtract = true;
+        }
+
+        else if (n / 1 == 9 || n / 10 == 9 || n / 100 == 9)
+
+        { 
+            int first{ 0 };
+            for (int i = 1; i <= 100; i *= 10)
+                if (n / i == 9) first = i;
+
+            for (Roman_int r : numerals)
+                if (first == r.get_int())
+                {
+                    last_c = r.get_char();
+                    number += last_c;
+                    //cout << number << "\n";
+                }
+
+            for (Roman_int r : numerals)
+                if (first * 10 == r.get_int())
+                {
+                    last_c = r.get_char();
+                    number += last_c;
+                    //cout << number << "\n";
+                }
+
+            n -= first * 9; subtract = true;
+        
+        }
+
+        else if ((n / div) >= 1) {
+
+                for (Roman_int r : numerals)
+                    if (div == r.get_int())
+                    {
+                        last_c = r.get_char();
+                        number += last_c;
+                        //cout << number << "\n";
+                    }
+
+                if ((n / div) > 1) {
+                    for (int i = 0; i < (n / div - 1); ++i)
+                        number += last_c;
+                    //cout << number << "\n";
+                }
+            
+        }
+
+        if (!subtract)
+        n -= div * (n / div);
+
+        div = (i % 2 == 0) ? div / 2 : div / 5;
+        
+    }
+
+    s = number;
+}
+
+
+ostream& operator<<(ostream& ost, const Roman_int r) {
+
+    cout << r.get_symb() << " " << r.get_int() << "\n";
+
+    return ost;
+}
+
+istream& operator>>(istream& is, Roman_int& r) {
+
+    string num;
+    cin >> num;
+
+    int filtered{ 0 };
+    for (int i = 0; i< num.size(); ++i)
+        for (char c : set)
+            if (num[i] == c) {
+
+                ++filtered;
+            }
+    if (num.size() != filtered)
+
+    {
+        cout << "!!\n";
+        is.unget();
+        is.clear(ios_base::failbit);
+        return is;
+    }
+
+    vector<Roman_int> sum;
+
+    for (int i = 0; i < num.size(); ++i)
+
+    {
+        for (Roman_int r : numerals)
+
+        {
+            if (num[i] == r.get_char())
+            {
+                sum.push_back(r);
+            }
+        }
+
+    }
+
+    int nsum{ 0 };
+    for (int i = 0; i < sum.size(); ++i)
+    {
+        if (i != sum.size() - 1)
+        {
+            if (sum[i].get_int() < sum[i + 1].get_int())
+            {
+                int n;
+                //cout << "HIT\n";
+                n = (sum[i + 1].get_int() - sum[i].get_int()); 
+                nsum = nsum + n; 
+            }
+            else if (i == 0) { nsum += sum[i].get_int(); }
+                
+                
+            else if (sum[i - 1].get_int() >= sum[i].get_int())
+            
+            {  nsum += sum[i].get_int(); }
+
+        }
+
+        else if (i == 0) { nsum += sum[i].get_int(); }
+            
+        else if (sum[i - 1].get_int() >= sum[i].get_int()) {  nsum += sum[i].get_int(); 
+         }
+
+
+    }
+
+    r.set_symb(num);
+    r.set_int(nsum);
+    return is;
+}
+
+
+
+int main()
+try {
+
+    /*for (int i = 1; i < 4000; ++i)
+    {
+        Roman_int r(i);
+        cout << r << "\n";
+
+    }*/
+
+
+    
+    for (Roman_int r; cin >> r;)
+
+        cout << r << "\n";
+
+}
+
+catch (exception& e) {
+    cerr << e.what();
+}
+catch (...) {
+    cerr << "unknown exception";
+}
+
