@@ -1,0 +1,74 @@
+#include "std_lib_facilities.h" 
+
+
+
+//------------------------------------------------------------------------------
+
+int main()
+try {
+    
+    ifstream is1{ "Ch11Ex1" };
+    if (!is1) error("OOOMPS");
+    is1.exceptions(is1.exceptions()|ios_base::badbit);
+    ifstream is2{ "Ex_2" };
+    if (!is2) error("OOOTPS");
+    is1.exceptions(is2.exceptions() | ios_base::badbit);
+    ofstream os{ "OUTPUT" };
+
+    string s1{ "" };
+    string s2{ "" };
+
+    
+    for (string s; is1 >> s; ) {
+        for (char& c : s)
+            c = tolower(c);
+
+        os << s << ' ';
+
+        //int i, y, z;
+
+        ////cin.unsetf(ios::dec);
+
+        //cin >> i;
+        //cout << i;
+        //
+        //cin >> hex >> y;
+        //cout << y;
+
+        //cin >> oct >> z;
+        //cout << z;
+
+
+        //double x{ 120 / 68.0 };
+        //double y = 1234567.89;
+
+        //cout << 1234756.789 << "\t\t(defaultfloat)\n";
+
+        //cout << fixed << 1234.789 << "\t(fixed)\n";
+
+        //cout<< setprecision(8) << scientific << 1234.789 << "\t(scientific)\n";
+
+
+        
+
+
+
+
+
+
+
+
+          // cope with Windows console mode
+        return 0;
+    }
+}
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
