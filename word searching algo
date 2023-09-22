@@ -1,0 +1,34 @@
+bool match(const string& s, int i, const string& w)
+	// is s[i] the start of w?
+{
+	for (int j=0; j<w.size(); ++j) {
+		if (s.size()<=j+i) return false;	// we ran out of character to match against
+		if (s[i+j]!=w[j]) return false;
+	}
+	return true;	// we matched all of w
+}
+
+
+int main()
+try
+{
+	cout << "Please enter an input file names: ";
+	string name;
+	cin>>name;
+	ifstream ifs(name.c_str());
+	if (!ifs) error("bad input file name: ", name);
+	
+	cout << "Please enter a word to search for: ";
+	string word;
+	cin >> word;
+
+	int line_no = 0;
+	string line;
+	while (getline(ifs,line)) {
+		++line_no;	// we read another line
+		for (int i=0; i<line.size(); ++i)
+			if (match(line,i,word)) {
+				cout << line_no << ": " << line << '\n';
+				break;	// don't find a word twice
+			}
+	}
