@@ -247,3 +247,37 @@ for (int i = 0; i < numbers.size(); ++i)
 
 
 
+
+
+
+vector<string> split(const string& s)
+    // return a vector of whitespace separated substrings of s
+{
+    vector<string> v;
+    istringstream ss {s};
+
+    for (string sub; ss >> sub; )
+        v.push_back(sub);
+
+    return v;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
