@@ -1,3 +1,117 @@
+
+
+
+#include "Simple_window.h" // if we want that “Next” button
+#include "Graph.h"
+using namespace Graph_lib;
+
+int main()
+try {
+	 // our graphics facilities are in Graph_lib
+	Point tl{ 100,100 }; // to become top left corner of window
+	Simple_window win{ tl,600,400,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+	
+	
+	
+	Graph_lib::Polygon poly; // a polygon; a Polygon is a kind of Shape
+	poly.add(Point{ 200,50 }); // three points make a triangle
+	poly.add(Point{ 200,80 });
+	poly.add(Point{ 300,80 });
+	poly.add(Point{ 300,50 });
+	poly.set_color(Color::red);
+	poly.set_style(Line_style::dash);
+	win.attach(poly);
+
+	Graph_lib::Rectangle r{ Point{200,600}, 100, 80 }; // top left corner, width, height
+	r.set_color(Color::blue);
+	win.attach(r);
+	Text h{ Point{220,650}, "Howdy" };
+	h.set_font(Font::times_bold);
+	
+	h.set_color(Color::black);
+	win.attach(h);
+
+
+
+	Text n{ Point{150,150}, "R." };
+	n.set_font(Font::times_bold);
+	n.set_font_size(50);
+	n.set_color(Color::dark_yellow);
+	win.attach(n);
+	
+	Text t1{ Point{250,150}, "T." };
+	t1.set_font(Font::times_bold);
+	t1.set_font_size(50);
+	t1.set_color(Color::magenta);
+	win.attach(t1);
+
+	int x = 200;
+	int y = 400;
+	Vector_ref <Graph_lib::Rectangle> tic;
+
+	for (int i = 1; i < 10; ++i) {
+		if (i == 4 || i == 7) {
+			y += 50;
+			x = 200;
+			tic.push_back(new Graph_lib::Rectangle{ Point{x, y}, 50, 50 });
+			x += 50;
+			if (i % 2 == 0) tic[i-1].set_fill_color(Color::red);
+			else tic[i-1].set_fill_color(Color::white);
+		}
+		else {
+			tic.push_back(new Graph_lib::Rectangle{ Point{x, y}, 50, 50 });
+			x += 50;
+			if (i % 2 == 0) tic[i-1].set_fill_color(Color::red);
+			else tic[i-1].set_fill_color(Color::white);
+		}
+	}
+	
+
+	for (int i = 0; i < tic.size(); ++i)
+		win.attach(tic[i]);
+
+	Graph_lib::Rectangle huge{ Point{0, 0}, 400, 300 };   // windows size is 600x400
+	huge.set_style(Line_style(Line_style::dash, 4));
+	huge.set_color(Color::red);
+
+	win.attach(huge);
+	
+
+		
+	win.wait_for_button();
+	
+	/*Fl_Window window(200, 200, "Window title");
+	Fl_Box box(0, 0, 200, 200, "Hey, I mean, Hello, World!");
+	window.show();
+	return Fl::run();*/
+
+	return 0;
+
+
+
+}
+catch (exception& e) {
+	cerr << e.what() << '\n';
+}
+catch (...) {
+	cerr << "something bad happened\n";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+///
+
 int x = 200;
 	int y = 400;
 	vector <Graph_lib::Rectangle> tic;
