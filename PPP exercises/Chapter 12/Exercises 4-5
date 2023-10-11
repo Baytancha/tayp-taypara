@@ -1,0 +1,12 @@
+int x = 200;
+	int y = 400;
+	vector <Graph_lib::Rectangle> tic;
+	Graph_lib::Rectangle t{ Point{x, y}, 50, 50 };
+	tic.push_back(t);
+
+//causes the error:
+
+Error	C2280	'Graph_lib::Rectangle::Rectangle(const Graph_lib::Rectangle &)': 
+attempting to reference a deleted function		
+
+
