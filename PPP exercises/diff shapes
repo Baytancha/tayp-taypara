@@ -1,0 +1,17 @@
+//Intersecting lines
+
+const Point xx { 100,100 };
+	Line horizontal{ xx,Point{200,100} }; // make a horizontal line
+	Line vertical{ Point{150,50},Point{150,150} };
+	horizontal.set_color(Color::black);
+	vertical.set_color(Color::black);
+	win.attach(horizontal); // attach the lines to the window
+	win.attach(vertical);
+
+
+
+	Lines xxx;
+	xxx.add(Point{ 100,500 }, Point{ 200,500 }); // first line: horizontal
+	xxx.add(Point{ 150,450 }, Point{ 150,550 }); // second line: vertical
+	xxx.set_color(Color::black);
+	win.attach(xxx);
