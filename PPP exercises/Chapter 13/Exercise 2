@@ -1,0 +1,101 @@
+int main()
+try {
+	
+	// our graphics facilities are in Graph_lib
+	Point tl{ 100,100 }; // to become top left corner of window
+	Simple_window win{ tl,800,800,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+
+	
+
+	Graph_lib::Box b(Point(100, 100), 100, 100);
+	b.set_fill_color(Color::black);
+	win.attach(b);
+
+	Graph_lib::Box bb(Point(300, 100), 300, 300);
+	bb.set_fill_color(Color::blue);
+	win.attach(bb);
+	
+
+	Graph_lib::Box bbb(Point(700, 100), 400, 400);
+	bbb.set_fill_color(Color::green);
+	win.attach(bbb);
+	
+
+	win.wait_for_button();
+
+
+
+////////////////////////////////////////
+header code:
+
+struct Box : Shape {
+
+        Box(Point xy, int ww, int hh) : w(ww), h(hh)
+        {
+            add(xy);
+            if (h <= 0 || w <= 0) error("Bad box: non-positive side");
+
+        }
+
+        void draw_lines() const;
+
+        int height() const { return h; }
+        int width() const { return w; }
+    private:
+
+        int h;    // height
+        int w;    // width
+    };
+
+
+
+///////////////////////////////////////////////
+cpp code:
+void Box::draw_lines() const
+    {
+        int c = 0;            //adjust corner based on box size
+        if (w <= 50 || h <= 50) { c = 5; }
+        else c = h >= w ? h/10 : w/10;
+
+        if (fill_color().visibility()) {
+            fl_color(fill_color().as_int());
+
+            fl_rectf(point(0).x + c, point(0).y, w - 2 * c, c);
+            fl_rectf(point(0).x, point(0).y + c, w, h - 2 * c);
+            fl_rectf(point(0).x + c, point(0).y + h - c, w - 2 * c, c);
+
+
+            fl_pie(point(0).x, point(0).y, 2 * c, 2 * c, 90, 180);
+            fl_pie(point(0).x + (w - 2 * c), point(0).y, 2 * c, 2 * c, 0, 90);
+            fl_pie(point(0).x, point(0).y + (h - 2 * c), 2 * c, 2 * c, 180, 270);
+            fl_pie(point(0).x + (w - 2 * c), point(0).y + (h - 2 * c), 2 * c, 2 * c, 270, 360);
+
+            fl_color(fill_color().as_int()); // reset color
+
+        }
+
+        fl_line(point(0).x + c, point(0).y, point(0).x + (w - c), point(0).y);
+        fl_line(point(0).x + c, point(0).y + h, point(0).x + (w - c), point(0).y + h);
+        fl_line(point(0).x, point(0).y + c, point(0).x, point(0).y + (h - c));
+        fl_line(point(0).x + w, point(0).y + c, point(0).x + w, point(0).y + (h - c));
+
+
+        //fl_rect(point(0).x, point(0).y, 20, 20);
+        fl_arc(point(0).x, point(0).y, 2*c, 2*c, 90, 180);
+        fl_arc(point(0).x + (w - 2*c), point(0).y, 2*c, 2*c, 0, 90);
+        fl_arc(point(0).x, point(0).y + (h - 2*c), 2*c, 2*c, 180, 270);
+        fl_arc(point(0).x + (w - 2*c), point(0).y + (h - 2*c), 2*c, 2*c, 270, 360);
+
+    }
+
+
+
+
+
+
+
+
+
+
+
