@@ -1,0 +1,61 @@
+Graph_lib::Arc arcс(Point(200, 200), 50, 90, 0, 180);
+	arcс.set_color(Color::dark_yellow);
+	arcс.set_major(100);
+	win.attach(arcс);
+
+	Graph_lib::Arc arcс1(Point(200, 500), 100, 200, 180, 360);
+	arcс1.set_color(Color::dark_cyan);
+	win.attach(arcс1);
+
+	win.wait_for_button();
+
+
+///////////////////////////////////////////////
+header code
+
+struct Arc : Ellipse {
+
+        Arc(Point p, int ww, int hh, double an1, double an2) 
+            : Ellipse(p,ww,hh), w(ww), h(hh), a1(an1), a2(an2) 
+        
+        {
+            if (a1 > a2) error("The second angle is smaller than the first angle");
+        }
+
+        void draw_lines() const;
+       
+    private:
+        int w;
+        int h;
+        double a1;
+        double a2;
+    };
+
+
+//////////////////////////////////
+cpp.code
+void Arc::draw_lines() const
+    {
+
+        if (fill_color().visibility()) {	// fill
+            fl_color(fill_color().as_int());
+            fl_pie(point(0).x, point(0).y, w + w - 1, h + h - 1, a1, a2);
+            fl_color(color().as_int());	// reset color
+        }
+
+        if (color().visibility()) {
+            fl_color(color().as_int());
+            fl_arc(point(0).x, point(0).y, w + w, h + h, a1, a2);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
