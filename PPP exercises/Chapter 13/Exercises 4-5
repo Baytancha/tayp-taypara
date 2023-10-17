@@ -1,1 +1,85 @@
-h
+Point tl{ 100,100 }; // to become top left corner of window
+	Simple_window win{ tl,800,800,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+
+	Graph_lib::Rectangle r1{ Point{100, 100}, 200, 100 }; // top left corner, width, height
+	r1.set_color(Color::blue);
+	win.attach(r1);
+	
+	Mark m1{ r1.n(), 'n' };
+	Mark m2{ r1.s(), 's' };
+	Mark m3{ r1.ww(), 'w' };
+	Mark m4{ r1.e(), 'e' };
+	Mark m5{ r1.se(), '3' };
+	Mark m6{ r1.ne(), '2' };
+	Mark m7{ r1.sw(), '4' };
+	Mark m8{ r1.nw(), '1' };
+	Mark m9{ r1.center(), 'c' };
+
+	win.attach(m1);
+	win.attach(m2);
+	win.attach(m3);
+	win.attach(m4);
+	win.attach(m5);
+	win.attach(m6);
+	win.attach(m7);
+	win.attach(m8);
+	win.attach(m9);
+
+	win.wait_for_button();
+
+
+
+
+
+////////////////////////////////////////////
+header code:
+   struct Rectangle : Shape {
+
+        Rectangle(Point xy, int ww, int hh) : w(ww), h(hh)
+        {
+            add(xy);
+            if (h <= 0 || w <= 0) error("Bad rectangle: non-positive side");
+        }
+
+        Rectangle(Point x, Point y) : w(y.x - x.x), h(y.y - x.y)
+        {
+            add(x);
+            if (h <= 0 || w <= 0) error("Bad rectangle: non-positive width or height");
+        }
+        void draw_lines() const;
+
+        int height() const { return h; }
+        int width() const { return w; }
+        Point n() const { return Point(point(0).x+w/2, point(0).y); }
+        Point s() const { return Point(point(0).x + w / 2, point(0).y + h); }
+        Point e() const { return Point(point(0).x + w, point(0).y + h / 2); }
+        Point ww() const { return Point(point(0).x, point(0).y + h / 2); }
+        Point ne() const { return Point(point(0).x + w, point(0).y); }
+        Point se () const { return Point(point(0).x + w, point(0).y + h); }
+        Point sw() const { return Point(point(0).x, point(0).y + h); }
+        Point nw() const { return Point(point(0).x, point(0).y); }
+        Point center () const { return Point(point(0).x + w / 2, point(0).y + h / 2); }
+    private:
+        int h;    // height
+        int w;    // width
+    };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
