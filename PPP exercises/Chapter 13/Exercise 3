@@ -1,1 +1,185 @@
-dd
+Arrow a('n', Point(100, 150), Point(100, 250));
+	a.set_color(Color::red);
+	a.set_fill_color(Color::red);
+	win.attach(a);
+
+	Arrow a1('n', Point(150, 150), Point(150, 225));
+	a1.set_color(Color::green);
+	a1.set_fill_color(Color::green);
+	win.attach(a1);
+
+	Arrow a2('n', Point(200, 150), Point(200, 200));
+	a2.set_color(Color::magenta);
+	a2.set_fill_color(Color::magenta);
+	win.attach(a2);
+
+	Arrow a3('n', Point(250, 150), Point(250, 175));
+	a3.set_color(Color::blue);
+	a3.set_fill_color(Color::blue);
+	win.attach(a3);
+
+	
+	Arrow ar('n', Point(400,200), Point(400, 400));
+	ar.set_fill_color(Color::dark_green);
+	win.attach(ar);
+
+	Arrow ar1('s', Point(400, 400), Point(400, 600));
+	ar1.set_fill_color(Color::dark_green);
+	win.attach(ar1);
+
+	Arrow ar2('w', Point(400, 400), Point(200, 400));
+	ar2.set_fill_color(Color::dark_green);
+	win.attach(ar2);
+
+	Arrow ar3('e', Point(400, 400), Point(600, 400));
+	ar3.set_fill_color(Color::dark_green);
+	win.attach(ar3);
+
+	
+	win.wait_for_button();
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////
+header code:
+struct Arrow : Shape {    
+    
+        Arrow(char ww,  Point xy, Point xxyy) : w(ww)
+        {
+            if (w != 'n' && w != 's' && w != 'w' && w != 'e') error("Define a correct direction");
+            if (xy.x == xxyy.x && xy.y == xxyy.y) error("Both points have the same coordinates");
+
+            if (w == 'n' || w == 's') if (xy.x != xxyy.x) error("Line not parallel with the direction");
+            if (w == 'w' || w == 'e') if (xy.y != xxyy.y) error("Line not parallel with the direction");
+
+            add(xy);
+            add(xxyy);
+     
+        }
+        void draw_lines() const;
+    private:
+        char w;
+        
+    };
+
+
+
+
+/////////////////////////////
+cpp code:
+void Arrow::draw_lines() const {
+
+        if (color().visibility() && 1 < number_of_points())    // draw sole pixel?
+            for (unsigned int i = 1; i < number_of_points(); ++i)
+                fl_line(point(i - 1).x, point(i - 1).y, point(i).x, point(i).y);
+
+        Point p; // locate point closest to the direction
+        int d{ 0 }; //calculate the size of the triangle based on the length of the line
+
+        switch (w) {
+        case 'n':
+            p = point(0).y > point(1).y ? point(1) : point(0);
+            d = point(0).y > point(1).y ? (point(0).y - point(1).y) : (point(1).y - point(0).y);
+            break;
+        case 's':
+            p = point(0).y > point(1).y ? point(0) : point(1);
+            d = point(0).y > point(1).y ? (point(0).y - point(1).y) : (point(1).y - point(0).y);
+            break;
+        case 'w':
+            p = point(0).x > point(1).x ? point(1) : point(0);
+            d = point(0).x > point(1).x ? (point(0).x - point(1).x) : (point(1).x - point(0).x);
+            break;
+        case 'e':
+            p = point(0).x > point(1).x ? point(0) : point(1);
+            d = point(0).x > point(1).x ? (point(0).x - point(1).x) : (point(1).x - point(0).x);
+            break;
+        }
+
+        if (fill_color().visibility()) {        //using the polygon method for filling
+
+            switch (w) {
+            case 'n':
+                fl_color(fill_color().as_int());
+                fl_begin_complex_polygon();
+                fl_vertex(p.x - d / 4, p.y);
+                fl_vertex(p.x + d / 4, p.y);
+                fl_vertex(p.x, p.y - d / 2);
+                fl_end_complex_polygon();
+                fl_color(color().as_int());
+                break;
+            case 's':
+                fl_color(fill_color().as_int());
+                fl_begin_complex_polygon();
+                fl_vertex(p.x - d / 4, p.y);
+                fl_vertex(p.x + d / 4, p.y);
+                fl_vertex(p.x, p.y + d / 2);
+                fl_end_complex_polygon();
+                fl_color(color().as_int());
+                break;
+            case 'e':
+                fl_color(fill_color().as_int());
+                fl_begin_complex_polygon();
+                fl_vertex(p.x, p.y - d / 4);
+                fl_vertex(p.x, p.y + d / 4);
+                fl_vertex(p.x + d / 2, p.y);
+                fl_end_complex_polygon();
+                fl_color(color().as_int());
+                break;
+            case 'w':
+                fl_color(fill_color().as_int());
+                fl_begin_complex_polygon();
+                fl_vertex(p.x, p.y - d / 4);
+                fl_vertex(p.x, p.y + d / 4);
+                fl_vertex(p.x - d / 2, p.y);
+                fl_end_complex_polygon();
+                fl_color(color().as_int());
+                break;
+            }
+        }
+
+        if (color().visibility()) {
+            switch (w) {
+            case 'n':
+                fl_line(p.x - d / 4, p.y, p.x + d / 4, p.y);
+                fl_line(p.x - d / 4, p.y, p.x, p.y - d / 2);
+                fl_line(p.x + d / 4, p.y, p.x, p.y - d / 2);
+                break;
+            case 's':
+                fl_line(p.x - d / 4, p.y, p.x + d / 4, p.y);
+                fl_line(p.x - d / 4, p.y, p.x, p.y + d / 2);
+                fl_line(p.x + d / 4, p.y, p.x, p.y + d / 2);
+                break;
+            case 'e':
+                fl_line(p.x, p.y - d / 4, p.x, p.y + d / 4);
+                fl_line(p.x, p.y - d / 4, p.x + d / 2, p.y);
+                fl_line(p.x, p.y + d / 4, p.x + d / 2, p.y);
+                break;
+            case 'w':
+                fl_line(p.x, p.y - d / 4, p.x, p.y + d / 4);
+                fl_line(p.x, p.y - d / 4, p.x - d / 2, p.y);
+                fl_line(p.x, p.y + d / 4, p.x - d / 2, p.y);
+                break;
+            }
+        }
+        
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
