@@ -1,0 +1,8 @@
+void Marked_polyline::draw_lines() const
+    {
+        Open_polyline::draw_lines();
+        for (int i = 0; i < number_of_points(); ++i)
+            draw_mark(point(i), mark[i % mark.size()]);
+    }
+
+//if there are 7 points (0 1 2 3 4 5 6) and two-c string (0, 1), mark[i % mark.size()] ensures we cycle through 0,1 throughout the length of the line
