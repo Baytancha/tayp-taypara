@@ -1,0 +1,53 @@
+int main()
+try {
+	
+	// our graphics facilities are in Graph_lib
+	Point tl{ 100,100 }; // to become top left corner of window
+	Simple_window win{ tl,800,800,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+
+	Tbox tbb(Point(100, 200),100,100, "Shape");
+
+	tbb.move(500, 200);
+
+	win.attach(tbb);
+
+
+
+///////////////////////////////////
+header code:
+ struct Tbox : Box {
+        Tbox(Point xy, int ww, int hh, string s)
+            :Box(xy, ww, hh), fill(Point(xy.x + ww / 4, xy.y + hh / 2), s) { }
+
+        void draw_lines() const;
+        void move(int dx, int dy);
+    private:
+        Text fill;
+    };
+
+
+///////////////////////////////////////
+cpp code:
+void Tbox::draw_lines() const {
+
+        Box::draw_lines();
+
+        fill.draw_lines();
+     
+
+    };
+    void Tbox::move(int dx, int dy) {
+        Shape::move(dx, dy);
+        fill.move(dx, dy);
+
+    };
+
+
+
+
+
+
+
+
+
