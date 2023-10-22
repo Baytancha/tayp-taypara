@@ -1,0 +1,44 @@
+int main()
+try {
+	
+	// our graphics facilities are in Graph_lib
+	Point tl{ 100,100 }; // to become top left corner of window
+	Simple_window win{ tl,1200,1200,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+
+	
+	Graph_lib::Ellipse el1{ Point{600, 300}, 300, 200};
+	win.attach(el1);
+
+
+	Marked_polyline x{ "x" };
+	x.add(Point{ 300, 300 });
+	x.add(Point{ 900, 300 });
+	win.attach(x);
+	
+	Marked_polyline y{ "y" };
+	y.add(Point{ 600, 100 });
+	y.add(Point{ 600, 500 });
+	win.attach(y);
+
+
+	Mark f1{ el1.focus1(), 'F' };
+	Mark f2{ el1.focus2(), 'F' };
+	Mark f3{Point{ 500, 200 }, 'M' };
+	win.attach(f3);
+	win.attach(f1);
+	win.attach(f2);
+
+	Open_polyline o1;
+	Open_polyline o2;
+
+	o1.add(el1.focus1());
+	o1.add(Point{ 500, 200 });
+
+	o2.add(el1.focus2());
+	o2.add(Point{ 500, 200 });
+
+	win.attach(o1);
+	win.attach(o2);
+
+	win.wait_for_button();
