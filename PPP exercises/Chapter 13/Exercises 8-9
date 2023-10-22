@@ -1,0 +1,95 @@
+int main()
+try {
+	
+	// our graphics facilities are in Graph_lib
+	Point tl{ 100,100 }; // to become top left corner of window
+	Simple_window win{ tl,1200,1200,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+
+
+	Regular_hexagon u{ Point{100,100}, 100 };
+	u.set_fill_color(Color::green);
+	u.set_style(Line_style::solid);
+	win.attach(u);
+
+	Regular_hexagon u1{ Point{100,272}, 100 };
+	u1.set_fill_color(Color::green);
+	u1.set_style(Line_style::solid);
+	win.attach(u1);
+
+
+	Regular_hexagon u3{ Point{100,444}, 100 };
+	u3.set_fill_color(Color::green);
+	u3.set_style(Line_style::solid);
+	win.attach(u3);
+
+	Regular_hexagon u4{ Point{100,616}, 100 };
+	u4.set_fill_color(Color::green);
+	u4.set_style(Line_style::solid);
+	win.attach(u4);
+
+	Regular_hexagon u5{ Point{250,186}, 100 };
+	u5.set_fill_color(Color::green);
+	u5.set_style(Line_style::solid);
+	win.attach(u5);
+
+	Regular_hexagon u6{ Point{250,358}, 100 };
+	u6.set_fill_color(Color::green);
+	u6.set_style(Line_style::solid);
+	win.attach(u6);
+
+	Regular_hexagon u7{ Point{250,530}, 100 };
+	u7.set_fill_color(Color::green);
+	u7.set_style(Line_style::solid);
+	win.attach(u7);
+
+	Regular_hexagon u8{ Point{250,702}, 100 };
+	u8.set_fill_color(Color::green);
+	u8.set_style(Line_style::solid);
+	win.attach(u8);
+
+	win.wait_for_button();
+
+
+
+
+
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////////////////////////
+header code:
+
+struct Regular_hexagon : Polygon {    // closed sequence of non-intersecting lines
+        using Polygon::Polygon;
+        Regular_hexagon(Point p, int center) : c{center} 
+        
+        {
+            int h = double(1) / 2 * sqrt(4 * c * c - c * c);
+            Point p1{ p.x + c / 2, p.y - h };
+            Point p6{ p.x - c / 2, p.y - h };
+            Point p3{ p.x + c / 2, p.y + h };
+            Point p4{ p.x - c / 2, p.y + h };
+            Point p2{ p.x + c, p.y };
+            Point p5{ p.x - c, p.y };
+            add(p1);
+            add(p2);
+            add(p3);
+            add(p4);
+            add(p5);
+            add(p6);
+
+        }  
+
+    private:
+        int c;
+    };
+
+
+
+
+
