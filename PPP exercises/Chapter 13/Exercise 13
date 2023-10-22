@@ -1,0 +1,29 @@
+int main()
+try {
+	
+	// our graphics facilities are in Graph_lib
+	Point tl{ 100,100 }; // to become top left corner of window
+	Simple_window win{ tl,1200,1200,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+
+	Vector_ref<Graph_lib::Rectangle> v;
+	for (int i = 0; i < 16; ++i)
+		for (int j = 0; j < 16; ++j) {
+			v.push_back(new Graph_lib::Rectangle{ Point{400 + (i * 20),400 + (j * 20)},20,20 });
+			v[v.size() - 1].set_fill_color(Color{ i * 16 + j }); // 0..1..2..3..4 (*0); 16..17..18..31 (*1); 32..33..34.. (*2)
+			v[v.size() - 1].set_color(Color::invisible);
+			win.attach(v[v.size() - 1]);
+		}
+
+	win.wait_for_button();
+
+	Vector_ref<Graph_lib::Rectangle> v1;
+	for (int i = 0; i < 16; ++i)
+		for (int j = 0; j < 16; ++j) {
+			v1.push_back(new Graph_lib::Rectangle{ Point{400 + (i * 20),400 + (j * 20)},20,20 });
+			v1[v1.size() - 1].set_fill_color(Color{ i * 16 + j }); // 0..1..2..3..4 (*0); 16..17..18..31 (*1); 32..33..34.. (*2)
+			//v[v.size() - 1].set_color(Color::invisible);
+			win.attach(v1[v1.size() - 1]);
+		}
+
+	win.wait_for_button();
