@@ -1,1 +1,50 @@
-gd
+int main()
+try {
+
+
+	
+	// our graphics facilities are in Graph_lib
+	Point tl{ 100,100 }; // to become top left corner of window
+	Simple_window win{ tl,1200,1200,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+
+	Point p(200, 200);
+	int r = 100;
+	int s = 10;
+
+	Regular_Polygon r_p(p, r, s);
+
+
+
+	win.attach(r_p);
+
+
+	win.wait_for_button();
+
+
+//////////////////////////////////////////////////////////////////////
+header file:
+ class Regular_Polygon : public Shape {
+    public:
+        Regular_Polygon(Point p, int r, int s) : _r(r), _s(s) { add(Point(p)); }
+
+        void draw_lines() const {
+            const float PiOn180 = 3.1415926535f / 180.0f;
+            const float angle = (360.0f / _s) * PiOn180;
+
+            for (int i = 0; i < _s; ++i) {
+                fl_line(point(0).x + std::cos(i * angle) * _r,
+                    point(0).y + std::sin(i * angle) * _r,
+                    point(0).x + std::cos((i + 1) * angle) * _r,
+                    point(0).y + std::sin((i + 1) * angle) * _r);
+            }
+        }
+
+    private:
+        int _r;
+        int _s;
+    };
+
+
+
+
