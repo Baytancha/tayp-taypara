@@ -263,7 +263,50 @@ vector<string> split(const string& s)
 }
 
 
+/////////////////////////////////////////////
+function hiding and function overriding
+struct B {
+    virtual void f() const { cout << "B::f "; }
+    void g() const { cout << "B::g "; } // not virtual
+};
 
+struct D : B {
+    void f() const { cout << "D::f "; }
+    //void g() const { cout << "D::g "; }
+};
+
+struct DD : D {
+    void g() const { cout << "DD::g "; }
+};
+
+void call(const B& b)
+
+{
+    b.f();
+    b.g();
+}
+
+void call2(const D& d)
+
+{
+    d.f();
+    d.g();
+}
+
+
+
+
+
+//------------------------------------------------------------------------------
+
+int main()
+try {
+   
+    B b;
+    D d;
+    DD dd;
+    call2(dd);
+    dd.f(); dd.g();
 
 
 
