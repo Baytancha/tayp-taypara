@@ -1,0 +1,76 @@
+/////////////////////////////////////////////
+function hiding and function overriding
+struct B {
+    virtual void f() const { cout << "B::f "; }
+    void g() const { cout << "B::g "; } // not virtual
+};
+
+struct D : B {
+    void f() const { cout << "D::f "; }
+    //void g() const { cout << "D::g "; }
+};
+
+struct DD : D {
+    void g() const { cout << "DD::g "; }
+};
+
+void call(const B& b)
+
+{
+    b.f();
+    b.g();
+}
+
+void call2(const D& d)
+
+{
+    d.f();
+    d.g();
+}
+
+/////////////////////////////////////////////
+drill
+class B1 {
+public:
+    virtual void vf() { cout << "B1::vf()\n"; }
+    void f() { cout << "B1::f()\n"; }
+    virtual void pvf() = 0;
+};
+
+class D1 : public B1 {
+public:
+    void pvf() { cout << "D1::pvf()\n"; }
+    void vf() { cout << "D1::vf()\n"; }
+    void f() { cout << "D1::f()\n"; }
+};
+
+class D2 : public D1 {
+public:
+    void pvf() { cout << "D2::pvf()\n"; }
+};
+
+class B2 {
+public:
+    virtual void pvf() = 0;
+};
+
+class D21 : public B2 {
+public:
+    void pvf() { cout << s << endl; }
+    string s;
+};
+
+class D22 : public B2 {
+public:
+    void pvf() { cout << n << endl; }
+    int n;
+};
+
+void f(B2& b2)
+{
+    b2.pvf();
+}
+
+
+
+  
