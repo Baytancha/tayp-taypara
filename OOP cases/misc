@@ -1,0 +1,44 @@
+
+deleted copy constructor
+
+class B1 {
+public:
+    B1() { }
+    virtual void vf() { cout << "B1::vf()\n"; }
+    void f() { cout << "B1::f()\n"; }
+    B1(const B1&) = delete;
+private:
+    int x{ 0 };
+    //B1(const B1&);
+    B1& operator=(const B1&);
+};
+
+class D1 : public B1 {
+public:
+    D1() { }
+    B1 get_b() { return b; }
+
+private:
+    B1 b;
+};
+
+class D2 : public D1 {
+public:
+    B1 get_b() { return b; }
+    D1 get_d() { return d; }
+private:
+    B1 b;
+    D1 d;
+
+};
+
+class B2 {
+public:
+    B1 get_b() { return b; }
+    D1 get_d() { return d; }
+    D2 get_dd() { return dd; }
+private:
+    B1 b;
+    D1 d;
+    D2 dd;
+};
