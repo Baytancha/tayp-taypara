@@ -1,1 +1,228 @@
+Point tl{ 100,100 }; // to become top left corner of window
+	Simple_window win{ tl,1000,900,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+
+	
+	Ssmiley ss1(Point(300, 300), 50);
+	win.attach(ss1);
+	ss1.set_color(Color::black);
+	ss1.set_fill_color(Color::green);
+	ss1.set_eye_color(Color::dark_blue);
+	ss1.move(100, 200);
+
+
+	Ffrowny_hat ss2(Point(300, 500), 50);
+	ss2.hat_set_color(Color::red);
+	win.attach(ss2);
+	ss2.set_color(Color::black);
+	ss2.set_fill_color(Color::green);
+	ss2.move(0, 200);
+	ss2.set_style(Line_style(Line_style::solid, 4));
+	ss2.hat_set_style(Line_style(Line_style::solid, 4));
+
+	Ssmiley_hat ss4(Point(500, 400), 150);
+	ss4.hat_set_color(Color::dark_green);
+	win.attach(ss4);
+	ss4.set_color(Color::dark_red);
+	ss4.set_fill_color(Color::green);
+	ss4.set_eye_color(Color::blue);
+	ss4.set_mouth_color(Color::dark_cyan);
+	ss4.set_style(Line_style(Line_style::solid, 4));
+	ss4.hat_set_style(Line_style(Line_style::solid, 4));
+
+	win.wait_for_button();
+
+
+
+
+////////////////////////////////
+header code:
+struct Ssmiley: Circle {
+    Ssmiley(Point p, int rr) : Circle(p, rr), le(Point(p.x - rr / 5, p.y - rr / 2), rr / 8, rr / 3),
+        re(Point(p.x + rr / 5, p.y - rr / 2), rr / 8, rr / 3), mouth(p, rr * 0.66, rr * 0.66, 180, 360)
+
+    {  } ;	
+
+    void draw_lines() const;
+    void move(int x, int y);
+    void set_color(Color col);
+    void set_style(Line_style sty);
+    void set_fill_color(Color col);
+    void set_eye_color(Color col);
+    void set_mouth_color(Color col);
+
+protected:
+    Ellipse le;
+    Ellipse re;
+    Arc mouth;
+};
+
+struct Ssmiley_hat : Ssmiley {
+    Ssmiley_hat(Point p, int rr): Ssmiley(p, rr),
+        brim(Point(p.x, p.y - rr - rr/8), rr, rr/4),
+        top(Point(p.x, p.y - rr - rr / 4), rr * 0.66, rr * 0.66, 0, 180)
+    {
+        brim.set_color(Color::black);
+        top.set_color(Color::black);
+    }
+    void draw_lines() const;
+    void hat_set_color(Color col);
+    void hat_set_style(Line_style sty);
+    void move(int x, int y);
+
+private:
+    Ellipse brim;
+    Arc top;
+};
+
+//------------------------------------------------------------------------------
+struct Ffrowny : Circle {
+    Ffrowny(Point p, int rr) : Circle(p, rr), le(Point(p.x - rr / 5, p.y - rr / 2), rr / 8, rr / 3),
+        re(Point(p.x + rr / 5, p.y - rr / 2), rr / 8, rr / 3), mouth(Point(p.x, p.y+r/1.5), rr * 0.60, rr * 0.60, 0, 180)
+
+    {  };
+
+    void draw_lines() const;
+    void move(int x, int y);
+    void set_color(Color col);
+    void set_style(Line_style sty);
+    void set_fill_color(Color col);
+    void set_eye_color(Color col);
+    void set_mouth_color(Color col);
+
+protected:
+    Ellipse le;
+    Ellipse re;
+    Arc mouth;
+};
+
+struct Ffrowny_hat : Ffrowny {
+    Ffrowny_hat(Point p, int rr) : Ffrowny(p, rr),
+        brim(Point(p.x, p.y - rr - rr / 8), rr, rr / 4),
+        top(Point(p.x, p.y - rr - rr / 4), rr * 0.66, rr * 0.66, 0, 180)
+    {
+        brim.set_color(Color::black);
+        top.set_color(Color::black);
+    }
+    void draw_lines() const;
+    void hat_set_color(Color col);
+    void hat_set_style(Line_style sty);
+    void move(int x, int y);
+
+private:
+    Ellipse brim;
+    Arc top;
+};
+
+
+/////////////////////////////////
+cpp code:
+void Ssmiley::draw_lines() const {
+
+    if (fill_color().visibility()) { 
+        Circle::draw_lines();
+        le.draw_lines();
+        re.draw_lines();
+        mouth.draw_lines();
+    }
+
+    if (color().visibility()) {
+        Circle::draw_lines();
+        le.draw_lines();
+        re.draw_lines();
+        mouth.draw_lines();
+    }
+
+};
+
+void Ssmiley::set_color(Color col) { Circle::set_color(col); mouth.set_color(col); le.set_color(col); re.set_color(col); };
+void Ssmiley::set_style(Line_style sty) { Circle::set_style(sty);  mouth.set_style(sty); le.set_style(sty); re.set_style(sty); };
+void Ssmiley::set_fill_color(Color col) { Circle::set_fill_color(col);  mouth.set_fill_color(col); le.set_fill_color(col); re.set_fill_color(col); };
+void Ssmiley::set_eye_color(Color col) { le.set_fill_color(col); re.set_fill_color(col); };
+void Ssmiley::set_mouth_color(Color col) { mouth.set_fill_color(col); };
+void Ssmiley::move(int x, int y) { Circle::move(x, y); mouth.move(x, y); le.move(x, y); re.move(x, y); };
+
+
+void Ssmiley_hat::draw_lines() const { 
+   
+    Ssmiley::draw_lines(); 
+
+    if (brim.fill_color().visibility() && top.fill_color().visibility()) {
+        
+        brim.draw_lines();
+        top.draw_lines();
+    }
+
+    if (brim.color().visibility() && top.color().visibility()) {
+        brim.draw_lines();
+        top.draw_lines();
+    }
+
+
+};
+void Ssmiley_hat::move(int x, int y) { Ssmiley::move(x,y); brim.move(x, y); top.move(x, y); };
+void Ssmiley_hat::hat_set_color(Color col) { brim.set_fill_color(col); top.set_fill_color(col); };
+void Ssmiley_hat::hat_set_style(Line_style sty) { Ssmiley::set_style(sty); brim.set_style(sty); top.set_style(sty); };
+//------------------------------------------------------------------------------
+void Ffrowny::draw_lines() const {
+
+    if (fill_color().visibility()) {
+        Circle::draw_lines();
+        le.draw_lines();
+        re.draw_lines();
+        mouth.draw_lines();
+    }
+
+    if (color().visibility()) {
+        Circle::draw_lines();
+        le.draw_lines();
+        re.draw_lines();
+        mouth.draw_lines();
+    }
+
+};
+
+void Ffrowny::set_color(Color col) { Circle::set_color(col); mouth.set_color(col); le.set_color(col); re.set_color(col); };
+void Ffrowny::set_style(Line_style sty) { Circle::set_style(sty);  mouth.set_style(sty); le.set_style(sty); re.set_style(sty); };
+void Ffrowny::set_fill_color(Color col) { Circle::set_fill_color(col);  mouth.set_fill_color(col); le.set_fill_color(col); re.set_fill_color(col); };
+void Ffrowny::set_eye_color(Color col) { le.set_fill_color(col); re.set_fill_color(col); };
+void Ffrowny::set_mouth_color(Color col) { mouth.set_fill_color(col); };
+void Ffrowny::move(int x, int y) { Circle::move(x, y); mouth.move(x, y); le.move(x, y); re.move(x, y); };
+
+
+void Ffrowny_hat::draw_lines() const {
+
+    Ffrowny::draw_lines();
+
+    if (brim.fill_color().visibility() && top.fill_color().visibility()) {
+
+        brim.draw_lines();
+        top.draw_lines();
+    }
+
+    if (brim.color().visibility() && top.color().visibility()) {
+        brim.draw_lines();
+        top.draw_lines();
+    }
+
+
+};
+void Ffrowny_hat::move(int x, int y) { Ffrowny::move(x, y); brim.move(x, y); top.move(x, y); };
+void Ffrowny_hat::hat_set_color(Color col) { brim.set_fill_color(col); top.set_fill_color(col); };
+void Ffrowny_hat::hat_set_style(Line_style sty) { Ffrowny::set_style(sty); brim.set_style(sty); top.set_style(sty); };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
