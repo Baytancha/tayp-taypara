@@ -1,0 +1,50 @@
+
+
+// overloaded assignment operator 
+    // argument passed by value. calls copy ctor 
+    anyArrayClass& operator=(anyArrayClass obj)     
+    { 
+        // calling friend function 
+        swap(*this, obj); 
+        return *this; 
+    } 
+
+
+lass Copyable {
+public:
+   Copyable& operator=(const Copyable &_v) {
+      Copyable tmp(_v);
+      this->swap(tmp);
+      return *this;
+   }
+
+   void swap(Copyable &_v) noexcept;
+};
+
+
+
+class Cont {
+public:
+    // ...
+    Cont& operator = (const Cont& rhs);
+    Cont& operator = (Cont&& rhs) noexcept;
+    friend void swap(Cont& lhs, Cont& rhs) noexcept {
+        swap(lhs.size, rhs.size);
+        swap(lhs.pdata, rhs.pdata);
+    }
+private:
+    int* pData;
+    std::size_t size;
+};
+
+Cont& Cont::operator = (const Cont& rhs) {
+    Cont tmp(rhs);              
+    swap(*this, tmp);          
+    return *this;
+}
+
+Cont& Cont::operator = (Cont&& rhs) {
+    Cont tmp(std::move(rhs));  
+    swap(*this, tmp);          
+    return *this;
+}
