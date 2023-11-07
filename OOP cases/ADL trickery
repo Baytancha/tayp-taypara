@@ -1,0 +1,13 @@
+struct S
+{
+    friend void f() {}
+    friend void g(S const&) {}
+} const s;
+
+int main()
+{
+    // f();     // error: 'f' was not declared in this scope
+    // S::f();  // error: 'f' is not a member of 'S'
+    g(s);
+    // S::g(s); // error: 'g' is not a member of 'S'
+}
