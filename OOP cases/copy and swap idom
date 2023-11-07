@@ -1,3 +1,20 @@
+anyArrayClass& operator=(const anyArrayClass& obj) 
+    { 
+        // self assignment check 
+        if (this != &obj) 
+        { 
+            delete ptr; 
+            size = obj.size; 
+            ptr = size? new int[size]: nullptr; 
+            memmove(ptr, obj.ptr, size*sizeof(int)); 
+            return *this; 
+        } 
+    } 
+    ~anyArrayClass() 
+    { 
+        delete[] ptr; 
+    } 
+} 
 
 
 // overloaded assignment operator 
