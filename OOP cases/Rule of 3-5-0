@@ -1,4 +1,7 @@
- Rule of Three
+https://web.archive.org/web/20160312193336/https://rmf.io/cxx11/rule-of-zero/
+
+
+Rule of Three
 What happens when a copy of an object that owns a resource is made? By default a memberwise copy is performed. This means that the internal resource handle the object stores will be copied, ending up with two objects that own the same resource. This is likely to lead to them both trying to release the resource, and catastrophe follows.
 
 Fortunately, C++ allows programmers to define what value semantics means for a class, by providing user-defined copy constructors and copy assignment operators.
@@ -13,3 +16,24 @@ do not allow copies to be made;
 provide custom copy semantics that copy the resource;
 make both objects have ownership of the resource;
 make copying transfer the resource;
+
+
+Option #1 gives exclusive ownership of a resource to a single object and does not allow that ownership to be transferred to another object. This is quite limiting since it prevents passing or returning those resources by value, and requires the use of pointers or references instead. Making it a member of another class also makes that class non-copyable, even if copies are desirable. An example of a class with this policy is boost::scoped_ptr.
+
+Option #2 also gives exclusive ownership to a single object, but emulates the "normal" value semantics for the resource. This is useful for polymorphic classes to avoid the slicing problem, and for other resources for which a copy can be made easily (POSIX file descriptors is a possible example, since they can be copied with dup).
+
+Option #3 shares the ownership between the two objects. This one can be quite tricky to implement, especially in a thread-safe manner. Common implementations maintain a reference count that tracks how many instances own the resource, and delete it when it reaches zero. Both Boost and the latest standard provide this policy in the form of shared_ptr.
+
+Option #4 gives exclusive ownership but allows that ownership to be transferred. This is what std::auto_ptr does, and it is known for not being a particularly good approach (in fact, std::auto_ptr is now a deprecated feature).
+
+Obviously, many more reasonable ownership policies can be invented.
+
+
+
+Come C++11 there are some extra options for our ownership policies. With move semantics in the mix, we can now provide options for transferring ownership between objects that are safer than option #4 above.
+
+Option #1 can be improved to allow transferring ownership by adding a move constructor and a move assignment operator. This makes it a lot more usable and a lot more useful. It can be returned from functions and passed by value to transfer ownership. An example of this is std::unique_ptr, the first choice when one needs a smart pointer.
+
+Option #2 can also benefit from having the move special members, since it avoids unneeded copies. In option #3 it gives the ability to transfer ownership without the need to update reference counts.
+
+Option #4 was not very good to start with. Since it basically boils down to an attempt at move semantics with the copy special members, option #1 is preferrable. This is the reason std::auto_ptr was deprecated in favour of std::unique_ptr.
