@@ -1,0 +1,15 @@
+ Rule of Three
+What happens when a copy of an object that owns a resource is made? By default a memberwise copy is performed. This means that the internal resource handle the object stores will be copied, ending up with two objects that own the same resource. This is likely to lead to them both trying to release the resource, and catastrophe follows.
+
+Fortunately, C++ allows programmers to define what value semantics means for a class, by providing user-defined copy constructors and copy assignment operators.
+
+To get consistent and correct behaviour, one has to pay close attention to how these user-defined functions interoperate. This idea is commonly known as the Rule of Three:
+
+If a class defines a destructor, copy constructor or copy assignment operator then it should probably explicitly define all three, and not rely on their default implementation.
+
+To solve this conflict between value semantics and ownership, one can take several approaches. Common choices include:
+
+do not allow copies to be made;
+provide custom copy semantics that copy the resource;
+make both objects have ownership of the resource;
+make copying transfer the resource;
