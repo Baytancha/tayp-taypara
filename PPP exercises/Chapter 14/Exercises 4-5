@@ -1,0 +1,55 @@
+Ex.4
+
+struct Immobile_circle : Circle {
+    Immobile_circle(Point p, int rr) : Circle(p,rr) { }
+private:
+    Circle::move;
+};
+
+////////////////////////////////////
+Ex.5 
+
+Point tl{ 100,100 }; // to become top left corner of window
+	Simple_window win{ tl,1000,900,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+
+
+	Sstriped_rectangle recc(Point(50, 100), 200, 200);
+	recc.set_color(Color::dark_green);
+	win.attach(recc);
+
+	Sstriped_rectangle rec(Point(50, 350), 200, 200);
+	
+	win.attach(rec);
+
+
+	Sstriped_rectangle recc1(Point(400, 200), 400, 400);
+	recc1.set_color(Color::dark_red);
+	win.attach(recc1);
+
+	win.wait_for_button();
+
+
+////////////////////////////////////
+header code:
+
+struct Sstriped_rectangle : Rectangle {
+    Sstriped_rectangle(Point xy, int ww, int hh) : Rectangle(xy, ww, hh)
+    {
+        int step = point(0).y + 7;
+        while (point(0).y + Rectangle::height() >= step)
+        {
+            s.add(Point(point(0).x, step ), Point(point(0).x + Rectangle::width(), step));
+            step += 7;
+        } 
+        s.set_color(Rectangle::color());
+        s.set_style(Line_style(Line_style::solid, 2));
+    }
+
+    void draw_lines() const { Rectangle::draw_lines();  s.draw(); };
+    void set_color(Color col) { Rectangle::set_color(col); s.set_color(col); };
+   
+private:
+    Lines s;
+};
+
