@@ -1,0 +1,23 @@
+struct Sstriped_circle : Circle {
+    Sstriped_circle(Point xy, int rr) : Circle(xy, rr)
+    {
+
+        const float PiOn180 = 3.1415926535f / 180.0f;
+        const float angle = 20 * PiOn180;
+
+        for (int i = 0; i < (2*rr)/10; ++i) {
+
+            s.add(Point(point(0).x + std::cos(i * angle) * rr, point(0).y + std::sin(i * angle) * rr),
+                Point(point(0).x - std::cos((i + 1) * angle) * rr, point(0).y - std::sin((i + 1) * angle) * rr));
+        }
+
+        s.set_color(Circle::color());
+        s.set_style(Line_style(Line_style::solid, 2));
+    }
+
+    void draw_lines() const { Circle::draw_lines();  s.draw(); };
+    void set_color(Color col) { Circle::set_color(col); s.set_color(col); };
+
+private:
+    Lines s;
+};
