@@ -54,3 +54,41 @@ struct Sstriped_circle : Circle {
 private:
     Lines s;
 };
+
+/////////////////////////////////////////////
+/struct Sstriped_circle : Circle {
+    Sstriped_circle(Point xy, int rr) : Circle(xy, rr)
+    {
+
+        const float PiOn180 = 3.1415926535f / 180.0f;
+        const float angle = 1 * PiOn180;
+
+        for (int i = 0; i < 180; ++i) {
+
+            s.add(Point(center().x + std::cos(i * angle) * rr, center().y - std::sin(i * angle) * rr),
+                Point(center().x - std::cos(i * angle) * rr, center().y - std::sin(i * angle) * rr));
+        }
+        for (int i = 0; i < 180; ++i) {
+
+            s.add(Point(center().x + std::cos(i * angle) * rr, center().y + std::sin(i * angle) * rr),
+                Point(center().x - std::cos(i * angle) * rr, center().y + std::sin(i * angle) * rr));
+        }
+        s.set_color(Circle::color());
+        s.set_style(Line_style(Line_style::solid, 2));
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
