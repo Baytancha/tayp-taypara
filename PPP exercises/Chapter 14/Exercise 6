@@ -1,5 +1,11 @@
 
-Sstriped_circle circ(Point(500, 400), 200);
+Sstriped_circle circa(Point(100, 200), 100);
+	circa.set_color(Color::dark_red);
+	win.attach(circa);
+	win.wait_for_button();
+
+
+	Sstriped_circle circ(Point(500, 400), 200);
 	circ.set_color(Color::dark_green);
 	win.attach(circ);
 	win.wait_for_button();
