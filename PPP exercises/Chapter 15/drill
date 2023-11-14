@@ -1,0 +1,76 @@
+double one(double x) { return 1; }
+double slope(double x) { return x / 2; }
+double square(double x) { return x*x; }
+double sloping_cos(double x) { return std::cos(x) + slope(x); }
+
+
+
+int main()
+try {
+	// our graphics facilities are in Graph_lib
+	Point tl{ 100,100 }; // to become top left corner of window
+	Simple_window win{ tl,600,600,"Function graphs" }; // make a simple window
+	win.set_label("Function graphs");
+
+
+	Scale xs{ xoffset,base_year,xscale };  // x coordinate moves rightwise 
+//for xoffset, and then moves again for (YEAR - BASE.YEAR)/number of years; 
+//ex. x+ 100 + (2000-1960)/2.5 where 2.5 is length of x / number of years;
+	Scale ys{ ymax - yoffset,0,-yscale };
+
+
+	Axis x{ Axis::x, Point{100,300}, 400,
+		400/ 20,
+		"1 = = 20 pixels"
+		 };
+
+	Axis y{ Axis::y, Point{300, 500}, 400,
+		400 / 20,
+		"1 = = 20 pixels"
+	};
+
+	x.set_color(Color::red);
+	y.set_color(Color::red);
+	win.attach(x);
+	win.attach(y);
+
+
+	Function s{one,-10,11,Point{300,300},400,20, 20};
+	s.set_color(Color::red);
+	Function s2{slope,-10,11,Point{300,300},400,20, 20};
+	s2.set_color(Color::red);
+	Function s3{ square,-10,11,Point{300,300},400, 20, 20 };
+	s3.set_color(Color::red);
+	Function s4{ std::cos,-10,11,Point{300,300},400, 20, 20 };
+	s4.set_color(Color::blue);
+	Function s5{ sloping_cos,-10,11,Point{300,300},400, 20, 20 };
+	s5.set_color(Color::blue);
+	win.attach(s);
+	win.attach(s2);
+	win.attach(s3);
+	win.attach(s4);
+	win.attach(s5);
+
+	 Text labell{ Point{100,380},"x/2" };
+	 labell.set_color(Color::red);
+	 win.attach(labell);
+
+
+
+
+
+////////////////////////////////////
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
