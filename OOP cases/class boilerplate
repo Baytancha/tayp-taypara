@@ -1,0 +1,154 @@
+struct Person {
+	Person() { }
+	Person(string nname, int aage) : name{nname}, age{aage}
+	
+	{ 
+		string set{ R"(;:\"\'[]*&^%$#@!)" };
+
+		
+		for (int i = 0; i < name.size(); ++i)
+			for (int z = 0; z < set.size(); ++z)
+				if (name[i] == set[z] || isdigit(name[i]))  error("Wrong symbol");
+
+		if (age > 150 || age < 0) error(" Wrong age");
+	
+	}
+	string get_name() const { return this->name; }
+	int get_age() const { return this->age; }
+	void set_name(string name)  { this->name = name; }
+	void set_age(int age) { this->age = age; }
+private:
+	string name{" "};
+	int age{ 0 };
+
+
+};
+
+
+struct Person2 {
+	Person2() { }
+	Person2(string fname, string sname, int aage) : first_name{ fname }, second_name{ sname }, age { aage }
+
+	{
+		if (first_name == " " || second_name == " ") error("Did not provide both names");
+		
+		string set{ R"(;:\"\'[]*&^%$#@!)" };
+
+		for (int i = 0; i < first_name.size(); ++i)
+			for (int z = 0; z < set.size(); ++z)
+				if (first_name[i] == set[z] || isdigit(first_name[i]))  error("Wrong symbol");
+
+		for (int i = 0; i < second_name.size(); ++i)
+			for (int z = 0; z < set.size(); ++z)
+				if (second_name[i] == set[z] || isdigit(second_name[i]))  error("Wrong symbol");
+
+
+		if (age > 150 || age < 0) error(" Wrong age");
+
+	}
+	string get_first_name() const { return this->first_name; }
+	string get_second_name() const { return this->second_name; }
+	int get_age() const { return this->age; }
+	void set_first_name(string name) { this->first_name = name; }
+	void set_second_name(string name) { this->second_name = name; }
+	void set_age(int age) { this->age = age; }
+private:
+	string first_name{ " " };
+	string second_name{ " " };
+	int age{ 0 };
+
+
+};
+
+ostream& operator<<(std::ostream& os, Person& person) {
+
+	cout << person.get_name() << " " << person.get_age() << "\n";
+	return os;
+};
+
+istream& operator>>(std::istream& is,  Person& person) {
+
+	string iname; int iage;
+	cin >> iname >> iage;
+
+	Person iperson{ iname, iage };
+
+	person = iperson;
+
+	return is;
+
+};
+
+
+ostream& operator<<(std::ostream& os, Person2& person) {
+
+	cout << person.get_first_name() << " " << person.get_second_name() << " : " << person.get_age() << "\n";
+	return os;
+};
+
+istream& operator>>(std::istream& is, Person2& person) {
+
+	string ifname, isname; int iage;
+	cin >> ifname >> isname >> iage;
+
+	Person2 iperson2{ ifname,isname, iage };
+
+	person = iperson2;
+
+	return is;
+
+};
+
+
+
+int main()
+try {
+	
+	Person Goofy("Goofy", 63);
+
+	Person Boofy{ "Boofy", 20 };
+
+	//cin >> Boofy;
+
+	
+	Person2 per;
+
+	while (cin)
+	{
+		cin >> per;
+
+		cout << "\n"<< per;
+
+
+	}
+
+
+	vector<Person> vec (5);
+
+	for (int i = 0; i < vec.size(); ++i)
+	{
+		Person p;
+		cin >> p;
+
+		vec[i] = p;
+
+
+	}
+
+	for (Person p : vec)
+		cout << p << "\n";
+
+
+	//cout << Goofy.name << Goofy.age;
+
+
+
+	return 0;
+
+}
+catch (exception& e) {
+	cerr << e.what() << '\n';
+}
+catch (...) {
+	cerr << "something bad happened\n";
+}
