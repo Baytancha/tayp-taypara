@@ -100,8 +100,21 @@ catch (...) {
 
 
 
+//////////////////////////////////////////////////////
+Vector_ref<Rectangle> vr;
+    int w = 50;
+    for (int row = 0; row < 3; ++row) {
+        for (int col = 0; col < 3; ++col) {
+            vr.push_back(new Rectangle{Point{350+w*col, 200+w*row}, w, w});
+            int i = vr.size() - 1;
 
+            i % 2 == 0
+                ? vr[i].set_fill_color(Color::red)
+                : vr[i].set_fill_color(Color::white);
 
+            win.attach(vr[i]);
+        }
+    }
 
 
 
