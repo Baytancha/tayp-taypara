@@ -1,0 +1,53 @@
+Point tl{ 100,100 }; // to become top left corner of window
+	Image_window win{ tl,900,900,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+
+	win.wait_for_button();
+
+	return 0;
+
+
+
+
+
+
+
+//////////////////////////////////////////////////////////
+header code:
+struct Image_window : Mmy_window {
+    Image_window(Point xy, int w, int h, const string& title);
+    
+
+private:
+    Image im;
+    Button b;
+    static void cb_move(Address, Address pw) { reference_to<Image_window>(pw).moving(); }
+    void moving();
+};
+
+////////////////////////////////////////////////////
+cpp code:
+void Image_window::moving() {
+    int x = rand_int(-x_max() / 2, x_max() / 2);
+    int y = rand_int(-y_max() / 2, y_max() / 2);
+    b.move(x, y);
+    im.move(x, y);
+    while (b.loc.x >= x_max()-256 || b.loc.y >= y_max()-256 || b.loc.x <= 0 || b.loc.y <= 0)
+
+    {
+        x = rand_int(-(x_max() / 2), x_max() / 2);
+        y = rand_int(-(y_max() / 2), y_max() / 2);
+        b.move(x, y);
+        im.move(x, y);
+        
+    }
+    //redraw();
+
+};
+
+
+
+
+
+
+
