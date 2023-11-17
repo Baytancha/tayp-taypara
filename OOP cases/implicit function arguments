@@ -1,0 +1,33 @@
+int x = 5;
+
+
+void f1() {
+	x = 7;
+
+
+}
+
+void f2(int xx) {
+	xx = 8;
+
+
+}
+
+
+void f3(int& xx) {
+	xx = 10;
+
+
+}
+
+
+int main()
+try {
+	// our graphics facilities are in Graph_lib
+	
+	f1();
+	f2(x);
+	f3(x);
+
+	cout << x;
+	
