@@ -1,0 +1,184 @@
+//don't resize the window for proper alighnment between buttons and squares
+	Point tl{ 100,100 }; // to become top left corner of window
+	Window4x4 win{ tl,900,900,"Canvas" }; // make a simple window
+	win.set_label("Ex.1");
+
+	win.wait_for_button();
+
+	return 0;
+
+
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////////
+header file:
+struct Window4x4 : Mmy_window {
+    Window4x4(Point xy, int w, int h, const string& title);
+private:
+    void change_color(int index); 
+    void get_coordinates(int index1, int index2);
+    void random(int color_index, int index1, int index2);
+    static void cb_menu11(Address, Address pw) { reference_to<Window4x4>(pw).random(0, 1, 1); }
+    static void cb_menu12(Address, Address pw) { reference_to<Window4x4>(pw).random(1, 1, 2); }
+    static void cb_menu13(Address, Address pw) { reference_to<Window4x4>(pw).random(2, 1, 3); }
+    static void cb_menu14(Address, Address pw) { reference_to<Window4x4>(pw).random(3, 1, 4); }
+    static void cb_menu21(Address, Address pw) { reference_to<Window4x4>(pw).random(4, 2, 1); }
+    static void cb_menu22(Address, Address pw) { reference_to<Window4x4>(pw).random(5, 2, 2); }
+    static void cb_menu23 (Address, Address pw) { reference_to<Window4x4>(pw).random(6, 2, 3); }
+    static void cb_menu24(Address, Address pw) { reference_to<Window4x4>(pw).random(7, 2, 4); }
+    static void cb_menu31(Address, Address pw) { reference_to<Window4x4>(pw).random(8, 3, 1); }
+    static void cb_menu32(Address, Address pw) { reference_to<Window4x4>(pw).random(9, 3, 2); }
+    static void cb_menu33(Address, Address pw) { reference_to<Window4x4>(pw).random(10, 3, 3); }
+    static void cb_menu34(Address, Address pw) { reference_to<Window4x4>(pw).random(11, 3, 4); }
+    static void cb_menu41(Address, Address pw) { reference_to<Window4x4>(pw).random(12, 4, 1); }
+    static void cb_menu42(Address, Address pw) { reference_to<Window4x4>(pw).random(13, 4, 2); }
+    static void cb_menu43(Address, Address pw) { reference_to<Window4x4>(pw).random(14, 4, 3); }
+    static void cb_menu44(Address, Address pw) { reference_to<Window4x4>(pw).random(15, 4, 4); }
+    Menu menu1;
+    Menu menu2;
+    Menu menu3;
+    Menu menu4;
+    Out_box xy_out;
+    Vector_ref <Graph_lib::Rectangle> checkers;
+
+};
+
+////////////////////////////////////////////
+cpp file:
+Window4x4::Window4x4(Point xy, int w, int h, const string& title) :
+    Mmy_window(xy, w, h, title),
+    menu1(Point(0, 0), 100, 100, Menu::horizontal, ""),
+    menu2(Point(0, 100), 100, 100, Menu::horizontal, ""),
+    menu3(Point(0, 200), 100, 100, Menu::horizontal, ""),
+    menu4(Point(0, 300), 100, 100, Menu::horizontal, ""),
+    xy_out(Point(x_max() - 100, 80), 150, 50, "coordinates:")
+{
+    int ww = 100;
+    for (int row = 0; row < 4; ++row) {
+        for (int col = 0; col < 4; ++col) {
+            checkers.push_back(new Graph_lib::Rectangle{ Point{0 + ww * col, 0 + ww * row}, ww, ww });
+            /*int i = vr.size() - 1;
+
+            i % 2 == 0
+                ? vr[i].set_fill_color(Color::red)
+                : vr[i].set_fill_color(Color::white);
+
+            win.attach(vr[i])*/;
+        }
+    }
+
+    menu1.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu11));
+    menu1.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu12));
+    menu1.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu13));
+    menu1.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu14));
+    attach(menu1);
+    menu2.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu21));
+    menu2.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu22));
+    menu2.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu23));
+    menu2.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu24));
+    attach(menu2);
+    menu3.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu31));
+    menu3.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu32));
+    menu3.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu33));
+    menu3.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu34));
+    attach(menu3);
+    menu4.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu41));
+    menu4.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu42));
+    menu4.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu43));
+    menu4.attach(new Button(Point(0, 0), 0, 0, "x", cb_menu44));
+    attach(menu4);
+
+    for (int i = 0; i < checkers.size(); ++i)
+    {
+        attach(checkers[i]);
+        //checkers[i].set_fill_color(Color::green);
+    }
+
+    attach(xy_out);
+
+};
+
+inline int rand_int(int min, int max)
+{
+    static default_random_engine ran;
+    return uniform_int_distribution<>{min, max}(ran);
+}
+
+void Window4x4::change_color(int index) {
+
+    checkers[index].set_fill_color(Color::red);
+
+
+};
+void Window4x4::get_coordinates(int index1, int index2) {
+    ostringstream os;
+
+    switch (index1) {
+    case 1:
+        switch (index2) {
+        case 1:os << '(' << menu1.selection[0].loc.x << ',' << menu1.selection[0].loc.y << ')'; xy_out.put(os.str()); break;
+        case 2:os << '(' << menu1.selection[1].loc.x << ',' << menu1.selection[1].loc.y << ')'; xy_out.put(os.str()); break;
+        case 3:os << '(' << menu1.selection[2].loc.x << ',' << menu1.selection[2].loc.y << ')'; xy_out.put(os.str()); break;
+        case 4:os << '(' << menu1.selection[3].loc.x << ',' << menu1.selection[3].loc.y << ')'; xy_out.put(os.str()); break;
+        }
+        break;
+    case 2:
+        switch (index2) {
+        case 1:os << '(' << menu2.selection[0].loc.x << ',' << menu2.selection[0].loc.y << ')'; xy_out.put(os.str()); break;
+        case 2:os << '(' << menu2.selection[1].loc.x << ',' << menu2.selection[1].loc.y << ')'; xy_out.put(os.str()); break;
+        case 3:os << '(' << menu2.selection[2].loc.x << ',' << menu2.selection[2].loc.y << ')'; xy_out.put(os.str()); break;
+        case 4:os << '(' << menu2.selection[3].loc.x << ',' << menu2.selection[3].loc.y << ')'; xy_out.put(os.str()); break;
+        }
+        break;
+    case 3:
+        switch (index2) {
+        case 1:os << '(' << menu3.selection[0].loc.x << ',' << menu3.selection[0].loc.y << ')'; xy_out.put(os.str()); break;
+        case 2:os << '(' << menu3.selection[1].loc.x << ',' << menu3.selection[1].loc.y << ')'; xy_out.put(os.str()); break;
+        case 3:os << '(' << menu3.selection[2].loc.x << ',' << menu3.selection[2].loc.y << ')'; xy_out.put(os.str()); break;
+        case 4:os << '(' << menu3.selection[3].loc.x << ',' << menu3.selection[3].loc.y << ')'; xy_out.put(os.str()); break;
+        }
+        break;
+    case 4:
+        switch (index2) {
+        case 1:os << '(' << menu4.selection[0].loc.x << ',' << menu4.selection[0].loc.y << ')'; xy_out.put(os.str()); break;
+        case 2:os << '(' << menu4.selection[1].loc.x << ',' << menu4.selection[1].loc.y << ')'; xy_out.put(os.str()); break;
+        case 3:os << '(' << menu4.selection[2].loc.x << ',' << menu4.selection[2].loc.y << ')'; xy_out.put(os.str()); break;
+        case 4:os << '(' << menu4.selection[3].loc.x << ',' << menu4.selection[3].loc.y << ')'; xy_out.put(os.str()); break;
+        }
+        break;
+    default:
+        error("wrong distribution");
+    }
+
+}
+
+void Window4x4::random(int index, int index1, int index2) {
+
+    for (int i = 0; i < checkers.size(); ++i)
+        checkers[i].set_fill_color(Color::invisible);
+
+    redraw();
+    int r = rand_int(0, 1);
+    switch (r) {
+    case 0:
+        change_color(index);
+        break;
+    case 1:
+        get_coordinates(index1, index2);
+        break;
+    default:
+        error("wrong distribution");
+    }
+
+
+
+
+
+
