@@ -1,0 +1,63 @@
+class Foo
+{
+private:
+	int m_x{};
+public:
+	Foo(int x)
+		: m_x{ x }
+	{
+	}
+
+	int getX() const { return m_x; }
+};
+
+void printFoo(Foo f) // has a Foo parameter
+{
+	std::cout << f.getX();
+}
+
+
+
+class Foo1
+{
+public:
+	Foo1(int x)
+		
+	{
+		int z = 5;
+	}
+
+	
+};
+
+void printFoo1(Foo1 f) // has a Foo parameter
+{
+	std::cout << "baaah";
+}
+
+
+
+
+int main()
+try {
+	// our graphics facilities are in Graph_lib
+	
+	//printFoo(5);
+	
+
+	printFoo1(5); // compiles just fine
+
+	/*Fl_Window window(200, 200, "Window title");
+	Fl_Box box(0, 0, 200, 200, "Hey, I mean, Hello, World!");
+	window.show();
+	return Fl::run();*/
+
+	return 0;
+
+}
+catch (exception& e) {
+	cerr << e.what() << '\n';
+}
+catch (...) {
+	cerr << "something bad happened\n";
+}
