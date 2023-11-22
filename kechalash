@@ -1,4 +1,22 @@
 
+#include <string>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#include <list>
+#include <array>
+
+
+
+
+
+
+
+
+
 
 int main()
 try {
