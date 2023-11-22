@@ -1,0 +1,130 @@
+#include <string>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#include <list>
+#include <array>
+
+
+class Foo1
+{
+public:
+	Foo1(int x)
+
+	{
+		int z = 5;
+	}
+
+
+};
+
+
+
+void fill(int* x, int s) {
+
+	int z = 10;
+	for (int i = 0; i < s; ++i) {
+
+		x[i] = z;
+
+		z *= 5;
+
+	}
+
+
+}
+
+
+void fill2(std::initializer_list<double> lst, int* x) {
+
+	std::copy(lst.begin(), lst.end(), x);
+
+
+
+}
+
+
+
+
+void print(int* x) { 
+
+	
+	for (int i = 0; i < 10; ++i) {
+
+		std::cout << x[i] << " ";
+		
+	}
+
+
+}
+
+std::ostream& print_ar10(std::ostream& os, int* a, int n) {
+
+	for (int i = 0; i < n; ++i) {
+
+		os << a[i] << " ";
+
+	}
+	return os;
+}
+
+
+int main()
+try {
+
+	int t = 7;
+	int* pt1 = &t;
+
+	//std::cout << pt1 << " " << * pt1 << " " << &pt1;
+
+
+
+
+	int arr[7];
+	fill2({ 1,2,4,8,16,32,64 }, arr);
+	int* pt2 = arr;
+
+	std::cout << &arr[0] << " " << pt2 << " " << "\n";
+	print_ar10(std::cout, arr, 7);
+
+	std::cout << "\n";
+
+	int* pt22 = new int[7];
+	fill2({ 1,2,4,8,16,32,64 }, pt22);
+	std::cout << pt22 << " " << "\n";
+	print_ar10(std::cout, pt22, 7);
+
+
+	int* pt3 = pt2;
+	pt2 = pt1;
+	pt2 = pt3;
+
+	std::cout << pt1 << " points to " << *pt1 << "\n";
+
+	std::cout << pt2 << " points to " << *pt2 << "\n";
+
+	std::cout << pt3 << " points to " << *pt3 << "\n";
+
+	
+
+	pt1 = pt22;
+	pt2 = new int[7];
+
+	for (int i = 0; i < 7; ++i)
+		pt2[i] = pt1[i];
+
+	print_ar10(std::cout, pt2, 7);
+
+
+	return 0;
+
+}
+catch (std::exception& e) {
+	std::cerr << e.what() << '\n';
+}
+catch (...) {
+	std::cerr << "something bad happened\n";
+}
