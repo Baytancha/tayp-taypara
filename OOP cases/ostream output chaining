@@ -1,0 +1,28 @@
+std::ostream& print_ar10(std::ostream& os, int* a) {
+
+	for (int i = 0; i < 10; ++i) {
+
+		os << a[i] << " ";
+	}
+
+	return os;
+}
+
+
+
+void print_ar10(std::ostream& os, int* a) {
+
+	for (int i = 0; i < 10; ++i) {
+
+		os << a[i] << " ";
+	}
+
+}
+
+
+/////////////////////////////////////
+The difference between these two functions lies in their return type and their usage.
+
+std::ostream& print_ar10(std::ostream& os, int* a): This function returns a reference to an std::ostream object. This allows for chaining of output operations. For example, you can do something like std::cout << print_ar10(os, a) << std::endl;. The function prints the elements of the array a to the output stream os, and then returns the stream so that it can be used in further operations.
+void print_ar10(std::ostream& os, int* a): This function does not return anything. It simply prints the elements of the array a to the output stream os. You cannot chain operations with this function. For example, you cannot do std::cout << print_ar10(os, a) << std::endl;.
+In summary, the first function is more flexible because it allows for chaining of output operations, while the second function is simpler and does not allow for such chaining.
