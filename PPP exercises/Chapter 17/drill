@@ -1,0 +1,108 @@
+#include <string>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#include <list>
+#include <array>
+
+
+class Foo1
+{
+public:
+	Foo1(int x)
+
+	{
+		int z = 5;
+	}
+
+
+};
+
+
+
+void fill(int* x, int s) {
+
+	int z = 10;
+	for (int i = 0; i < s; ++i) {
+
+		x[i] = z;
+
+		z *= 5;
+
+	}
+
+
+}
+
+
+void fill2(std::initializer_list<double> lst, int* x) {
+
+	std::copy(lst.begin(), lst.end(), x);
+
+
+
+}
+
+
+
+
+
+void print(int* x) { 
+
+	
+	for (int i = 0; i < 10; ++i) {
+
+		std::cout << x[i] << " ";
+		
+	}
+
+
+}
+
+void print_ar10(std::ostream& os, int* a, int n) {
+
+	for (int i = 0; i < n; ++i) {
+
+		os << a[i] << " ";
+
+	}
+
+}
+
+
+int main()
+try {
+
+	int* arr = new int[10];
+
+	fill(arr, 10);
+
+	//print(arr);
+
+	//print_ar10(std::cout,arr, 10);
+
+	delete[] arr;
+
+	int* arr2 = new int[10];
+
+	fill2({ 100, 101, 102, 103, 104, 105, 106, 107, 108, 109}, arr2);
+
+	print_ar10(std::cout, arr2, 5);
+
+	std::cout << "\n";
+	std::vector <double> vec{ 100, 101, 102, 103, 104, 105, 106, 107, 108, 109 };
+
+	for (double d : vec)
+		std::cout << d << " ";
+
+	return 0;
+
+}
+catch (std::exception& e) {
+	std::cerr << e.what() << '\n';
+}
+catch (...) {
+	std::cerr << "something bad happened\n";
