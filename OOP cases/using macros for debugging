@@ -1,0 +1,5 @@
+#ifdef ( DEBUG )
+#define M_DebugLog( msg )  std::cout << __FILE__ << ":" << __LINE__ << ": " << msg
+#else
+#define M_DebugLog( msg )
+#endif
