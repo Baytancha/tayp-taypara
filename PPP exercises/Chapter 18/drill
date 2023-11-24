@@ -1,1 +1,182 @@
-   vb
+   #include <string>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#include <list>
+#include <array>
+
+
+int ga[10];
+
+std::vector<int> gv{ 1,2,4,8,16,32,64,128,256,512 };
+
+
+
+
+void fill_arr(int* x, int s) {
+
+	
+	int count = 1;
+	for (int i = 0; i < s; ++i) {
+
+		if (i == 0) x[i] = 1;
+		else x[i] = x[i-1] * (i+1);
+	}
+
+
+}
+
+void fill_v(std::vector<int>& v) {
+
+	
+	int count = 1;
+	for (int i = 0; i < v.size(); ++i) {
+
+		if (i == 0) v[i] = 1;
+		else v[i] = v[i - 1] * (i + 1);
+	}
+
+
+}
+
+std::ostream& print(std::ostream& os, int* a, int n) {
+
+	for (int i = 0; i < n; ++i) {
+
+		os << a[i] << " " << " \n";
+
+	}
+	return os;
+}
+
+
+void fill(std::initializer_list<double> lst, int* x) {
+
+	std::copy(lst.begin(), lst.end(), x);
+
+
+}
+
+void fun(int arr[], int n) {
+
+	int loc[10];
+
+	std::copy(arr, arr + 10, loc);
+
+	print(std::cout, loc, 10);
+
+	int* p = new int[n];
+
+	std::copy(arr, arr + 10, p);
+
+	print(std::cout, p, n);
+
+	delete[] p;
+
+}
+
+
+void v_fun(std::vector<int> v) {
+
+	std::vector<int> lv(v.size());
+
+	lv = v;
+
+	for (int r : lv)
+		std::cout << r << " ";
+
+	std::cout << "\n";
+
+	std::vector<int> lv2 = v;
+
+	for (int r : lv2)
+		std::cout << r << " ";
+
+
+}
+
+
+
+
+int main()
+try {
+
+	//fill({ 1,2,4,8,16,32,64,128,256,512 }, ga);
+
+	//fun(ga, 10);
+
+
+	int aa[10];
+
+	fill_arr(aa, 10);
+
+	//fun(aa, 10);
+
+
+	//v_fun(gv);
+
+	std::vector<int> vv (10);
+
+	fill_v(vv);
+
+	v_fun(vv);
+
+
+
+
+	/*int t = 7;
+	int* pt1 = &t;*/
+
+	//std::cout << pt1 << " " << * pt1 << " " << &pt1;
+
+	
+
+
+	/*int arr[7];
+	fill({ 1,2,4,8,16,32,64 }, arr);
+	int* pt2 = arr;
+
+	std::cout << &arr[0] << " " << pt2 << " " << "\n";
+	print(std::cout, arr, 7);
+
+	std::cout << "\n";
+
+	int* pt22 = new int[7];
+	fill({ 1,2,4,8,16,32,64 }, pt22);
+	std::cout << pt22 << " " << "\n";
+	print_ar10(std::cout, pt22, 7);
+
+
+	int* pt3 = pt2;
+	pt2 = pt1;
+	pt2 = pt3;
+
+	std::cout << pt1 << " points to " << *pt1 << "\n";
+
+	std::cout << pt2 << " points to " << *pt2 << "\n";
+
+	std::cout << pt3 << " points to " << *pt3 << "\n";
+
+
+
+	pt1 = pt22;
+	pt2 = new int[7];
+
+	for (int i = 0; i < 7; ++i)
+		pt2[i] = pt1[i];
+
+	print_ar10(std::cout, pt2, 7);*/
+
+
+	return 0;
+
+}
+catch (std::exception& e) {
+	std::cerr << e.what() << '\n';
+}
+catch (...) {
+	std::cerr << "something bad happened\n";
+}
