@@ -1,0 +1,22 @@
+Ex.1
+int: 4 bytes
+double: 8 bytes
+bool: 1 byte
+
+Ex.2
+int x = 10;
+int* p = &x;
+std::cout << p;
+Output:
+0000057432FF734 (hexadecimal)
+
+
+Ex.3
+void to_lower(char* s) {
+if (*s >= 'A' && *s <= 'Z') *s = *s + 32;
+}
+char d[] = "HeLLO MUdda, HELLO FUDdAA";
+	int size = sizeof(d) / sizeof(d[0]);
+	for (int i = 0; i < size; ++i) {
+		to_lower(&d[i]);
+std::cout << d;
