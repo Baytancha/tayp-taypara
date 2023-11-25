@@ -27,3 +27,64 @@ In summary, the main difference is that const char* a is a pointer to a constant
 while char* b is a pointer to a character (you can change the value of the character). 
 However, in both cases, attempting to modify the string literal will result 
 in undefined behavior because string literals are stored in read-only memory in C++.
+
+
+
+
+
+Explain the following C++ code:
+
+char b[] = "Nello";
+const char* a = b;
+
+This C++ code is doing two things:
+
+
+It's declaring a character array b and initializing it with the string "Nello". 
+In C++, a string is an array of characters. The last character in the array 
+is always the null character (\0), which signifies the end of the string. 
+So, the array b actually contains the characters 'N', 'e', 'l', 'l', 'o', and '\0'.
+It's declaring a pointer to a constant character a and initializing it 
+with the address of the first character of the array b. This means that 
+a points to the first character of the string "Nello". The const keyword 
+means that the character that a points to cannot be changed through this pointer.
+In summary, this code creates a string "Nello" and a pointer to 
+the first character of this string. The pointer is declared 
+as a pointer to a constant character, which means that 
+the character it points to cannot be changed.
+
+
+
+
+
+Explain the following C++ code:
+
+char b[] = "Nello";
+char c[] = {'N','e','l','l','o'}
+
+char b[] = "Nello";
+This line is defining a character array b and initializing it 
+with the string "Nello". In C++, strings are essentially arrays of characters. 
+The null character \0 is automatically appended at the end of the string 
+to mark its end. So, b is actually an array of 6 characters: 'N', 'e', 'l', 'l', 'o', and '\0'.
+
+char c[] = {'N','e','l','l','o'};
+This line is defining a character array c and initializing it with the characters 
+'N', 'e', 'l', 'l', 'o'. Unlike the first line, this array does not automatically 
+get a null character at the end. So, c is an array of 5 characters: 
+'N', 'e', 'l', 'l', 'o'.
+
+In summary, both b and c are character arrays that store the string 
+"Nello", but b includes the null character at the end, while c does not.
+
+
+
+
+
+
+
+
+
+
+
+
