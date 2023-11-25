@@ -1,3 +1,33 @@
+//all print the same string
+char b[] = "Nello";
+
+	std::cout << b << "\n";
+
+	 char* a = b;
+
+	std::cout << a << "\n";
+
+	std::string c = a;
+
+	std::cout << c << "\n";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Explain the difference between the following C++ expressions:
 
 Case 1:
