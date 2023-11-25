@@ -11,8 +11,8 @@ char b[] = "Nello";
 
 	std::cout << c << "\n";
 
-
-
+here's how a dynamic array is created on the heap:
+char* p = new char[count];
 
 
 
