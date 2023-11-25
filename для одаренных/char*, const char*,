@@ -1,0 +1,29 @@
+Explain the difference between the following C++ expressions:
+
+Case 1:
+const char* a = "Nello";
+std::cout << a;
+
+Case 2:
+char* b = "Nello";
+std::cout << b;
+
+
+The difference between the two cases lies in the use of the const keyword
+In Case 1, const char* a = "Nello"; declares a pointer to a constant character. 
+This means that the characters that a points to cannot be changed through a. 
+The string "Nello" is stored in read-only memory, and a points to that. 
+If you try to modify the string through a, it will result in undefined behavior.
+
+In Case 2, char* b = "Nello"; declares a pointer to a character. 
+This implies that the characters that b points to can be changed. 
+However, in C++, string literals like "Nello" are still stored in read-only memory, 
+so attempting to modify them will result in undefined behavior. 
+This is actually not valid C++ code, even though it may compile and run 
+without errors in some compilers due to backward compatibility with C.
+
+In summary, the main difference is that const char* a is a pointer to a constant character 
+(you can't change the value of the character), 
+while char* b is a pointer to a character (you can change the value of the character). 
+However, in both cases, attempting to modify the string literal will result 
+in undefined behavior because string literals are stored in read-only memory in C++.
