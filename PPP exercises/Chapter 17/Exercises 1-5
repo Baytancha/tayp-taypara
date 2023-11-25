@@ -20,3 +20,29 @@ char d[] = "HeLLO MUdda, HELLO FUDdAA";
 	for (int i = 0; i < size; ++i) {
 		to_lower(&d[i]);
 std::cout << d;
+
+
+Ex.4
+char* strrdup(const char* s) {
+	const char* t = s;
+	int count = 0;
+	while (*t != '\0') {
+		++count;
+		++t;
+	}
+	++count;
+	char* p = new char[count];
+
+	for (int i = 0; i < count; ++i) {
+
+		p[i] = s[i];
+	}
+	return p;
+}
+char* pp = strrdup("HeLLO");
+
+
+	std::cout << pp;
+
+
+
