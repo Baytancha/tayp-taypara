@@ -1,0 +1,35 @@
+void mem_over(int x, int size) {
+	std::cout << x << "\n";
+	int* p = new int{ x * x };
+
+	size += sizeof(*p);
+	std::cout << size << "\n";
+
+	mem_over(*p, size);
+
+	//std::cout << sizeof(*p) << "\n";
+
+
+}
+
+
+void mem_over2(std::string x, int size) {
+	//std::cout << x << "\n";
+	std::string* p = new std::string{ x + x };
+
+	size += sizeof(*p);
+	std::cout << size << "\n";
+
+	mem_over2(*p, size);
+
+	//std::cout << sizeof(*p) << "\n";
+
+
+}
+
+	mem_over(1000000000, 0); //12764 bytes
+
+	//mem_over2("In computer science, a memory leak is a type of resource leak that occurs when a computer program incorrectly manages memory allocations[1] in a way that memory which is no longer needed is not released. A memory leak may also happen when an object is stored in memory but cannot be accessed by the running code (i.e. unreachable memory).[2] A memory leak has symptoms similar to a number of other problems and generally can only be diagnosed by a programmer with access to the program's source code.", 0);
+
+
+
