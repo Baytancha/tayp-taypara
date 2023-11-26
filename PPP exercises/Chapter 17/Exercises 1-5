@@ -20,7 +20,7 @@ char d[] = "HeLLO MUdda, HELLO FUDdAA";
 	for (int i = 0; i < size; ++i) {
 		to_lower(&d[i]);
 std::cout << d;
-
+///////////////////////////////
 void to_lower(char* s) {
 	int count = 0;
 	int i = 0;
@@ -59,7 +59,7 @@ char* strrdup(const char* s) {
 	}
 	return p;
 }
-
+//////////////////////////
 char* strrdup(const char* s) {
 
 	int count = 0;
@@ -137,16 +137,62 @@ const char* findx(const char* s, const char* x) {
 
 	return tp;
 }
-
 	char d[] = "Find it, and find it now too fast";
-
 	char w[] = "now";
-
 	const char* n = findx(d, w);
-
-
 	std::cout << "The first occurence if the word " << w << " is at: " << n;
 
+///////////////////////////
+
+char* findx(const char* s, const char* x) {
+
+	const char* tp = nullptr;
+	
+	int count_s = 0;
+	int i_s = 0;
+	while (s[i_s] != '\0') {
+		++count_s;
+		++i_s;
+	}
+	++count_s;
+
+	int count_w = 0;
+	int i_w = 0;
+	while (x[i_w] != '\0') {
+		++count_w;
+		++i_w;
+	}
+	//++count_w;
+
+	int count_x = 0;
+	int address_x = 0;
+	for (int i = 0; i < count_s; ++i) {
+		address_x = i;
+		std::cout << i <<"\n";
+		for (int z = 0; z < count_w; ++z) {
+			if (count_s <= z + i) {
+
+				std::cout << count_s << "\n";
+				std::cout << count_w << "\n";
+				std::cout << i << "\n";
+				std::cout << "Enough\n";
+				return nullptr;
+			}
+			if (s[i + z] == x[z]) { ++count_x; std::cout << count_x << "\n"; }
+			else count_x = 0;
+			
+		}
+		if (count_x == count_w) { std::cout << "Found\n"; break; }
+	}
+
+	std::cout << address_x << "\n";
+	std::cout << count_w<< "\n";
+	tp = &s[address_x];
+
+	char* p = const_cast<char*>(tp);
+
+	return p;
+}
 
 
 
