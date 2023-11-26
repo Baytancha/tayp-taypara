@@ -1,37 +1,22 @@
-
+exhaustion at ~7200 MB
 int main()
 try {
 	int i = 0;
 	while (true) {
 		std::cout << ++i << " MB\n";
-		char* pd = new char[1048576];    // allocate 1 MB
+		char* pd = new char[1048576];    
 		}
 
 
-
-
-
-
-
-
-
 ///////////////////////////////////////////////////////
-
-void mem_over(int x, int size) {
-	std::cout << x << "\n";
-	int* p = new int{ x * x };
-
-	size += sizeof(*p);
-	std::cout << size << "\n";
-
-	mem_over(*p, size);
-
+overflow at 3192 MB
+void mem_over(int size) {
+	char* p = new char[1048576];
+	++size;
+	std::cout << size << "MB\n" << "\n";
+	mem_over(size);
 	//std::cout << sizeof(*p) << "\n";
-
-
 }
 
-
-
-	mem_over(1000000000, 0); //12764 bytes
+mem_over(0);
 
