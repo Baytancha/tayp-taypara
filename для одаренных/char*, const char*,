@@ -114,6 +114,29 @@ In summary, both b and c are character arrays that store the string
 
 
 
+char d[] = "	DEGRADATION GA lore TODAY";
+
+	 const char* zz = d;
+	 char* ddd = zz; // char* can't refer to the object pointer to by const char even though it'd located on the stack
+
+
+char* zz = d;
+char* ddd = zz; // it's alright, chat* ddd points to  the stack object that char* zz also points to 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
