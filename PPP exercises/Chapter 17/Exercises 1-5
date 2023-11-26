@@ -89,9 +89,7 @@ char* pp = strrdup("HeLLO");
 
 Ex.4 
 const char* findx(const char* s, const char* x) {
-
 	const char* tp = nullptr;
-	
 	int count_s = 0;
 	int i_s = 0;
 	while (s[i_s] != '\0') {
@@ -115,28 +113,19 @@ const char* findx(const char* s, const char* x) {
 		std::cout << i <<"\n";
 		for (int z = 0; z < count_w; ++z) {
 			if (count_s <= z + i) {
-
-				std::cout << count_s << "\n";
-				std::cout << count_w << "\n";
-				std::cout << i << "\n";
-				std::cout << "Enough\n";
 				return nullptr;
 			}
-			if (s[i + z] == x[z]) { ++count_x; std::cout << count_x << "\n"; }
-			else count_x = 0;
-			
+			if (s[i + z] == x[z]) { ++count_x; }
+			else count_x = 0;	
 		}
-		if (count_x == count_w) { std::cout << "Found\n"; break; }
+		if (count_x == count_w) { break; }
 	}
 
-	std::cout << address_x << "\n";
-	std::cout << count_w<< "\n";
 	tp = &s[address_x];
-
-	//char* p = const_cast<char*>(tp);
 
 	return tp;
 }
+
 	char d[] = "Find it, and find it now too fast";
 	char w[] = "now";
 	const char* n = findx(d, w);
@@ -147,7 +136,6 @@ const char* findx(const char* s, const char* x) {
 char* findx(const char* s, const char* x) {
 
 	const char* tp = nullptr;
-	
 	int count_s = 0;
 	int i_s = 0;
 	while (s[i_s] != '\0') {
@@ -168,29 +156,17 @@ char* findx(const char* s, const char* x) {
 	int address_x = 0;
 	for (int i = 0; i < count_s; ++i) {
 		address_x = i;
-		std::cout << i <<"\n";
 		for (int z = 0; z < count_w; ++z) {
 			if (count_s <= z + i) {
-
-				std::cout << count_s << "\n";
-				std::cout << count_w << "\n";
-				std::cout << i << "\n";
-				std::cout << "Enough\n";
 				return nullptr;
 			}
-			if (s[i + z] == x[z]) { ++count_x; std::cout << count_x << "\n"; }
+			if (s[i + z] == x[z]) { ++count_x;  }
 			else count_x = 0;
-			
 		}
-		if (count_x == count_w) { std::cout << "Found\n"; break; }
+		if (count_x == count_w) {  break; }
 	}
-
-	std::cout << address_x << "\n";
-	std::cout << count_w<< "\n";
 	tp = &s[address_x];
-
 	char* p = const_cast<char*>(tp);
-
 	return p;
 }
 
