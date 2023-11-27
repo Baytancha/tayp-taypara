@@ -1,0 +1,101 @@
+void print_ar(std::ostream& os, char* a, int n);
+
+void read_new(std::istream& is) {
+
+	char x = '0';
+	int i = 0;
+	char* p = nullptr;
+	char* rt = nullptr;
+
+
+	while (true) {
+		
+		is >> x;
+		if (x != '!') {
+			if (i == 0) {
+				
+				p = new char{ x };
+				rt = p;
+			}
+			else {
+				
+				char* tp = ++p;
+				*tp = x;
+			}
+			++i;
+		}
+		else break;
+	}
+
+
+
+	print_ar(std::cout, rt, i);
+
+}
+
+void read_str(std::istream& is, std::string* str) {
+
+	char x = '0';
+	int i = 0;
+	
+
+	while (true) {
+
+		is >> x;
+		if (x != '!') {
+			if (i == 0) {
+				
+				*str = x;
+			}
+			else {
+			
+				*str = *str + x;
+			}
+			++i;
+		}
+		else break;
+	}
+
+
+
+	std::cout << *str;
+
+
+}
+
+
+
+
+void print_ar(std::ostream& os, char* a, int n) {
+
+
+
+	for (int i = 0; i < n; ++i) {
+
+		os << i << " " << a[i] << " ";
+
+	}
+
+}
+
+
+
+int main()
+try {
+
+	read_new(std::cin);
+
+	std::string str;
+
+	//read_str(std::cin, &str);
+
+
+	return 0;
+
+}
+catch (std::exception& e) {
+	std::cerr << e.what() << '\n';
+}
+catch (...) {
+	std::cerr << "something bad happened\n";
+}
