@@ -10,7 +10,7 @@ void read_new(std::istream& is) {
 
 	while (true) {
 		
-		is >> x;
+		is.get(x); // for whitespace characters
 		if (x != '!') {
 			if (i == 0) {
 				
@@ -41,7 +41,7 @@ void read_str(std::istream& is, std::string* str) {
 
 	while (true) {
 
-		is >> x;
+		is.get(x);
 		if (x != '!') {
 			if (i == 0) {
 				
