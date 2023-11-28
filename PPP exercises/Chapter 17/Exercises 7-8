@@ -1,13 +1,55 @@
+//Here are two versions of the read functions, "safe" and "unsafe" version
+
+safe version: safe allocation on the heap via new operator:
+void read_new(std::istream& is) {
+	char x;
+	int i = 0;
+	int c = 0;
+	char* p = nullptr;
+	while (true) {
+		is.get(x);
+		++c;
+		if (x != '!') {
+			if (i == 0) {
+		               p = new char{ x };
+			}
+			else {
+				char* tp = new char[c];
+				for (int i = 0; i < c - 1; ++i)
+				{
+					tp[i] = p[i];
+				}
+				tp[c - 1] = x;
+				delete[] p;
+				p = tp;	
+			}
+			++i;
+		}
+		else { 
+			if (p != nullptr) {
+				char* tp = new char[c];
+				for (int i = 0; i < c - 1; ++i)
+				{
+					tp[i] = p[i];
+				}
+				tp[c - 1] = '\0';
+				delete[] p;
+				p = tp; break;
+			}
+			break; }
+	}
+	print_ar(std::cout, p, i);
+}
+
 void print_ar(std::ostream& os, char* a, int n);
 
-void read_new(std::istream& is) {
 
+unsafe version which allocates the array by pointer incrementation, addresses aren't checked hence risk of UB
+void read_new(std::istream& is) {
 	char x = '0';
 	int i = 0;
 	char* p = nullptr;
 	char* rt = nullptr;
-
-
 	while (true) {
 		
 		is.get(x); // for whitespace characters
@@ -26,19 +68,17 @@ void read_new(std::istream& is) {
 		}
 		else break;
 	}
-
-
-
 	print_ar(std::cout, rt, i);
-
 }
 
-void read_str(std::istream& is, std::string* str) {
 
+
+//////////////////////////////////////////////////////////////////
+Exercise 8
+
+void read_str(std::istream& is, std::string* str) {
 	char x = '0';
 	int i = 0;
-	
-
 	while (true) {
 
 		is.get(x);
@@ -56,27 +96,16 @@ void read_str(std::istream& is, std::string* str) {
 		else break;
 	}
 
-
-
 	std::cout << *str;
-
-
 }
-
-
 
 
 void print_ar(std::ostream& os, char* a, int n) {
-
-
-
 	for (int i = 0; i < n; ++i) {
-
 		os << i << " " << a[i] << " ";
-
 	}
-
 }
+
 
 
 
