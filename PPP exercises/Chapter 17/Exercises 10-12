@@ -1,0 +1,13 @@
+Ex. 10: 
+1)Is there any way that input could 
+get the array to overflow; that is, is there any way you could enter more 
+characters than you allocated space for (a serious error)?
+ANSWER: YES, with escape sequences
+
+2)Does anything reasonable happen if you try to enter more characters than you allocated?
+ANSWER: It's not possible to enter more character than is allocated by the function
+
+
+Ex. 12:
+Why did we define two versions of find()?
+ANSWER: to account for 
