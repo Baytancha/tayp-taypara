@@ -1,0 +1,31 @@
+//stack grows downward::
+
+void stack_addresses(int x) {
+
+	int z = x;
+
+	std::cout << &z << "\n";
+
+	if (z <=100)
+	stack_addresses(z + 10);
+
+}
+
+//addresses aren't growing strictly up or down
+void heap_addresses(int x) {
+
+	int* z = new int{ x };
+
+	std::cout << z << "\n";
+
+	if (*z <= 100)
+		heap_addresses(*z + 10);
+}
+
+
+//addresses aren't growing strictly up or down
+for (int i = 0; i < 10; ++i) {
+		int* z = new int{ i };
+		std::cout << z << "\n";
+
+	}
