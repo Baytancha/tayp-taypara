@@ -126,7 +126,6 @@ try {
     greek_gods = greek_gods->insert(new Link{ "Mars" });
     greek_gods = greek_gods->insert(new Link{ "Poseidon" });
 
-    cout << "Benchmark data:\n";
     print_all(norse_gods);
     cout << "\n";
     print_all(greek_gods);
@@ -141,8 +140,6 @@ try {
         p2->erase();
         greek_gods = greek_gods->insert(p2);
     }
-
-    cout << "Changed data:\n";
     print_all(norse_gods);
     cout << "\n";
     print_all(greek_gods);
