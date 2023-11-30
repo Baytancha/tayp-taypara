@@ -1,0 +1,25 @@
+char* strrdup(const char* s) {
+	const char* t = s;
+	int count = 0;
+	while (*t != '\0') {
+		++count;
+		++t;
+	}
+	++count; // array "size"
+	char* tp = new char[count];
+    char*  p = tp;
+
+	for (int i = 0; i < count; ++i) {
+       
+		*tp = *s;
+        ++tp;
+        ++s;
+	}
+	return p;
+}
+
+char* pp = strrdup("HeLLO");
+
+
+    for (int i = 0;pp[i] != '\0'; i++)
+        std::cout << pp[i];
