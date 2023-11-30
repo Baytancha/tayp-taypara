@@ -1,0 +1,15 @@
+char* strdupl(const char* s) {
+    // get size of s
+    int i = 0;
+    const char* p = s;
+    while (*p++) ++i;
+
+    // allocate new string, add space for terminating 0
+    char* s_cpy = new char[i + 1];
+
+    // copy s, add terminating 0
+    char* s_cpy_ptr = s_cpy;
+    while (*s) *s_cpy_ptr++ = *s++;
+    *s_cpy_ptr = 0;
+    return s_cpy;
+}
