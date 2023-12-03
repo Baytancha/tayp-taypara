@@ -1,0 +1,29 @@
+The simplest way to distinguish between the different kinds of real-time system types is answering the question:
+
+Is a delayed system response (after the deadline) is still useful or not?
+
+So depending on the answer you get for this question, your system could be included as one of the following categories:
+
+Hard: No, and delayed answers are considered a system failure
+This is the case when missing the dead-line will make the system unusable. 
+For example the system controlling the car Airbag system should detect the crash and inflate rapidly the bag. 
+he whole process takes more or less one-twenty-fifth of a second. Thus, if the system for example react with 
+1 second of delay the consequences could be mortal and it will be no benefit having the bag inflated once the car has already crashed.
+
+Firm: No, but delayed answers are not necessary a system failure
+This is the case when missing the deadline is tolerable but it will affect the quality of the service. 
+As a simple example consider a video encryption system. Normally the password of encryption is generated 
+in the server (video Head end) and sent to the customer set-top box. This process should be synchronized so normally 
+the set-top box receives the password before starts receiving the encrypted video frames. In this case a 
+delay it may lead to video glitches since the set-top box is not able to decode the frames because it hasn't received the password yet. 
+In this case the service (film, an interesting football match, etc) could be affected by not meeting the deadline. 
+Receiving the password with delay in this case is not useful since the frames encrypted with the same have already caused the glitches.
+
+Soft: Yes, but the system service is degraded
+As from the the wikipedia description the usefulness of a result degrades after its deadline. That means, 
+getting a response from the system out of the deadline is still useful for the end user but its usefulness 
+degrade after reaching the deadline. A simple example for this case is a software that automatically controls 
+the temperature of a room (or a building). In this case if the system has some delays reading the temperature 
+sensors it will be a little bit slow to react upon brusque temperature changes. However, at the end it will 
+end up reacting to the change and adjusting accordingly the temperature to keep it constant for example. 
+So in this case the delayed reaction is useful, but it degrades the system quality of service.
