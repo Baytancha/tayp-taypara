@@ -1,0 +1,3 @@
+if (this == &a) return *this;: This is a self-assignment check. If the address of the current object (this) is the same as the address of the input object (&a), 
+it means that the same object is being assigned to itself. In such cases, the function simply returns a reference to the current object (*this). 
+This is a common practice to avoid unnecessary computations and potential issues in more complex classes where self-assignment could lead to problems.
