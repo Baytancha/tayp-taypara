@@ -1,0 +1,31 @@
+ostream& operator<<(ostream& os, const Book& d)
+{
+    return os << "title: " << d.title_get() <<"\n"
+        << "author: " << d.author_get() << "\n"
+        << "ISBN: " << d.ISBN_get() << "\n"
+        << "copyright date: " << d.copyright_get() << "\n"
+        << "genre: " << genre_name(d) << "\n";
+}
+
+//------------------------------------------------------------------------------
+
+istream& operator>>(istream& is, Book& dd)
+{
+    cout << "Enter title: ";
+    string t;
+    is >> t;
+    cout << "Enter author: ";
+    string a;
+    is >> a;
+    cout << "Enter date: ";
+    Date copy;
+    is >> copy;
+      
+    if (!is)  {
+        is.clear(ios_base::failbit);                    
+        return is;
+    }
+
+    dd = Book(t, a, copy);   // update dd
+    return is;
+}
