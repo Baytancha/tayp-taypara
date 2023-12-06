@@ -1,0 +1,58 @@
+As usual, please remember that a “naked” new outside a constructor is an 
+opportunity to forget to delete the object that new created. Unless you have a 
+good (that is, really simple, such as Vector_ref from §13.10 and §E.4) strategy for 
+deleting objects, try to keep news in constructors and deletes in destructors.
+
+template<class T> class Vector_ref {   //wrapper vector-of-pointers-to-dynamic-memory class that cleans itself
+    std::vector<T*> v;
+    std::vector<T*> owned;
+public:
+    Vector_ref() {}
+    Vector_ref(T& a) { push_back(a); }
+    Vector_ref(T& a, T& b);
+    Vector_ref(T& a, T& b, T& c);
+    Vector_ref(T* a, T* b = 0, T* c = 0, T* d = 0)
+    {
+        if (a) push_back(a);
+        if (b) push_back(b);
+        if (c) push_back(c);
+        if (d) push_back(d);
+    }
+
+    ~Vector_ref() { for (int i = 0; i < owned.size(); ++i) delete owned[i]; } //it detects when object goes out of scope and starts clean-up
+
+    void push_back(T& s) { v.push_back(&s); }
+    void push_back(T* p) { v.push_back(p); owned.push_back(p); } //  we get a heap object pointed to by two vectors; v[i] and owned[i] share the same address
+    /*
+        void erase(int i)
+        {
+            if (i<0 || v.size()<=i) return;
+            T* p = v[i];
+            v.erase(v.begin()+i);
+            for (int i=0; i<owned.size(); ++i)
+                    if (p==owned[i]) {
+                            delete p;
+                            owned.erase(owned.begin()+i);
+                    }
+        }
+
+        void erase(T* p)
+        {
+            for (int i=0; i<v.size(); ++i)
+                    if (p==v[i]) v.erase(&v[i]);
+            for (int i=0; i<owned.size(); ++i)
+                    if (p==owned[i]) {
+                            delete p;
+                            owned.erase(&owned[i]);
+                    }
+        }
+    */
+    T& operator[](int i) { return *v[i]; }
+    const T& operator[](int i) const { return *v[i]; }
+
+    int size() const { return v.size(); }
+
+private:	// prevent copying
+    Vector_ref(const Vector<T>&);
+    Vector_ref& operator=(const Vector<T>&);
+};
