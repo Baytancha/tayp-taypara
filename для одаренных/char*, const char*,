@@ -15,14 +15,22 @@ here's how a dynamic array is created on the heap:
 char* p = new char[count];
 
 
+here's how a string is created on the heap:
+std::string* d = new std::string{"hello"};
 
+You can't allocate a C-style string on the heap like this?
+ char* d = new char[] {"hello"};
 
+You must do it like this:
+char* d = new char[6] {'h', 'e', 'l', 'l', 'o', '\0'};
 
+or look up exercise on char* stdup(cosnt char*)
 
-
-
-
-
+also:
+int ai[] = { 1, 2, 3, 4, 5, 6 }; // array of 6 ints
+int ai2[100] = {0,1,2,3,4,5,6,7,8,9}; // the last 90 elements are initialized to 0
+double ad[100] = { }; // all elements initialized to 0.0
+char chars[] = {'a', 'b', 'c'}; // no terminating 0!
 
 
 
