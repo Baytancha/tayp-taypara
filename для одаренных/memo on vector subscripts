@@ -1,0 +1,13 @@
+double& operator[ ](int n) { return elem[n]; } 
+elem[i] - pointer elem to an element at index i located on the heap; 
+elem[i] is the name of the object located at i and pointed to by elem. What is returned is not a pointer but the object itself
+double& - we return a reference to the object elem[n] because we want it to be modified. Without it we'd retrn a copy of the object
+
+
+T& operator[](int i) { return *v[i]; }
+
+v[i] - is the name of the object located at i and pointed to by v. 
+*v[i] - we need to deference v because v is a vector of pointers, so if we return a pointer only, we will only get the address of the stored object, not its value
+T& - we return a reference to the object pointed to by the pointer object stored at v[i]. We want to modify the object pointed to by the object which 
+is actually stored in the vector. Note that we can also return a reference to the pointer object itself, but this way we will modify not the owned object but the address stored
+Because [] is overloaded, it appears we access the element like this: vector[i]
