@@ -1,0 +1,37 @@
+int f() {
+  return 123;
+}
+// vs.
+auto f() -> int {
+  return 123;
+}
+auto g = []() -> int {
+  return 123;
+};
+
+// NOTE: This does not compile!
+template <typename T, typename U>
+decltype(a + b) add(T a, U b) {
+    return a + b;
+}
+
+// Trailing return types allows this:
+template <typename T, typename U>
+auto add(T a, U b) -> decltype(a + b) {
+    return a + b;
+}
+
+
+Converting constructors will convert values of braced list syntax into constructor arguments.
+
+struct A {
+  A(int) {}
+  A(int, int) {}
+  A(int, int, int) {}
+};
+
+A a {0, 0}; // calls A::A(int, int)
+A b(0, 0); // calls A::A(int, int)
+A c = {0, 0}; // calls A::A(int, int)
+A d {0, 0, 0}; // calls A::A(int, int, int)
+
