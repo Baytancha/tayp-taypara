@@ -1,0 +1,14 @@
+Final specifier
+Specifies that a virtual function cannot be overridden in a derived class or that a class cannot be inherited from.
+
+struct A {
+  virtual void foo();
+};
+
+struct B : A {
+  virtual void foo() final;
+};
+
+struct C : B {
+  virtual void foo(); // error -- declaration of 'foo' overrides a 'final' function
+};
