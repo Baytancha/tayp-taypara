@@ -20,3 +20,49 @@ At the end of main(), mainres goes out of scope, and our final “Resource destr
 The move constructor and move assignment are called when those functions have been defined, and the argument for construction or assignment is an rvalue. Most typically, this rvalue will be a literal or temporary value.
 
 The copy constructor and copy assignment are used otherwise (when the argument is an lvalue, or when the argument is an rvalue and the move constructor or move assignment functions aren’t defined).
+
+
+
+
+The terms "universal reference" and "rvalue reference" in C++ are often used interchangeably, 
+but they describe slightly different but related concepts.
+
+An rvalue reference is denoted by && and binds only to rvalues, which are typically temporary 
+objects or literals that are not associated with any memory location. This concept is used in C++ 
+to allow for efficient transfer of resources, such as during move semantics or perfect forwarding 5.
+
+// Example of rvalue reference
+int&& rvalueRef = 5;
+On the other hand, the term "universal reference" was coined by Scott Meyers to describe 
+a situation where an rvalue reference is used with a cv-unqualified template parameter. 
+In this case, the reference can bind to either an lvalue or rvalue depending on the argument provided. 
+This is possible due to a feature in C++ called reference collapsing 1.
+
+// Example of universal reference
+template <typename T>
+void foo(T&& universalRef) { /* ... */ }
+
+In the above code, foo can take either an lvalue or rvalue as an argument. If it's called with an lvalue, 
+T will be deduced to be Type&, and Type& && will collapse to Type&. If it's called with an rvalue, T will
+be deduced to be Type, and Type && remains as Type && 3.
+
+The C++ standard later adopted the term "forwarding reference" instead of "universal reference", 
+arguing that the former more accurately describes the behavior of the reference. Regardless of 
+the terminology, the underlying concept remains the same 1.
+In conclusion, the key difference is that an rvalue reference binds only to rvalues, while a universal 
+(or forwarding) reference can bind to either lvalues or rvalues, depending on the argument provided. 
+This distinction is important for understanding how move semantics and perfect forwarding work in C++
+
+
+
+
+
+
+
+
+
+
+
+
+
+
