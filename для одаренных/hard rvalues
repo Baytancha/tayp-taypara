@@ -1,0 +1,90 @@
+An lvalue is an expression that identifies an object that could in principle be 
+modified (but obviously an lvalue that has a const type is protected against modification by the type system) and have its address taken. The complement to lvalue 
+is rvalue, that is, an expression that identifies something that may not be modified 
+or have its address taken, such as a value returned from a function (&f(x) is an 
+error because f(x) is an rvalue).
+
+
+#include <iostream>
+
+int main()
+{
+    int&& rref{ 5 }; // because we're initializing an r-value reference with a literal, a temporary with value 5 is created here
+    rref = 10;
+    std::cout << rref << '\n';
+
+    return 0;
+}
+
+
+#include <iostream>
+
+void fun(const int &lref) // l-value arguments will select this function
+{
+	std::cout << "l-value reference to const: " << lref << '\n';
+}
+
+void fun(int &&rref) // r-value arguments will select this function
+{
+	std::cout << "r-value reference: " << rref << '\n';
+}
+
+int main()
+{
+	int x{ 5 };
+	fun(x); // l-value argument calls l-value version of function
+	fun(5); // r-value argument calls r-value version of function
+
+	return 0;
+}
+
+
+
+
+
+
+
+Rvalue reference variables are lvalues
+
+Consider the following snippet:
+
+int&& ref{ 5 };
+fun(ref);
+Which version of fun would you expect the above to call: fun(const int&) or fun(int&&)?
+
+The answer might surprise you. This calls fun(const int&).
+
+Although variable ref has type int&&, when used in an expression it is an lvalue (as are all named variables). The type of an object and its value category are independent.
+
+You already know that literal 6 is an rvalue of type int, and int x is an lvalue of type int. Similarly, int&& ref is an lvalue of type int&&.
+
+So not only does fun(ref) call fun(const int&), it does not even match fun(int&&), as rvalue references can’t bind to lvalues.
+
+
+
+int main()
+{
+	int x{};
+
+	// l-value references
+	int& ref1{ x }; // A
+	int& ref2{ 5 }; // B
+
+	const int& ref3{ x }; // C
+	const int& ref4{ 5 }; // D
+
+	// r-value references
+	int&& ref5{ x }; // E
+	int&& ref6{ 5 }; // F
+
+	const int&& ref7{ x }; // G
+	const int&& ref8{ 5 }; // H
+
+	return 0;
+}
+
+B, E, and G won’t compile.
+
+
+
+
