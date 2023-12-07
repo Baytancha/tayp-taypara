@@ -15,3 +15,8 @@ Res goes out of scope. Because res no longer manages a pointer (it was moved to 
 The temporary object is move assigned to mainres. This transfers the dynamically created object stored in the temporary to mainres.
 The assignment expression ends, and the temporary object goes out of expression scope and is destroyed. However, because the temporary no longer manages a pointer (it was moved to mainres), nothing interesting happens here either.
 At the end of main(), mainres goes out of scope, and our final “Resource destroyed” is displayed.
+
+
+The move constructor and move assignment are called when those functions have been defined, and the argument for construction or assignment is an rvalue. Most typically, this rvalue will be a literal or temporary value.
+
+The copy constructor and copy assignment are used otherwise (when the argument is an lvalue, or when the argument is an rvalue and the move constructor or move assignment functions aren’t defined).
