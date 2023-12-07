@@ -1,6 +1,24 @@
 https://web.archive.org/web/20160312193336/https://rmf.io/cxx11/rule-of-zero/
 
 
+Rule of 5 2004 version:
+A class that requires deep copies generally needs:
+
+A constructor to either make an initial allocation or set the pointer to NULL.
+A destructor to delete the dynamically allocated memory.
+A copy constructor to make a copy of the dynamically allocated memory.
+An overloaded assignment operator to make a copy of the dynamically allocated memory.
+
+
+
+
+
+
+
+
+
+
+
 Rule of Three
 What happens when a copy of an object that owns a resource is made? By default a memberwise copy is performed. This means that the internal resource handle the object stores will be copied, ending up with two objects that own the same resource. This is likely to lead to them both trying to release the resource, and catastrophe follows.
 
