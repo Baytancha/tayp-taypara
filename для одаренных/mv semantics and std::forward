@@ -1,1 +1,17 @@
-bgh
+
+
+COPY:
+Inside generateResource(), local variable res is created and initialized with a dynamically allocated Resource, which causes the first “Resource acquired”.
+Res is returned back to main() by value. We return by value here because res is a local variable -- it can’t be returned by address or reference because res will be destroyed when generateResource() ends. So res is copy constructed into a temporary object. Since our copy constructor does a deep copy, a new Resource is allocated here, which causes the second “Resource acquired”.
+Res goes out of scope, destroying the originally created Resource, which causes the first “Resource destroyed”.
+The temporary object is assigned to mainres by copy assignment. Since our copy assignment also does a deep copy, a new Resource is allocated, causing yet another “Resource acquired”.
+The assignment expression ends, and the temporary object goes out of expression scope and is destroyed, causing a “Resource destroyed”.
+At the end of main(), mainres goes out of scope, and our final “Resource destroyed” is displayed.
+
+MOVE:
+Inside generateResource(), local variable res is created and initialized with a dynamically allocated Resource, which causes the first “Resource acquired”.
+Res is returned back to main() by value. Res is move constructed into a temporary object, transferring the dynamically created object stored in res to the temporary object. We’ll talk about why this happens below.
+Res goes out of scope. Because res no longer manages a pointer (it was moved to the temporary), nothing interesting happens here.
+The temporary object is move assigned to mainres. This transfers the dynamically created object stored in the temporary to mainres.
+The assignment expression ends, and the temporary object goes out of expression scope and is destroyed. However, because the temporary no longer manages a pointer (it was moved to mainres), nothing interesting happens here either.
+At the end of main(), mainres goes out of scope, and our final “Resource destroyed” is displayed.
