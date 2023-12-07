@@ -5,6 +5,13 @@ or have its address taken, such as a value returned from a function (&f(x) is an
 error because f(x) is an rvalue).
 
 
+Non-const l-value references can only bind to non-const l-values.
+Const l-value references can bind to non-const l-values, const l-values, and r-values.
+R-value references can only bind to r-values.
+
+
+
+
 #include <iostream>
 
 int main()
