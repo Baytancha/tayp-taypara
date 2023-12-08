@@ -17,9 +17,11 @@ The assignment expression ends, and the temporary object goes out of expression 
 At the end of main(), mainres goes out of scope, and our final “Resource destroyed” is displayed.
 
 
-The move constructor and move assignment are called when those functions have been defined, and the argument for construction or assignment is an rvalue. Most typically, this rvalue will be a literal or temporary value.
+The move constructor and move assignment are called when those functions have been defined, and the argument for construction or assignment is an rvalue. 
+Most typically, this rvalue will be a literal or temporary value.
 
-The copy constructor and copy assignment are used otherwise (when the argument is an lvalue, or when the argument is an rvalue and the move constructor or move assignment functions aren’t defined).
+The copy constructor and copy assignment are used otherwise 
+(when the argument is an lvalue, or when the argument is an rvalue and the move constructor or move assignment functions aren’t defined).
 
 
 
@@ -54,7 +56,17 @@ In conclusion, the key difference is that an rvalue reference binds only to rval
 This distinction is important for understanding how move semantics and perfect forwarding work in C++
 
 
+///////////////////////////////////////////////////////////////////////////////////////////////
+What happens when a class has deleter copyctor and copyass?
 
+DynamicArray<int> cloneArrayAndDouble(const DynamicArray<int>& arr) // no object created here because arr is an alias
+{
+    DynamicArray<int> dbl(arr.getLength());
+    for (int i = 0; i < arr.getLength(); ++i)
+        dbl[i] = arr[i] * 2;
+
+    return dbl; // temporary object with moved resource returned
+}
 
 
 
