@@ -1,0 +1,119 @@
+struct B {
+     B() { /*might throw*/ }
+};
+
+struct A : B {
+     A() 
+     try : B() { 
+         // ... 
+     } 
+     catch (...) {
+         // handle exceptions thrown from inside A() or by B() 
+     } 
+};
+
+
+void f(int i)
+try
+{
+   if ( i  < 0 ) 
+      throw "less than zero";
+   std::cout << "greater than zero" << std::endl;
+}
+catch(const char* e)
+{
+    std::cout << e << std::endl;
+}
+
+int main() {
+        f(1);
+        f(-1);
+        return 0;
+}
+
+
+
+
+
+For constructors, a function try block encompasses the construction of data members and base-classes.
+
+For destructors, a function try block encompasses the destruction of data members and base-classes. 
+It gets complicated, but for C++11, you have to include noexcept(false) in the declaration of your destructor 
+(or that of a base/member class) or any destruction exception will result in termination at the conclusion of 
+the catch block. It may be possible to prevent this by putting a return statement in the catch block (but this won't work for constructors).
+
+A catch block in a constructor or destructor must throw some exception (or it will implicitly rethrow the caught exception). 
+It is not legal to simply return (at least in constructor's function catch block). Note, however, that you could call exit() 
+or similar, which might make sense in some situations.
+
+A catch block can't return a value, so it doesn't work for functions returning non-void (unless they intentionally terminate 
+the program with exit() or similar). At least that is what I've read.
+
+The catch block for a constructor-function-try can't reference data/base members since they will have either 
+have 1) not been constructed or 2) been destructed prior to the catch. As such, function try blocks are not useful 
+for cleaning up an object's internal state -- the object should already be completely "dead" by the time you get there. 
+This fact makes it very dangerous to use function try blocks in constructors, since it is difficult to police this rule 
+over time if your compiler(s) don't happen to flag it.
+
+
+
+
+class A
+{
+public:
+  A()
+  try {
+    throw 5;
+  }
+  catch (int) {
+    std::cout << "exception thrown\n";
+    //return; <- invalid
+  }
+};
+
+int main()
+{
+  try {
+    A a;
+  }
+  catch (...) {
+    std::cout << "was rethrown";
+  }
+}
+
+It might be useful if you want to catch exceptions from constructor's initializer.
+
+However, if you do catch exception in constructor that way, you have to either rethrow 
+it or throw new exception (i.e. you cannot just normally return from constructor). 
+If you do not rethrow, it just happens implicitly.
+
+class A
+{
+public:
+  A()
+  try {
+    throw 5;
+  }
+  catch (int) {
+    std::cout << "exception thrown\n";
+    //return; <- invalid
+  }
+};
+
+int main()
+{
+  try {
+    A a;
+  }
+  catch (...) {
+    std::cout << "was rethrown";
+  }
+}
+
+
+
+
+
+
+
+
