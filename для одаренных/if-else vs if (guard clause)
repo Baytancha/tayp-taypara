@@ -1,0 +1,24 @@
+If 'a' is a boolean value:
+
+if(a) {SomeCode(a)}else {return false}
+
+That's logically equivalent to:if(!a) {return false}SomeCode(a)
+
+
+So when we talk about what is better - the computer doesn't care. 
+And a compiler is free to make whatever optimizations behind the scenes anyway. None of it matters.
+
+We're just talking about the people side of things. What's easier for us. What we prefer. 
+And some people will tell you that the second version looks nicer. It reduces nesting. 
+And okay, it does. When 'a' is a boolean and the code is super simple it's easy to see that 
+it is equivalent and that when 'a' is true or that when 'a' is false, our code does something.
+
+In the simple cases though - nobody makes a mistake and we wouldn't have bugs.
+
+The difference is that in a scenario like the above, when a isn't a simple boolean, 
+what happens when you 'miss' a guard clause? In the classic-if format, only when the 
+test condition is true do you run 'SomeCode'. In the refactored guard clause style, only when you FAIL an expected condition do you early return.
+
+People are more likely to get the condition they expect right, and miss a failure condition. 
+It's easy to miss. But it's obvious to remember that every single `if` always has a corresponding 
+`else` that is possible, even if the developer misses it. You can glance at this:
