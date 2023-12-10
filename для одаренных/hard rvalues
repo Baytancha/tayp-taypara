@@ -95,3 +95,80 @@ B, E, and G won’t compile.
 
 
 
+
+
+
+
+
+
+An lvalue (so-called, historically, because lvalues could appear on the left-hand side of an assignment expression) designates a function or an object. [Example: If E is an expression of pointer type, then *E is an lvalue expression referring to the object or function to which E points. As another example, the result of calling a function whose return type is an lvalue reference is an lvalue.]
+An xvalue (an “eXpiring” value) also refers to an object, usually near the end of its lifetime (so that its resources may be moved, for example). An xvalue is the result of certain kinds of expressions involving rvalue references. [Example: The result of calling a function whose return type is an rvalue reference is an xvalue.]
+A glvalue (“generalized” lvalue) is an lvalue or an xvalue.
+An rvalue (so-called, historically, because rvalues could appear on the right-hand side of an assignment expression) is an xvalue, a temporary object or subobject thereof, or a value that is not associated with an object.
+A prvalue (“pure” rvalue) is an rvalue that is not an xvalue. [Example: The result of calling a function whose return type is not a reference is a prvalue]
+
+
+
+
+If you can take the address of an expression, the expression is an lvalue.
+If the type of an expression is an lvalue reference (e.g., T& or const T&, etc.), that expression is an lvalue.
+Otherwise, the expression is an rvalue. Conceptually (and typically also in fact), rvalues correspond to temporary objects, 
+such as those returned from functions or created through implicit type conversions. Most literal values (e.g., 10 and 5.3) are also rvalues.
+
+
+
+
+/////////////////////////////////////////////////////////////
+I don't feel that the other answers (good though many of them are) really capture the answer to this particular question. 
+Yes, these categories and such exist to allow move semantics, but the complexity exists for one reason. 
+This is the one inviolate rule of moving stuff in C++11:
+
+Thou shalt move only when it is unquestionably safe to do so.
+That is why these categories exist: to be able to talk about values where 
+it is safe to move from them, and to talk about values where it is not.
+
+In the earliest version of r-value references, movement happened easily. 
+Too easily. Easily enough that there was a lot of potential for implicitly 
+moving things when the user didn't really mean to.
+
+Here are the circumstances under which it is safe to move something:
+When it's a temporary or subobject thereof. (prvalue)
+When the user has explicitly said to move it.
+If you do this:
+
+SomeType &&Func() { ... }
+SomeType &&val = Func();
+SomeType otherVal{val};
+
+What does this do? In older versions of the spec, before the 5 values came in, this would provoke a move. 
+Of course it does. You passed an rvalue reference to the constructor, and thus it binds to the constructor 
+that takes an rvalue reference. That's obvious.
+
+There's just one problem with this; you didn't ask to move it. Oh, you might say that the && should have 
+been a clue, but that doesn't change the fact that it broke the rule. val isn't a temporary because temporaries 
+don't have names. You may have extended the lifetime of the temporary, but that means it isn't temporary; 
+it's just like any other stack variable.
+
+If it's not a temporary, and you didn't ask to move it, then moving is wrong.
+The obvious solution is to make val an lvalue. This means that you can't move from it. OK, fine; it's named, so its an lvalue.
+Once you do that, you can no longer say that SomeType&& means the same thing everwhere. You've now made a distinction between 
+named rvalue references and unnamed rvalue references. Well, named rvalue references are lvalues; that was our solution above. 
+So what do we call unnamed rvalue references (the return value from Func above)?
+It's not an lvalue, because you can't move from an lvalue. And we need to be able to move by returning a &&; how else could you 
+explicitly say to move something? That is what std::move returns, after all. It's not an rvalue (old-style), because it can be 
+on the left side of an equation (things are actually a bit more complicated, see this question and the comments below). 
+It is neither an lvalue nor an rvalue; it's a new kind of thing.
+What we have is a value that you can treat as an lvalue, except that it is implicitly moveable from. We call it an xvalue.
+
+Note that xvalues are what makes us gain the other two categories of values:
+A prvalue is really just the new name for the previous type of rvalue, i.e. they're the rvalues that aren't xvalues.
+Glvalues are the union of xvalues and lvalues in one group, because they do share a lot of properties in common.
+So really, it all comes down to xvalues and the need to restrict movement to exactly and only certain places. 
+Those places are defined by the rvalue category; prvalues are the implicit moves, and xvalues are the explicit
+moves (std::move returns an xvalue)
+
+
+
+
+
+
