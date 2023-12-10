@@ -1,0 +1,108 @@
+
+For the purposes of this paper, an abominable function type is the type produced by writing a function type followed by a cv-ref qualifier.
+
+Example:
+
+using regular    = void();
+using abominable = void() const volatile &&;
+
+
+Note that it is not possible to create a function that has an abominable type. Rather, the cv-ref qualifier applies to the implicit 
+*this reference when calling a member function. However, abominable function types are specifically function types, and not member 
+function types. This is evident from the lack of ability to specify the type of class the abominable function would be a member 
+of, when declaring such a function type.
+
+
+
+
+
+
+
+
+
+class rectangle {
+  public:
+    using int_property = int() const;  // common signature for several methods
+
+    int_property top;
+    int_property left;
+    int_property bottom;
+    int_property right;
+    int_property width;
+    int_property height;
+
+    // Remaining details elided
+};
+
+
+Here we declare a rectangle class with accessors for common properties of a rectangle, which would doubtlessly compute the value, 
+rather than store directly, for some of these properties. This is a very common object oriented example so I will not labour the details. 
+The key is that the class author wants to guarantee a regularity of declaration for all member access functions, so forms an abominable 
+function type with the desired const qualified access, to ensure that all functions have identical signatures.
+
+Note that this example applies to function types in general, not just abominable function types. However, most other examples of using function 
+types do not apply to abominable function types, due to their inability to form references and pointers. While the above idiom with regular 
+function types is highly unusual, even in tutorials on the esoteric, I am not aware of any such coverage that actually uses abominable function
+types when demonstrating the idiom, so even this usage is yet to be proved as more than theoretical
+
+
+
+class some_type
+{
+  void foo() & ; 
+  void foo() && ;
+  void foo() const & ;
+  void foo() const && ;
+};
+
+int main()
+{
+  some_type t; 
+  t.foo(); // some_type::foo() & 
+  some_type().foo(); // some_type::foo() && 
+}
+
+
+struct some_type // syntactically, == may refer to object some_type t, or may be a free standing function taking some_type t as a parameter
+{
+  bool operator == (int) const; 
+};
+bool operator == (const some_type& l, long r); 
+void g()
+{
+  some_type t;
+  int i = 42;
+  t == i; // Какую функцию вызвать?
+}
+
+
+
+
+class some_type
+{
+  void foo() & ; // 1
+  void foo() && ; // 2
+  void foo() const & ; // 3
+  void foo() const && ; // 4
+};
+
+void g()
+{
+  some_type().foo();
+}
+
+Для этого вызова подходят 3 кандидата: 2, 3 и 4. Для разрешения между ними в стандарте существуют особые правила, 
+которые на бумаге выглядят довольно многословными и сложными, но суть которых сводится к тому, что выбирается функция, 
+наиболее точно соответствующая типу.
+Попробую пересказать цепь рассуждений по выводу кандидата, как я ее себе представляю. В данном примере выражение 
+some_type() — rvalue. Потенциально могут быть вызваны функции 2, 3 или 4. Но rvalue reference квалифицированные 
+функции более “соответствуют” типу исходного выражения (rvalue), чем const &. Остаются варианты 2 и 4. 
+В четвертом варианте для полного соответствия нужно сделать дополнительное действие над исходным типом — добавить const, 
+тогда как во 2ом варианте никаких дополнительных действий не требуется. Поэтому в итоге будет выбран вариант 2.
+
+
+
+
+
+
+
