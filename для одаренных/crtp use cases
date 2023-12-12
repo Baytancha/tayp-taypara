@@ -64,6 +64,73 @@ I have simplified how this works somewhat, by explaining everything as if there 
 
 
 
+struct Object;
+
+
+struct Property
+{
+	Property(char const* name, int initial, Object* owner) :
+		m_name(name), m_value(initial), m_owner(owner) {}
+
+	char const* m_name;
+	Object* m_owner;
+	int m_value;
+};
+
+
+struct Object
+{
+	Property Prop(char const* name, int initial)
+	{
+		return Property(name, initial, this);
+	}
+	///other methods elided
+
+
+};
+
+
+struct Widget : Object
+{
+
+	Property Height{ Prop("Height", 10) };
+	Property Width{ Prop("Width", 10) };
+};
+
+
+
+
+int main()
+try {
+
+
+	Widget x;
+
+	Property z = x.Prop("bork", 12);
+
+	std::cout << x.Height.m_owner << "\n";
+
+	std::cout << &x << "\n";
+
+	return 0;
+
+}
+catch (std::exception& e) {
+	std::cerr << e.what() << '\n';
+}
+catch (...) {
+	std::cerr << "something bad happened\n";
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
