@@ -1,0 +1,39 @@
+
+template<typename D>
+struct PropertyHelper
+{
+    Property Prop(char const* name, int initial)
+    { return Property(name, initial, static_cast<D*>(this)); }
+};
+
+struct Widget : Object, PropertyHelper<Widget>
+{
+    Property Height{ Prop("Height", 10) };
+    Property Width{ Prop("Width", 10) };
+};
+
+
+
+
+
+
+struct Object
+{
+
+///other methods elided
+
+
+Property Prop(char const* name, int initial)
+    { return Property(name, initial, this); }
+
+};
+
+struct Widget : Object
+{
+    Property Height{ Prop("Height", 10) };
+    Property Width{ Prop("Width", 10) };
+};
+
+
+
+Can you tell me if this wouldn't work, and why? Wouldn't the Property Prop function directly get the pointer to the base object Object without the need for templates and conversions?
