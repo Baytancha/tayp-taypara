@@ -169,6 +169,19 @@ moves (std::move returns an xvalue)
 
 
 
+n the example in the lesson, std::move_if_noexcept(my_pair) returns an lvalue because std::pair's move constructor is not noexcept 
+(because CopyClass's copy constructor is potentially throwing). This causes std::pair's copy constructor to be called, 
+which copies both the CopyClass and MoveClass members.
+
+However, if CopyClass's copy constructor is made noexcept (and the throw statement removed), then std::move_if_noexcept(my_pair) 
+will return an rvalue. This causes std::pair's move constructor to be used instead, which will copy CopyClass and move MoveClass, leading to increased efficiency.
+So I now agree, it does make sense to make your copy constructors noexcept if they are nonthrowing.
 
 
+Hi, If I understood correctly, the lesson says that std::move_if_noexcept will basically just check the argument's (in this case, my_pair) m
+ove constructor for the noexcept specifier. Std::pair's move constructor defined at the top does not have the noexcept specifier, 
+but the lesson states that the problem is in the fact that CopyClass doesn't have a noexcept move constructor.
+Can you please clarify? Shouldn't checking std::pair's constructors be the only check?
+Does this mean that std::move_if_noexcept "digs" deeper into the argument class, beyond its constructors, 
+until it finds out if all member objects' move constructor are noexcept?
 
