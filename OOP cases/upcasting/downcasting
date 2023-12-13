@@ -1,0 +1,72 @@
+class Parent {
+public:
+  void sleep() {}
+};
+
+class Child: public Parent {
+public:
+  void gotoSchool(){}
+};
+
+int main( ) 
+{ 
+  Parent parent;
+  Child child;
+
+  // upcast - implicit type cast allowed
+  Parent *pParent = &child; 
+
+  // downcast - explicit type case required 
+  Child *pChild =  (Child *) &parent;
+
+  pParent -> sleep();
+  pChild -> gotoSchool();
+    
+  return 0; 
+}
+
+
+
+
+
+Downcasting
+The opposite process, converting a base-class pointer (reference) to a derived-class pointer (reference) is called downcasting. 
+  Downcasting is not allowed without an explicit type cast. The reason for this restriction is that the is-a relationship is not, 
+  in most of the cases, symmetric. A derived class could add new data members, and the class member functions that used these data members wouldn't apply to the base class.
+
+As in the example, we derived Child class from a Parent class, adding a member function, gotoSchool(). It wouldn't make sense to apply 
+  the gotoSchool() method to a Parent object. However, if implicit downcasting were allowed, we could accidentally assign the address 
+  of a Parent object to a pointer-to-Child
+
+Child *pChild =  &parent; // actually this won't compile
+        // error: cannot convert from 'Parent *' to 'Child *'
+and use the pointer to invoke the gotoSchool() method as in the following line.
+
+pChild -> gotoSchool();
+Because a Parent isn't a Child (a Parent need not have a gotoSchool() method), the downcasting in 
+  the above line can lead to an unsafe operation.
+
+C++ provides a special explicit cast called dynamic_cast that performs this conversion. 
+  Downcasting is the opposite of the basic object-oriented rule, which states objects of a derived class, can always be assigned to variables of a base class.
+One more thing about the upcasting:
+Because implicit upcasting makes it possible for a base-class pointer (reference) to refer to a base-class 
+  object or a derived-class object, there is the need for dynamic binding. That's why we have virtual member functions.
+
+Pointer (Reference) type: known at compile time.
+Object type: not known until run time.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
