@@ -56,8 +56,63 @@ Pointer (Reference) type: known at compile time.
 Object type: not known until run time.
 
 
+int main( ) 
+{ 
+  Parent *pParent = new Parent;
+  Parent *pChild = new Child;
+    
+  Child *p1 = (Child *) pParent;  // #1
+  Parent *p2 = (Child *) pChild;  // #2
+  return 0; 
+}
+
+Type cast #1 is not safe because it assigns the address of a base-class object (Parent) to a derived class (Child) pointer. 
+So, the code would expect the base-class object to have derived class properties such as gotoSchool() method, and that is false. 
+Also, Child object, for example, has a member classes that a Parent object is lacking.
+
+Type case #2, however, is safe because it assigns the address of a derived-class object to a base-class pointer. 
+In other words, public derivation promises that a Child object is also a Parent object.
 
 
+
+
+Child *p = dynamic_cast<Child *>(pParent)
+This code is asking whether the pointer pParent can be type cast safely to the type Child *.
+
+It returns the address of the object, if it can.
+It returns 0, otherwise.
+
+
+
+How do we use the dynamic_cast?
+
+void f(Parent* p) {
+  Child *ptr = dynamic_cast<Child*>(p);
+   if(ptr) { 
+    // we can safely use ptr
+  } 
+}
+In the code, if (ptr) is of the type Child or else derived directly or indirectly from the type Child, the dynamic_cast converts 
+the pointer p to a pointer of type Child. Otherwise, the expression evaluates to 0, the null pointer.
+
+In other words, we want to check if we can use the passed in pointer p before we do some operation on a child class 
+object even though it's a pointer to base class.
+
+"The need for dynamic_cast generally arises because we want perform derived class operation on a derived class object, 
+but we have only a pointer-or reference-to-base." -Scott Meyers
+
+
+
+
+
+
+
+
+
+
+
+
+https://www.bogotobogo.com/cplusplus/upcasting_downcasting.php
 
 
 
