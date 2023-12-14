@@ -1,0 +1,26 @@
+#include <iostream>
+struct A{
+    virtual void foo() { std::cout << "A::foo()" << std::endl; }
+    int *a_vtable_ptr;
+    // First, save value of A's vtable pointer in a separate variable.
+    A() { a_vtable_ptr = *(int**)this; }
+};
+
+struct B:A{
+    virtual void foo() { std::cout << "B::foo()" << std::endl; }
+    void callBase(void (A::*f)()){
+        int *my_vtable_ptr = *(int**)this;
+        // Then modify vtable pointer of given object to one that corresponds to class A.
+        *(int**)this = a_vtable_ptr;
+        (this->*f)(); // Call the method as usual.
+        // Restore the original vtable pointer.
+        *(int**)this = my_vtable_ptr;
+    }
+};
+
+// Function main() is not modified.
+int main(){
+    B* p=new B();
+    void (A::*f)() = &A::foo;
+    p->callBase(f);
+}
