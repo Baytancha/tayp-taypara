@@ -1,0 +1,25 @@
+std::false_type is used as a building block in type traits and is defined as std::integral_constant<bool, false> 
+(which I will skip over here). It's definition boils down to something like this (simplified):
+
+struct false_type {
+    static constexpr bool value = false;
+    constexpr operator bool() const noexcept { return value; }
+    // There is more here, but it doesn't really matter for your question
+};
+Similarly:
+
+struct true_type {
+    static constexpr bool value = true;
+    constexpr operator bool() const noexcept { return value; }
+    // There is more here, but it doesn't really matter for your question
+};
+It is used to represent the values false and true as types. This is useful in type traits where you let a class template 
+inherit from either std::false_type or std::true_type for different (partial) specializations, depending on some condition 
+met by the template argument. Doing so allows one to test whether a given type satisfies the condition of the type trait 
+and to obtain a compile time constant value indicating the result through access to the static value member which is inherited 
+from either std::false_type or std::true_type or alternative through conversion of an instance of the type trait using the conversion operator.
+
+What you are showing here is a simple type trait which always (for all T) evaluates to std::false_type. It is used in static_asserts
+that should always fail when the template they are located in is instantiated. This is necessary, because a static_assert that does 
+not dependent on a template parameter is triggered already at the point of definition, rather than the point of instantiation, therefore
+making every program containing something like static_assert(false); ill-formed.
