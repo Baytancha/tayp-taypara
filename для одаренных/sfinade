@@ -1,0 +1,137 @@
+#include <iostream>
+using namespace std;
+
+template <typename T> void foo(typename T::type) { cout << "1st" << endl; }
+template <typename T> void foo(T) { cout << "2nd" << endl; }
+
+struct MyStruct {
+    using type = int;
+};
+
+int main() {
+    foo<MyStruct>(2);  // ok - calls first version
+    foo<int>(2);       // also ok - calls second version
+}
+
+
+struct Test {
+  typedef int foo;
+};
+
+template <typename T>
+void f(typename T::foo) {}  // Definition #1
+
+template <typename T>
+void f(T) {}  // Definition #2
+
+int main() {
+  f<Test>(10);  // Call #1.
+  f<int>(10);   // Call #2. Without error (even though there is no int::foo)
+                // thanks to SFINAE.
+  return 0;
+}
+
+
+
+
+One important thing to note is that SFINAE, like its name suggests, only happens during substitution. 
+Essentially it means that, like above, providing an error during function matching (aka overload resolution) 
+is OK and the compiler will continue on its journey to find the proper function. However, failure inside a 
+function’s body will yield an unrecoverable compiler error, afterwhich the compiler will not continue to search for other functions.
+
+
+
+template <typename Container>
+void zoo(const Container& container) {  // 1st version
+    auto it = container.begin();
+}
+
+template <typename NonContainer>
+void zoo(NonContainer&& non_container) {}  // 2nd version
+
+int main() {
+    std::less<int> l;
+
+    // take a const-reference to ensure 1st version is called; If we used 'l'
+    // the 2nd version would be preferred with NonContainer == std::less<int>&
+    const std::less<int>& r = l;
+
+    zoo(r);  // ERROR: no member named 'begin' in 'std::less<int>';
+             // Compiler will *not* attempt to use the 2nd version of zoo
+}
+
+
+// this is an actual complete implementation of std::enable_if found in std
+// header <type_traits>
+template <bool Condition, typename T = void>
+struct enable_if {
+    // No 'type' here, so any attempt to use it will fail substitution
+};
+
+// partial specialization for when Condition==true
+template <typename T>
+struct enable_if<true, T> {
+    using type = T;
+};
+
+If B is true, std::enable_if has a public member typedef type, equal to T; otherwise, there is no member typedef.
+
+This metafunction is a convenient way to leverage SFINAE prior to C++20's concepts, in particular for conditionally 
+removing functions from the candidate set based on type traits, allowing separate function overloads or specializations based on those different type traits.
+std::enable_if can be used in many forms, including:
+
+
+as an additional function argument (not applicable to operator overloads),
+as a return type (not applicable to constructors and destructors),
+as a class template or function template parameter.
+The behavior of a program that adds specializations for std::enable_if is undefined.
+
+If B is true, std::enable_if has a public member typedef type, equal to T; otherwise, there is no member typedef.
+
+This metafunction is a convenient way to leverage SFINAE prior to C++20's concepts, in particular for conditionally removing 
+functions from the candidate set based on type traits, allowing separate function overloads or specializations based on those different type traits.
+
+std::enable_if can be used in many forms, including:
+as an additional function argument (not applicable to operator overloads),
+as a return type (not applicable to constructors and destructors),
+as a class template or function template parameter.
+The behavior of a program that adds specializations for std::enable_if is undefined.
+
+
+// T must be an enum type.
+// Second template argument is only used to enforce T's type, therefore it
+// doesn't have a name and it is not used.
+template <typename T,
+          typename = typename enable_if<std::is_enum<T>::value, void>::type>
+void bar(T t) {}
+
+enum Enum1 { A, B };
+enum class Enum2 { C, D };
+
+int main() {
+    bar(A);
+    bar(Enum2::C);
+    bar(1); // compile error - "no matching function for call to 'bar(int)'"
+}
+
+alternative:
+template <typename T>
+typename std::enable_if<std::is_enum<T>::value, void>::type bar2(T t) {}
+
+// Rest unchanged.
+
+
+
+
+
+enable_if	                                                              static_assert()
+Allows complicated overload rules without template specialization	     Forces compilation to fail when a criteria was not met
+Takes place during function matching	                                Only takes place after overload resolution, when a function has been selected
+Long, harder to parse compilation errors	                             Compile error is user-defined (2nd parameter to static_assert())
+
+
+
+
+
+
+
