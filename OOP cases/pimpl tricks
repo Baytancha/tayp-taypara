@@ -1,0 +1,66 @@
+https://www.reddit.com/r/cpp_questions/comments/xtvig8/what_is_this_c_trick_called_it_looks_a_bit_like/
+
+
+#define FILAMENT_UPCAST(CLASS)                                  \
+inline F##CLASS& upcast(CLASS& that) noexcept {                 \
+    return static_cast<F##CLASS &>(that);                       \
+}                                                               \
+inline const F##CLASS& upcast(const CLASS& that) noexcept {     \
+    return static_cast<const F##CLASS &>(that);                 \
+}                                                               \
+inline F##CLASS* upcast(CLASS* that) noexcept {                 \
+    return static_cast<F##CLASS *>(that);                       \
+}                                                               \
+inline F##CLASS const* upcast(CLASS const* that) noexcept {     \
+    return static_cast<F##CLASS const *>(that);                 \
+}
+upcast.h
+
+This casts Camera to FCamera. The FCamera class is defined in a different Camera.h header and FCamera extends Camera and defines all the same member functions but they are not virtual. The bottom of the file also has FILAMENT_UPCAST(Camera), which allows Camera to cast to FCamera.
+
+Camera also extends FilamentAPI, which prevents the caller from instantiating the class directly. Cameras need to be created and destroyed with Engine::createCamera(Entity) and Engine::destroyCameraComponent(Entity).
+
+This is an interesting trick and seems to hide the implementation details similar to how PIMPL does. Does anyone here know if there is a name for this trick?
+
+
+
+
+
+
+
+
+It sounds like a reasonable design.
+
+I thought it probably didn't make much sense because of e.g. the generation of downcast functions called upcast, via a macro instead of as a template:
+
+#define FILAMENT_UPCAST(CLASS)                                      \
+    inline F##CLASS& upcast(CLASS& that) noexcept {                 \
+        return static_cast<F##CLASS &>(that);                       \
+    }                                                               \
+    inline const F##CLASS& upcast(const CLASS& that) noexcept {     \
+        return static_cast<const F##CLASS &>(that);                 \
+    }                                                               \
+    inline F##CLASS* upcast(CLASS* that) noexcept {                 \
+        return static_cast<F##CLASS *>(that);                       \
+    }                                                               \
+    inline F##CLASS const* upcast(CLASS const* that) noexcept {     \
+        return static_cast<F##CLASS const *>(that);                 \
+    }
+With a template the class to cast to needs to be deduced in some other way than a name manipulation, e.g. available via specialization of a traits class.
+
+Off the cuff, like
+
+template< class Public_class >
+auto downcast( Public_class& o )
+    -> auto&
+{ return static_cast<typename Impl_class_of_<Public_class>::type&>( o ); }
+… with the Impl_class_of_ traits class template specialized by each implementation class.
+
+
+
+
+
+
+
+
+
