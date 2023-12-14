@@ -1,0 +1,21 @@
+For anyone who is stuck in C++17 and doesn’t know, you can totally do this design by introspection in C++, it’s just more of a hassle.
+
+You’d need a purpose-made detector metafunction, like such:
+
+template<typename T, typename = void>
+struct has_reserve : std::false_type {};
+
+template<typename T, 
+typename = std::void_t<
+decltype(std::declval<T>().reserve(1))>>
+struct has_reserve : std::true_type {};
+
+template<typename T>
+constexpr inline bool has_reserve_v =
+has_reserve<T>::value;
+
+Then you can:
+
+if constexpr (has_reserve_v<Container<int>>) {
+ // …
+}
