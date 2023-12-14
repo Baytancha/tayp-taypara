@@ -1,0 +1,15 @@
+template<typename T>
+class B {
+public:
+  class Xyz { /*...*/ };  // Type nested in class B<T>
+  typedef int Pqr;        // Type nested in class B<T>
+};
+template<typename T>
+class D : public B<T> {
+public:
+  void g()
+  {
+    typename B<T>::Xyz x;  // Good
+    typename B<T>::Pqr y;  // Good
+  }
+};
