@@ -19,3 +19,11 @@ Then you can:
 if constexpr (has_reserve_v<Container<int>>) {
  // …
 }
+
+The specialization is wrong and should be:
+
+template<typename T>
+struct has_reserve<T, std::void_t<
+    decltype(std::declval<T>().reserve(1))
+>> : std::true_type {};
+
