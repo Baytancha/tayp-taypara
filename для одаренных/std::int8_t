@@ -19,3 +19,24 @@ Unsigned types for holding quantities.
 The 8-bit fixed-width integer types.
 The fast and least fixed-width types.
 Any compiler-specific fixed-width integers -- for example, Visual Studio defines __int8, __int16, etc…
+
+
+sizeof must be able to return the size of an object (in bytes) using a value of type std::size_t. 
+Therefore, the largest object creatable on a system has a size (in bytes) equal to the largest value 
+std::size_t can hold. If it were possible to create a larger object, sizeof would not be able to return 
+its size, as it would overflow the range of std::size_t.
+
+Therefore, any object with a size (in bytes) larger than the largest value an object of type std::size_t 
+can hold is considered ill-formed (and will cause a compile error).
+
+For example, the range of a 4-byte unsigned integral type is 0 to 4,294,967,295. Assuming std::size_t is 4 bytes
+in size, then an object of type std::size_t can hold an integral value from 0 to 4,294,967,295. This means the largest 
+object creatable on such a system is 4,294,967,295 bytes (and calling sizeof on that object would return exactly 4,294,967,295).
+
+
+
+
+
+
+
+
