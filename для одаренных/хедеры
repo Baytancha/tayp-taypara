@@ -78,9 +78,87 @@ because it includes square.h, which has a forward declaration for the function (
 the call to getSquareSides from main.cpp to the definition of getSquareSides in square.cpp).
 
 
+Note that square.h is included from both main.cpp and square.cpp. This means the contents of square.h will be included once into square.cpp and once into main.cpp.
+
+Let’s examine why this happens in more detail. When square.h is included from square.cpp, SQUARE_H is defined until the end of square.cpp. This define prevents square.h from being included into square.cpp a second time (which is the point of header guards). However, once square.cpp is finished, SQUARE_H is no longer considered defined. This means that when the preprocessor runs on main.cpp, SQUARE_H is not initially defined in main.cpp.
+
+The end result is that both square.cpp and main.cpp get a copy of the definition of getSquareSides. This program will compile, but the linker will complain about your program having multiple definitions for identifier getSquareSides!
+
+The best way to work around this issue is simply to put the function definition in one of the .cpp files so that the header just contains a forward declaration:
+
+square.h:
+
+#ifndef SQUARE_H
+#define SQUARE_H
+
+int getSquareSides(); // forward declaration for getSquareSides
+int getSquarePerimeter(int sideLength); // forward declaration for getSquarePerimeter
+
+#endif
+square.cpp:
+
+#include "square.h"
+
+int getSquareSides() // actual definition for getSquareSides
+{
+    return 4;
+}
+
+int getSquarePerimeter(int sideLength)
+{
+    return sideLength * getSquareSides();
+}
+main.cpp:
+
+#include "square.h" // square.h is also included once here
+#include <iostream>
+
+int main()
+{
+    std::cout << "a square has " << getSquareSides() << " sides\n";
+    std::cout << "a square of length 5 has perimeter length " << getSquarePerimeter(5) << '\n';
+
+    return 0;
 
 
+Headers may include other headers 
 
+It’s common that a header file will need a declaration or definition that lives in a different header file. 
+Because of this, header files will often #include other header files.
+
+When your code file #includes the first header file, you’ll also get any other header files that the first 
+header file includes (and any header files those include, and so on). These additional header files are 
+sometimes called transitive includes, as they’re included implicitly rather than explicitly.
+
+The content of these transitive includes are available for use in your code file. However, you generally 
+should not rely on the content of headers that are included transitively (unless reference documentation 
+indicates that those transitive includes are required). The implementation of header files may change over time, 
+or be different across different systems. If that happens, your code may only compile on certain systems, or 
+may compile now but not in the future. This is easily avoided by explicitly including all of the header files 
+the content of your code file requires.
+
+
+The #include order of header files
+
+If your header files are written properly and #include everything they need, the order of inclusion shouldn’t matter.
+
+Now consider the following scenario: let’s say header A needs declarations from header B, but forgets to include it. 
+In our code file, if we include header B before header A, our code will still compile! This is because the compiler 
+will compile all the declarations from B before it compiles the code from A that depends on those declarations.
+
+However, if we include header A first, then the compiler will complain because the code from A will be compiled 
+before the compiler has seen the declarations from B. This is actually preferable, because the error has been surfaced, 
+and we can then fix it.
+
+Best practice
+
+To maximize the chance that missing includes will be flagged by compiler, order your #includes as follows:
+
+The paired header file
+Other headers from your project
+3rd party library headers
+Standard library headers
+The headers for each grouping should be sorted alphabetically (unless the documentation for a 3rd party library instructs you to do otherwise).
 
 
 
