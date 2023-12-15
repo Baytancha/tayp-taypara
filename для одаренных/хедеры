@@ -19,3 +19,72 @@ Doing so can cause naming collisions between source files.
 In a large project it can be hard to avoid one definition rules (ODR) issues.
 Any change to such a .cpp file will cause both the .cpp file and any other .cpp file that includes it to recompile, which can take a long time. Headers tend to change less often than source files.
 It is non-conventional to do so.
+
+
+
+
+
+
+Note that square.h is included from both main.cpp and square.cpp. This means the contents of square.h will be included once into square.cpp and once into main.cpp.
+
+Let’s examine why this happens in more detail. When square.h is included from square.cpp, SQUARE_H is defined until the end of square.cpp. 
+This define prevents square.h from being included into square.cpp a second time (which is the point of header guards). However, once square.cpp is finished, 
+SQUARE_H is no longer considered defined. This means that when the preprocessor runs on main.cpp, SQUARE_H is not initially defined in main.cpp.
+
+The end result is that both square.cpp and main.cpp get a copy of the definition of getSquareSides. This program will compile, but the linker 
+will complain about your program having multiple definitions for identifier getSquareSides!
+
+The best way to work around this issue is simply to put the function definition in one of the .cpp files so that the header 
+just contains a forward declaration:
+
+square.h:
+
+#ifndef SQUARE_H
+#define SQUARE_H
+
+int getSquareSides(); // forward declaration for getSquareSides
+int getSquarePerimeter(int sideLength); // forward declaration for getSquarePerimeter
+
+#endif
+square.cpp:
+
+#include "square.h"
+
+int getSquareSides() // actual definition for getSquareSides
+{
+    return 4;
+}
+
+int getSquarePerimeter(int sideLength)
+{
+    return sideLength * getSquareSides();
+}
+main.cpp:
+
+#include "square.h" // square.h is also included once here
+#include <iostream>
+
+int main()
+{
+    std::cout << "a square has " << getSquareSides() << " sides\n";
+    std::cout << "a square of length 5 has perimeter length " << getSquarePerimeter(5) << '\n';
+
+    return 0;
+}
+
+Now when the program is compiled, function getSquareSides will have just one definition (via square.cpp), 
+so the linker is happy. File main.cpp is able to call this function (even though it lives in square.cpp) 
+because it includes square.h, which has a forward declaration for the function (the linker will connect 
+the call to getSquareSides from main.cpp to the definition of getSquareSides in square.cpp).
+
+
+
+
+
+
+
+
+
+
+
+
