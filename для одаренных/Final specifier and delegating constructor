@@ -27,6 +27,70 @@ Foo foo;
 foo.foo; // == 0
 
 
+Constructors are allowed to delegate (transfer responsibility for) initialization to another constructor from the same class type. 
+This process is sometimes called constructor chaining and such constructors are called delegating constructors.
+
+To make one constructor delegate initialization to another constructor, simply call the constructor in the member initializer list. 
+Applied to our example above:
+
+class Employee
+{
+private:
+    std::string m_name{};
+    int m_id{ 0 };
+
+public:
+    Employee(std::string_view name)
+        : Employee{ name, 0 } // delegate initialization to Employee(std::string_view, int) constructor
+    {
+    }
+
+    Employee(std::string_view name, int id)
+        : m_name{ name }, m_id{ id } // actually initializes the members
+    {
+        std::cout << "Employee " << m_name << " created\n";
+    }
+
+};
+
+int main()
+{
+    Employee e1{ "James" };
+    Employee e2{ "Dave", 42 };
+}
+
+
+The downside of this method is that it sometimes requires duplication of initialization values. 
+In the delegation to the Employee(std::string_view, int) constructor, we need an initialization 
+value for the int parameter. We had to hardcode literal 0, as there is no way to reference the default member initializer.
+
+A few additional notes about delegating constructors. First, a constructor that delegates to 
+another constructor is not allowed to do any member initialization itself. So your constructors 
+can delegate or initialize, but not both.
+
+
+Note that we had Employee(std::string_view) (the constructor with less parameters) delegate to Employee(std::string_view name, int id) 
+(the constructor with more parameters). It is common to have the constructor with fewer parameters delegate to the constructor with more parameters.
+
+If we had instead chosen to have Employee(std::string_view name, int id) delegate to Employee(std::string_view), then that would have left us 
+unable to initialize m_id using id, as a constructor can only delegate or initialize, not both.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 something similar (designated init):
 struct Employee
 {
