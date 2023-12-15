@@ -27,7 +27,7 @@ Foo foo;
 foo.foo; // == 0
 
 
-something similar:
+something similar (designated init):
 struct Employee
 {
     int id {};
