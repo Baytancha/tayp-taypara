@@ -13,3 +13,75 @@ public:
     typename B<T>::Pqr y;  // Good
   }
 };
+
+
+
+
+
+Yes, C++ does support nested templates, also known as template template parameters. This enables a template to take another template as a parameter.
+
+There are different ways to approach nested templates depending on the use case. Here are a few examples:
+
+Use a single template and pick the typedefs from it:
+template<typename T1>
+void print(const T1& container) { 
+    using T2 = typename T1::value_type;
+    using T3 = typename T2::value_type;
+
+    for (auto &e : container)
+        for (auto x : e)
+            std::cout<<x<<' ';
+    std::cout<<'\n';
+}
+In this example, T1 is the template parameter and T2 and T3 are the typedefs picked from it 1.
+
+Use a template template parameter:
+template<
+  template<typename, typename> class T1,
+  template<typename, typename> class T2,
+  typename AllocT1, typename AllocT2, 
+  typename T3
+>
+void print(const T1<T2<T3, AllocT2>, AllocT1> &container) {
+  for (auto &e : container)
+    for (auto x : e)
+      std::cout<<x<<' ';
+  std::cout<<'\n';
+}
+In this example, T1 and T2 are template template parameters, AllocT1 and AllocT2 are allocator types and T3 is the value type 1.
+
+Use a template with a neater solution:
+template<typename T1, 
+         typename T2 = typename T1::value_type,
+         typename T3 = typename T2::value_type>
+T3 print(const T1& container){
+
+  for (auto &e : container)
+    for (auto x : e)
+      std::cout<<x<<' ';
+  std::cout<<'\n';
+
+  return T3();
+}
+In this example, T1, T2, and T3 are the template parameters 1.
+
+These examples demonstrate different ways to use nested templates in C++, whether it's through typedefs, template template parameters, or a more streamlined approach. The choice of which method to use depends on the specific needs of your code.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
