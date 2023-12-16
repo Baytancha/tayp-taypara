@@ -76,6 +76,20 @@ int main()
 
 
 
+Constexpr/consteval function parameters are not constexpr (but can be used as arguments to other constexpr functions)
+
+The parameters of a constexpr function are not constexpr (and thus cannot be used in constant expressions). 
+Such parameters can be declared as const (in which case they are treated as runtime constants), but not constexpr. 
+This is because a constexpr function can be evaluated at runtime (which wouldn’t be possible if the parameters were compile-time constants).
+
+However, an exception is made in one case: a constexpr function can pass those parameters as arguments to another constexpr function, 
+and that subsequent constexpr function can be resolved at compile-time. This allows constexpr functions to still be resolved at 
+compile-time when they call other constexpr functions (including themselves recursively).
+
+Perhaps surprisingly, the parameters of a consteval function are not considered to be constexpr within the function either 
+(even though consteval functions can only be evaluated at compile-time). This decision was made for the sake of consistency.
+
+
 
 
 
