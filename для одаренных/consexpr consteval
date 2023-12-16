@@ -1,3 +1,18 @@
+To be eligible for compile-time evaluation, a function must have a constexpr return type and not call any non-constexpr functions when evaluated at compile-time. 
+Additionally, a call to the function must have constexpr arguments (e.g. constexpr variables or literals).
+
+
+NB: PARAMETERS IN A CONSTEXPR FUNCTION HAVE TO BE NORMAL BECAUSE WE DON'T KNOW IF A CONSTEXPR OR NON-CONSTEXPR ARGUMENT WILL BE PASSED TO THE FUNCTION
+AND THE COMPILER CAN'T CHECK SOMETHING THAY MAY OR MAY NOT BE CONSTEPR (AND YOU ALSO CAN'T ENFORCE A CONSTEXPR-ONLY VERSION OF A FUNCTION)
+
+
+
+
+
+
+
+
+
 Use consteval if you have a function that must run at compile-time for some reason (e.g. performance).
 Unless you have a specific reason not to, a function that can be made constexpr generally should be made constexpr.
 
@@ -8,8 +23,9 @@ Unless you have a specific reason not to, a function that can be made constexpr 
 
 #include <iostream>
 
-constexpr int greater(int x, int y)
+constexpr int greater(int x, int y) // constexpr argument BUT non-constexpr parameter
 {
+//x or y can't be evaluated at compile time or statically asserted
     return (x > y ? x : y);
 }
 
@@ -155,6 +171,63 @@ If your constexpr function requires different behavior for constant and non-cons
 conditionalize the behavior with if (std::is_constant_evaluated()).
 Always test your constexpr functions in a constant context, as they may work when called in a non-constant 
 context but fail in a constant context.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Non-type template parameters are used primarily when we need to pass constexpr values to functions (or class types) 
+so they can be used in contexts that require a constant expression.
+
+The class type std::bitset uses a non-type template parameter to define the number of bits to store because 
+the number of bits must be a constexpr value.
+
+Having to use non-type template parameters to circumvent the restriction that function parameters can’t be 
+constexpr isn’t great. There are quite a few different proposals being evaluated to help address situations like this. 
+I expect that we might see a better solution to this in a future C++ language standard.
+
+
+#include <cmath> // for std::sqrt
+#include <iostream>
+
+template <double D> // requires C++20 for floating point non-type parameters
+double getSqrt()
+{
+    static_assert(D >= 0.0, "getSqrt(): D must be non-negative");
+
+    if constexpr (D >= 0) // ignore the constexpr here for this example
+        return std::sqrt(D); // strangely, std::sqrt isn't a constexpr function (until C++26)
+
+    return 0.0;
+}
+
+int main()
+{
+    std::cout << getSqrt<5.0>() << '\n';
+    std::cout << getSqrt<-5.0>() << '\n';
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
 
 
 
