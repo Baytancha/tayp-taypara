@@ -91,6 +91,40 @@ Perhaps surprisingly, the parameters of a consteval function are not considered 
 
 
 
+#include <iostream>
+
+constexpr int goo(int c)
+{
+    return c;
+}
+
+constexpr int foo(int b)
+{
+    constexpr int b2 { b }; // compile error: b is not a constant expression within foo()
+
+    return goo(b);          // okay: b can still be used as argument to constexpr function goo()
+}
+
+int main()
+{
+    constexpr int a { 5 };
+
+    std::cout << foo(a); // okay: constant expression a can be used as argument to constexpr function foo()
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
