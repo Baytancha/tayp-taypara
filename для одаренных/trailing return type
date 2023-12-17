@@ -21,6 +21,33 @@ auto add(T a, U b) -> decltype(a + b) {
     return a + b;
 }
 
+It's called "trailing return type" (google it) and allows you to postpone saying what the actual type is until after you are done with your args etc.
+
+There many reasons to do that:
+
+Your return type is in the right scope.
+
+Consider:
+
+template<typename T, size_t kIndexSize>
+MyContainer<T, kIndexSize>::const_iterator MyContainer<T, kIndexSize>::find(const T& x) const noexcept { ... }
+Compare with:
+
+template<typename T, size_t kIndexSize>
+auto MyContainer<T, kIndexSize>::find(const T& x) const noexcept -> const_iterator { ... }
+
+Note that now you don't have to say that you are talking about MyContainer<T, kIndexSize>::const_iterator, because already specified 
+that you are implementing a method of MyContainer<T, kIndexSize>.
+
+Your return type can depend on arguments. An example from cppreference: template<class T, class U> auto add(T t, U u) -> decltype(t + u);
+
+Method names are nicely aligned. The return type information is often both ultra-verbose and irrelevant. Moving it to the right allows 
+you to keep the interfaces clean. I wrote an example in this thread here. The name of the function is by far the most important part 
+of the function for the reader, and now it's not shifted by an arbitrarily long return type.
+
+Most of the newer languages (rust, swift, go, zig, typescript, etc.) are generally using trailing return types. 
+I'm happy that we finally got here too.
+
 
 Converting constructors will convert values of braced list syntax into constructor arguments.
 
