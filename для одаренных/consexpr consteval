@@ -279,9 +279,52 @@ int main()
     return 0;
 }
 
+You should define constexpr methods for things that can be logically constant and/or calculable at compile-time. 
+For example std::max is a constexpr function because if you write something like std::max(1, 2); it is obviously 
+evaluated at compile-time. The segment you quote is basically saying that if you use it with non-constexpr arguments 
+it is a normal run-time call. If the language didn't allow a constexpr function to be called at run-time then you would
+have to define another non-constexpr but otherwise identical function, which would be impractical. Also, classes that 
+are only used as values and have no side-effects are good candidates for constexpr constructors and methods. eg a matrix class in a linear algebra library.
+
+Keep in mind that constexpr is a contract of sorts. Don't use it for functions that happen to be constexpr at the time 
+but in a future implementation might need to be changed to non-constexpr. Only use it for functions that are guaranteed 
+to be constexpr indefinitely because what they do is by nature constexpr
+
+
+constexpr and #defines are once again largely different things. Of course a constexpr variable can and should be used in place of #definefor constants, 
+but for functions there simply is no relation between functional macros and constexpr functions.
+
+constexpr functions first and foremost allow you, the programmer, to invoke the function in a constant evaluated context. 
+This means that you can use it e.g. in template arguments or indeed to calculate some constants at compile time and then 
+store them in a constexpr variable.
+
+Notably however, just because a function is marked as constexpr that doesnt mean that it runs at compile time. It can run 
+in a constant evaluated context, but it can also be executed at runtime. (as opposed to consteval, which defines an immediatly 
+
+invoked function that must only be invoked at compiletime and will be replaced with its result)
+
+So yes, it allows you to do work at compile time, allowing for better runtime performance. But its not enforcing anything 
+(except that the function must be eligable to be invoked at compile time)
+
+
+if you forget to add "constexpr" you potentially lose out on performance too.
+
+No, you don't. The compiler is still allowed to compute the value at compile time. And it very often does.
+The difference is that the result of a constexpr function can be used where a constant is required. 
+An "ordinary" function can not be used, even if the result would be available.
+If you try int f() { return 1 + 2; }, of course the compiler knows that it is 3, but you cannot use 
+it as an array size unless you add constexpr.
 
 
 
+
+
+
+
+
+
+
+https://www.reddit.com/r/cpp_questions/comments/14r6208/i_dont_get_why_constexpr_isnt_default/
 
 
 
