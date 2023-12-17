@@ -34,7 +34,10 @@ istream& operator>>(istream& is, Book& dd)
 https://stackoverflow.com/questions/4421706/what-are-the-basic-rules-and-idioms-for-operator-overloading?noredirect=1&lq=1
 
 
-
+operator->() is actually extremely weird. It's not required to return a value_type* -- 
+in fact, it can return another class type, provided that class type has an operator->(), 
+which will then be called subsequently. This recursive calling of operator->()s proceeds 
+until a value_type* return type occurs. Madness! :)
 
 
 
