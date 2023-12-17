@@ -29,3 +29,23 @@ istream& operator>>(istream& is, Book& dd)
     dd = Book(t, a, copy);   // update dd
     return is;
 }
+
+
+https://stackoverflow.com/questions/4421706/what-are-the-basic-rules-and-idioms-for-operator-overloading?noredirect=1&lq=1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
