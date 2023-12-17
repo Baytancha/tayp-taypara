@@ -7,7 +7,10 @@ AND THE COMPILER CAN'T CHECK SOMETHING THAY MAY OR MAY NOT BE CONSTEPR (AND YOU 
 
 
 
-
+"" So it's a trade-off between do you want a function that can be evaluated at either compile-time or runtime 
+but can break if you try and use it in a compile-time context with runtime args (in which case use constexpr). 
+Or do you want to make sure your function can only ever be compile-time used, and want the function to break 
+if you try and use it at runtime at all (in which case use consteval).  ""
 
 
 
@@ -135,18 +138,6 @@ int main()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 Because constexpr functions may be evaluated at compile-time, the compiler must be able to see the full definition of the constexpr 
 function at all points where the function is called. A forward declaration will not suffice, even if the actual function definition 
 appears later in the same compilation unit.
@@ -158,6 +149,27 @@ inline, which makes them exempt from the one-definition rule.
 As a result, constexpr functions are often defined in header files, so they can be #included into any .cpp file that requires the full definition.
 Consteval functions are also implicitly inline for the same reasons.
 
+
+/////////////
+std::array<int, func(3, 4)> foo;
+Note in this case, func above can either be constexpr or consteval. As long as you use const args like (3,4) and not something like (argc,argc).
+
+func(3, 4) must be in a constexpr context to be evaluated as constexpr
+
+/////////////////////
+constexpr int someFunction(bool b)
+{
+    if (b)
+        return someConstexprFcn();
+    else
+        return someNonConstexprFcn();
+}
+
+
+"" So it's a trade-off between do you want a function that can be evaluated at either compile-time or runtime 
+but can break if you try and use it in a compile-time context with runtime args (in which case use constexpr). 
+Or do you want to make sure your function can only ever be compile-time used, and want the function to break 
+if you try and use it at runtime at all (in which case use consteval).  ""
 
 
 The C++ standard says that a constexpr function must return a constexpr value for at least one set of arguments, otherwise it is technically ill-formed. 
@@ -173,6 +185,46 @@ Always test your constexpr functions in a constant context, as they may work whe
 context but fail in a constant context.
 
 
+WHY CONSTEXPT ISN'T THE DEFAULT?
+
+Basically the same question as "why is constexpr not just the default/implicit".
+With constexpr you are saying: "My function is intended to be used in a compile-time context".
+
+E.g. let's say you have a function:
+
+std::array<std::string, 4> fileTypes = { "mp3", "txt", "wav", "m4v" };
+size_t supportedTypeCount()
+{
+    return fileTypes.size();
+}
+Someone might be tempted to use it in a const-evaluated position. E.g.
+
+int main(int argc, const char** argv)
+{
+    std::array<int, supportedTypeCount()> foo;
+}
+This isn't allowed today, even though it technically can be resolved at compile time. So you have to change the function to:
+
+constexpr size_t supportedTypeCount()
+{
+    return fileTypes.size();
+}
+And now your caller can do:
+
+std::array<int, supportedTypeCount()> foo;
+The reason for requiring it to be explicit is because constexpr forms a contract.
+
+What if you, as the library developer, wants to change supportedTypeCount() to now be based on something at runtime. E.g. "isM4VcodecInstalled()"?
+
+So you add the check to your non-constexpr function, and you get a call: "Hey dude! You broke my code! This used to compile, 
+but doesn't anymore!". And you go: "Wth? I never intended for it to be a fixed forever list of types?? This breaks encapsulation!"
+
+If the library developer however put constexpr on the function, then modify the function to be based on runtime behavior, 
+it is a definite breaking change, and the callers will have a legit gripe and can rightfully demand a fix.
+
+So same, if you litter constexpr all over your code, you're making a guarantee that your code can be used in const-evaluated contexts. 
+But what if you want to change the implementation? Now there is a bunch of code that will break as a result of something 
+that you never intended for it to be used in that way.
 
 
 
@@ -183,6 +235,14 @@ context but fail in a constant context.
 
 
 
+
+
+
+
+
+
+
+/////////////////////////////////////////////////////
 
 
 
