@@ -317,6 +317,9 @@ it as an array size unless you add constexpr.
 
 
 
+Constexpr is a guarantee that the function will work in a constexpr context for at least one set of arguments (despite future changes to implementation)
+
+
 
 
 
