@@ -321,6 +321,40 @@ Constexpr is a guarantee that the function will work in a constexpr context for 
 
 
 
+These are exactly what JankoDedic means by "constexpr is a contract." (IME it's also the typical meaning of calling a programming language feature a "contract.")
+
+That is, it's a contract between the API author and the user, not between the programmer and the compiler. 
+It means the API author wrote the function with constexpr in mind, and doesn't plan to change that in minor 
+updates, so the user may bind the result to a constexpr variable and expect that to keep working. In this sense, 
+the presence of constexpr is a restriction on and promise made by the API author.
+
+Finding a single non-synthetic case where anyone would like to explicitly disallow the possibility of constexpr-ness 
+for a function is a tricky challenge
+
+There is certainly very little reason, if any, to forbid the compiler from ever evaluating something at compile time. 
+But this was never the point of constexpr, and more importantly constexpr was never necessary for this!
+
+Compiler optimizers have had permission (and to varying extents, ability) to run code at compile time since long before 
+constexpr existed. The addition of constexpr did not change that- it merely started requiring that ability of the frontend, 
+as an extension to the existing set of "constant expressions."
+
+It seems to me that a lot of C++ programmers hear constexpr and then immediately start thinking about things like your 
+bar(foo(5), 42) example, and thus miss this point: Nothing has ever forbidden the compiler from running a non-constexpr foo(5) 
+at compile time even in C++98 or C, and constexpr was never expected to require it.
+
+Lambdas became implicitly constexpr in C++14, IIRC, and no one died from that.
+
+When you consider this in the API sense of "contract," this has a very clear difference from other functions. 
+Unlike typical inline functions, lambdas are not usually exposed as part of APIs, but rather consumed by them. 
+So there is relatively little reason for anyone to signal that a lambda is intended to be constexpr, or for 
+a change that breaks that to sneak into a minor release.
+
+
+
+
+
+
+
 
 
 
