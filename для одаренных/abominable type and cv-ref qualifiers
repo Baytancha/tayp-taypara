@@ -146,9 +146,21 @@ int main()
 
 
 
+For advanced readers
+
+The above rvalue overload of getName() above is potentially suboptimal from a performance perspective. 
+When the implicit object is an rvalue, we know the object is going to die soon, so instead of returning 
+m_name (which will invoke copy semantics), we should return std::move(m_name), which will invoke move semantics instead.
 
 
 
+auto getName() const && { return std::move(m_name); }       // Since we know the implicit object is an rvalue, use std::move to invoke move semantics
+
+
+First, non-ref-qualified overloads and ref-qualified overloads can not coexist. Use one or the other.
+Second, if only an lvalue-qualified overload is provided (i.e. the rvalue-qualified version is not defined), 
+any call to the function with an rvalue implicit object will result in a compilation error. This provides 
+a useful way to completely prevent use of a function with rvalue implicit objects.
 
 
 
