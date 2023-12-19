@@ -1,0 +1,116 @@
+struct Request {
+    auto send() {
+        struct Response {
+            int list[3]{1,2,3};
+            auto& getList() {
+                return list;
+            }
+        };
+        struct Waitable {
+            auto wait() {
+                return Response{};
+            }
+        };
+        return Waitable{};
+    }
+};
+
+int main() {
+    Request request{};
+    // WRONG: send returns a temporary, of which .wait() returns some response which is a temporary,
+    //        but it's by reference.
+    const auto BAD = request.send().wait().getList();
+}
+
+
+
+
+struct Request {
+    auto send() {
+        struct Response {
+            Response() {
+                std::cout << "Response constructor" << std::endl;
+            }
+            int list[3]{1,2,3};
+            auto& getList() &  {
+                return list;
+            }
+            ~Response() {
+                std::cout << "Response destructor" << std::endl;
+            }
+        };
+        struct Waitable {
+            auto wait() {
+                return Response{};
+            }
+        };
+        return Waitable{};
+    }
+};
+
+int main() {
+    Request request{};
+    // WRONG: send returns a temporary, of which .wait() returns some response which is a temporary,
+    //        but it's by reference.
+    
+    // I can't do the bad thing anymore! try to uncomment this line. wait() returns a temporary,
+    // the method is lvalue-ref qualified, so that means the compiler refuses
+    // const auto BAD = request.send().wait().getList();
+
+    // ignore that response is not const-qualified; I just didn't add `const` overloads.
+    auto response = request.send().wait();
+    // response is an lvalue, I can use getList again!
+    std::cout << response.getList()[0] << std::endl;
+}
+
+
+struct Response {
+    Response() {
+        std::cout << "Response constructor" << std::endl;
+    }
+    int list[3]{1,2,3};
+    auto& getList(this auto& self) {
+        return self.list;
+    }
+    ~Response() {
+        std::cout << "Response destructor" << std::endl;
+    }
+};
+
+struct Request {
+    auto send() {
+        struct Waitable {
+            auto wait() {
+                return Response{};
+            }
+        };
+        return Waitable{};
+    }
+};
+
+int main() {
+    Request request{};
+    // WRONG: send returns a temporary, of which .wait() returns some response which is a temporary,
+    //        but it's by reference.
+    
+    // I can't do the bad thing anymore! try to uncomment this line. wait() returns a temporary,
+    // the method is lvalue-ref qualified, so that means the compiler refuses
+    // const auto BAD = request.send().wait().getList();
+
+    const auto response = request.send().wait();
+    // response is an lvalue, I can use getList again!
+    std::cout << response.getList()[0] << std::endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
