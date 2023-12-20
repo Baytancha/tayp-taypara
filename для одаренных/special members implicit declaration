@@ -1,0 +1,52 @@
+
+REFERENCE MEMBER TURNS OFF DEFAULT COPY CONSTRUCTOR
+
+struct  S {
+S(int xx): x{xx}, z{x} { }
+int x = 0;
+int &z {x};
+
+};
+
+int main() {
+    
+S s(10);
+
+S ss(5);
+
+s = ss;
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+struct  S {
+S(int xx): x{xx}, z{x} { }
+int x = 0;
+int z {x};
+
+};
+
+int main() {
+    
+S s(10);
+
+S ss(5);
+
+s = ss;
+
+}
