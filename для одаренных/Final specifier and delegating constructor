@@ -79,7 +79,15 @@ unable to initialize m_id using id, as a constructor can only delegate or initia
 
 
 
+A conundrum: Redundant constructors vs redundant default values
 
+In the above examples, we used delegating constructors and then default arguments to reduce constructor redundancy. 
+But both of these methods required us to duplicate initialization values for our members in various places. 
+Unfortunately, there is currently no way to specify that a delegating constructor or default argument should use the default member initializer value.
+
+There are various opinions about whether it is better to have fewer constructors (with duplication of initialization values) 
+or more constructors (with no duplication of initialization values). Our opinion is that it’s usually more straightforward 
+to have fewer constructors, even if it results in duplication of initialization values.
 
 
 
