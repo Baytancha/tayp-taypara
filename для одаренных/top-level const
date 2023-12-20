@@ -9,3 +9,24 @@ mistakenly believing that the return value must be used a const as well e.g. con
 
 A similar caveat goes for arguments. Suppose the return value of const size_t get_length(); is always passed to another function 
 baz(get_length());. The argument of baz needs not (and arguably should not) be declared as const size_t but just plain size_t i.e. void baz(size_t);.
+
+
+
+int main()  
+  int x = 5;
+  int y = 6;
+ int* const ptr = &x;
+ptr = &y; // ERROR: TOP-LEVEL CONST (AFFECTS THE POINTER OBJECT)
+
+
+int main() 
+  int x = 5;
+  int y = 6;
+ const int* ptr = &x;
+*ptr = 8; // ERROR: LOW-LEVEL CONST (AFFECTS THE UNDERLYING OBJECT)
+
+  
+    
+
+
+
