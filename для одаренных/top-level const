@@ -26,7 +26,8 @@ int main()
 *ptr = 8; // ERROR: LOW-LEVEL CONST (AFFECTS THE UNDERLYING OBJECT)
 
   
-    
+    Top-level constness applies to the object itself.
+Low-level constness means that the the referenced object is const which makes the referenced object top-level const.
 
 
 
