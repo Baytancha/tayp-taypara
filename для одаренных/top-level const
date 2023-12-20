@@ -1,0 +1,11 @@
+You are allowed to use const there, but Clang-Tidy is also correct in flagging it as ineffective.
+
+The related Q&As under Should useless type qualifiers on return types be used, for clarity?, Benefits of using “const” with scalar type? 
+cover the part of why const is ineffective in this context.
+
+The other part of the question about why "code readability is reduced", that's because a superfluous const qualifier can potentially 
+distract from the core fact that const'ness is not carried over value assignments. It could, for example, tempt the client code into 
+mistakenly believing that the return value must be used a const as well e.g. const size_t val = get_length(); which is not true, as the posted code shows.
+
+A similar caveat goes for arguments. Suppose the return value of const size_t get_length(); is always passed to another function 
+baz(get_length());. The argument of baz needs not (and arguably should not) be declared as const size_t but just plain size_t i.e. void baz(size_t);.
