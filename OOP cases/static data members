@@ -1,0 +1,41 @@
+In C++, when a class member function is declared as static, it means that the function is associated with the class, not an instance of the class. 
+The static member function can be called even if no objects of the class exist. It is independent of any particular object of the class 1.
+
+Here are some key characteristics of static member functions in C++:
+
+A static member function can only access static data members, other static member functions, or any other functions from outside the class.
+Static member functions have a class scope and they do not have access to the this pointer of the class. This is because the 'this' pointer 
+is associated with an object, and static member functions can be called without an object 1.
+Static member functions cannot be declared as const, volatile, or virtual because they don't belong to any instance of the class 3.
+They can be called using the class name followed by the scope resolution operator 1.
+Here's a simple example of a static member function:
+
+class Box {
+    private:
+        static int length;
+        static int breadth;
+        static int height;
+
+    public:
+        static void print() {
+            std::cout << "The value of the length is: " << length << std::endl;
+            std::cout << "The value of the breadth is: " << breadth << std::endl;
+            std::cout << "The value of the height is: " << height << std::endl;
+        }
+};
+
+int Box::length = 10;
+int Box::breadth = 20;
+int Box::height = 30;
+
+int main() {
+    Box::print(); // Call static member function
+    return 0;
+}
+In this example, we have a Box class with three static data members: length, breadth, and height. We also have a static
+member function named print() that prints the values of these members. Note that we can call the print() function using 
+the class name (Box), followed by the scope resolution operator (::), without creating an instance of the class 1.
+
+Static members are often used to keep track of shared data that needs to be the same for all objects of a class. 
+For example, you might use a static data member as a counter to keep track of how many objects of a certain class 
+have been created. This counter can be incremented each time an object is created, giving you a running total of the number of objects 1.
