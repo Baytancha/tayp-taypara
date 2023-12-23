@@ -1,0 +1,42 @@
+In most quarters, class inheritance for the sole purpose of code reuse has fallen out of favor.[citation needed] 
+The primary concern is that implementation inheritance does not provide any assurance of polymorphic substitutability—
+an instance of the reusing class cannot necessarily be substituted for an instance of the inherited class. 
+An alternative technique, explicit delegation, requires more programming effort, but avoids the substitutability 
+issue.[citation needed] In C++ private inheritance can be used as a form of implementation inheritance without substitutability. 
+Whereas public inheritance represents an "is-a" relationship and delegation represents a "has-a" relationship, private 
+(and protected) inheritance can be thought of as an "is implemented in terms of" relationship.[16]
+
+
+
+
+
+
+
+
+
+
+
+class AA {
+public:
+	AA(int x) { }
+};
+
+class AB : private AA {
+public:
+	AB(int x) : AA{ x } { }
+};
+
+void func(AA& ob) {
+}
+
+
+int main()
+try {
+	AA obj(3);
+
+	AB objj(4);
+
+
+	AA* x = &objj; // ERROR: private ctor prevents interface inheritance
+
+	func(objj); // same
