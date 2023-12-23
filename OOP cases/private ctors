@@ -8,7 +8,12 @@ Whereas public inheritance represents an "is-a" relationship and delegation repr
 
 
 
-
+In programming languages that do not support inheritance as a subtyping mechanism, the relationship between a base class and a derived 
+class is only a relationship between implementations (a mechanism for code reuse), as compared to a relationship between types. 
+Inheritance, even in programming languages that support inheritance as a subtyping mechanism, does not necessarily entail behavioral subtyping. 
+It is entirely possible to derive a class whose object will behave incorrectly when used in a context where the parent class is expected; 
+see the Liskov substitution principle.[18] (Compare connotation/denotation.) In some OOP languages, the notions of code reuse and subtyping 
+coincide because the only way to declare a subtype is to define a new class that inherits the implementation of another.
 
 
 
