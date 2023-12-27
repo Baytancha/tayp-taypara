@@ -69,8 +69,12 @@ DynamicArray<int> cloneArrayAndDouble(const DynamicArray<int>& arr) // no object
 }
 
 
+copy elision vs move-construction
+
+https://devblogs.microsoft.com/oldnewthing/20231124-00/?p=109059#comments
 
 
+https://www.reddit.com/r/cpp_questions/comments/12krny3/copy_elision_when_should_i_let_the_compiler/
 
 
 
