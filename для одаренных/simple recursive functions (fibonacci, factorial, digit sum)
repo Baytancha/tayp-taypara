@@ -104,6 +104,46 @@ because sometimes a recursive destructor in a tree could take up a lot of memory
 to functions that calculate by looping and not creating any branched loops, correct?
 
 
+
+
+
+// Tail Recursive Fibonacci
+// implementation
+#include <iostream>
+using namespace std;
+ 
+// A tail recursive function to
+// calculate n th fibonacci number
+int fib(int n, int a = 0, int b = 1)
+{
+    if (n == 0)
+        return a;
+    if (n == 1)
+        return b;
+    return fib(n - 1, b, a + b);
+}
+ 
+// Driver Code
+int main()
+{
+    int n = 9;
+    cout << "fib(" << n << ") = "
+         << fib(n) << endl;
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 Correct, though you can can still use the ternary operator because you still need to evaluate the terminating condition. 
 The difference is compilers treat ternary operators as a statement that returns a type, it's not just a branching structure.
 
