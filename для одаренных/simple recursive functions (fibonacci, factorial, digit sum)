@@ -81,3 +81,31 @@ for (int i = 0; i < 10; ++i) {
 		std::cout << z << "\n";
 
 	}
+
+
+
+TAIL CALL vs NON-TAIL CALL
+
+
+
+Related to the conversation is tail call optimization. There was talk about making TCO a requirement, 
+I don't know where that stands, I think it was dropped. But the major compilers all support TCO. This 
+converts certain recursive function calls into a loop, which means no stack overflow, and a performance 
+improvement because you're not building a stack frame every recurse. Can't force it, and it's not guaranteed.
+
+Many functional languages like Lisp or Haskell require it because that's how you build loops. The recurse simply 
+overwrites the existing stack frame and the instruction register jumps to the beginning of the function. It also 
+means the return only has to go back one frame. Makes sense because when the last statement of a function is the 
+return of a recursive call, the only place you can go is to the return of the prior call, the return of the prior 
+call, the return of the prior call...
+
+A year ago I wrote a red black tree as an exercise and someone told me to write a non recursive destructor as an exercise 
+because sometimes a recursive destructor in a tree could take up a lot of memory. What you speak of is recursion relating 
+to functions that calculate by looping and not creating any branched loops, correct?
+
+
+Correct, though you can can still use the ternary operator because you still need to evaluate the terminating condition. 
+The difference is compilers treat ternary operators as a statement that returns a type, it's not just a branching structure.
+
+
+
