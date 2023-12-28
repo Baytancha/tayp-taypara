@@ -1,0 +1,85 @@
+struct Something
+{
+    int x;       // no default initialization value (bad)
+    int y {};    // value-initialized by default
+    int z { 2 }; // explicit default value
+};
+
+int main()
+{
+    Something s1;             // No initializer list: s1.x is uninitialized, s1.y and s1.z use defaults
+    Something s2 { 5, 6, 7 }; // Explicit initializers: s2.x, s2.y, and s2.z use explicit values (no default values are used)
+    Something s3 {};          // Missing initializers: s3.x is value initialized, s3.y and s3.z use defaults
+
+    return 0;
+}
+
+
+struct Fraction
+{
+	int numerator { }; // we should use { 0 } here, but for the sake of example we'll use value initialization instead
+	int denominator { 1 };
+};
+
+int main()
+{
+	Fraction f1;          // f1.numerator value initialized to 0, f1.denominator defaulted to 1
+	Fraction f2 {};       // f2.numerator value initialized to 0, f2.denominator defaulted to 1
+	Fraction f3 { 6 };    // f3.numerator initialized to 6, f3.denominator defaulted to 1
+	Fraction f4 { 5, 8 }; // f4.numerator initialized to 5, f4.denominator initialized to 8
+
+	return 0;
+}
+
+
+You’ll note that f1 is default initialized and f2 is value initialized, yet the results are the same 
+(numerator is initialized to 0 and denominator is initialized to 1). So which should we prefer?
+
+The value initialization case (f2) is safer, because it will ensure any members with no default values 
+are value initialized (and although we should always provide default values for members, this protects 
+against the case where one is missed).
+
+Preferring value initialization has one more benefit -- it’s consistent with how we initialize objects 
+of other types. Consistency helps prevent errors.
+
+That said, it’s not uncommon for programmers to use default initialization instead of value initialization for class types. 
+This is partly for historic reasons (as value initialization wasn’t introduced until C++11), and partly because there is a 
+similar case (for non-aggregates) where default initialization can be more efficient (we cover this case in 14.9 -- Introduction to constructors).
+
+Therefore, we won’t be militant about enforcing use of value initialization for structs and classes in these tutorials, 
+but we do strongly recommend it.
+
+
+class Foo // Foo is not an aggregate (has private members)
+{
+    int m_x {};
+    int m_y {};
+};
+
+int main()
+{
+    Foo foo { 6, 7 }; // compile error: can not use aggregate initialization
+
+    return 0;
+}
+
+Not allowing class types with private members to be initialized via aggregate initialization makes sense for a number of reasons:
+
+Aggregate initialization requires knowing about the implementation of the class (since you have to know what the members are, and what order they were defined in), 
+which we’re intentionally trying to avoid when we hide our data members.
+If our class had some kind of invariant, we’d be relying on the user to initialize the class in a way that preserves the invariant.
+So then how do we initialize a class with private member variables? The error message given by the compiler for the prior example provides a clue: 
+“error: no matching constructor for initialization of ‘Foo'”
+
+We must need a matching constructor. But what the heck is that?
+
+
+
+
+
+
+
+
+
+
+}
