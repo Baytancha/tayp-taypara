@@ -30,5 +30,52 @@ public:
 
 
 
+So for each action on a Widget, we have to define two functions: one to map from 
+the system’s notion of a callback and one to do our desired action. Consider:
+
+struct Simple_window : Graph_lib::Window {
+ Simple_window{Point xy, int w, int h, const string& title};
+ void wait_for_button(); // simple event loop
+private:
+ Button next_button; // the “Next” button
+ bool button_pushed; // implementation detail
+ static void cb_next(Address, Address); // callback for next_button
+ void next(); // action to be done when next_button is pressed
+}; 
+
+By using a lambda expression (§15.3.3), we can eliminate the need to explicitly declare the mapping function cb_next(). Instead, we define the mapping in 
+Simple_window’s constructor:
+
+Simple_window::Simple_window(Point xy, int w, int h, const string& title)
+ :Window{xy,w,h,title},
+ next_button{Point{x_max()–70,0}, 70, 20, "Next",
+ [](Address, Address pw) { reference_to<Simple_window>
+ (pw).next(); } 
+},
+button_pushed{false}
+{
+ attach(next_button);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
