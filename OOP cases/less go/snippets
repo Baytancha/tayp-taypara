@@ -76,3 +76,56 @@ func main() {
 		sm.Transition()
 	}
 }
+
+
+
+
+
+
+
+
+PS C:\Users\mk> cd GoHello3
+PS C:\Users\mk\GoHello3> go mod init
+go: cannot determine module path for source directory C:\Users\mk\GoHello3 (outside GOPATH, module path must be specified)
+
+Example usage:
+        'go mod init example.com/m' to initialize a v0 or v1 module
+        'go mod init example.com/m/v2' to initialize a v2 module
+
+Run 'go help mod init' for more information.
+PS C:\Users\mk\GoHello3> go mod init example.com/gh
+go: creating new go.mod: module example.com/gh
+PS C:\Users\mk\GoHello3> go run .
+GoHello3.go:6:2: no required module provides package rsc.io/quote; to add it:
+        go get rsc.io/quote
+PS C:\Users\mk\GoHello3> go run .
+GoHello3.go:6:2: no required module provides package rsc.io/quote; to add it:
+        go get rsc.io/quote
+PS C:\Users\mk\GoHello3> go mod tidy
+go: finding module for package rsc.io/quote
+go: downloading rsc.io/quote v1.5.2
+go: found rsc.io/quote in rsc.io/quote v1.5.2
+go: downloading rsc.io/sampler v1.3.0
+go: downloading golang.org/x/text v0.0.0-20170915032832-14c0d48ead0c
+PS C:\Users\mk\GoHello3> go run .
+Don't communicate by sharing memory, share memory by communicating.
+PS C:\Users\mk\GoHello3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
