@@ -1,0 +1,78 @@
+package main
+
+import (
+	"fmt"
+
+	"time"
+)
+
+type State interface { //методы типа интерфейса не совершают операции над его объектами, они принимают произвольные типы
+	Enter()                     // рассматривать в контексте FSM: действие совершается тогда, когда состояние машины поменялось
+	Exit()                      // то же самое. Enter и Exit это действия выполняемые состоянием при переходах
+	Pass_state(l *StateMachine) // внимательно смотреть на аргументы. State не объект, предмет модификации другой
+}
+
+type StateMachine struct {
+	currentState State            //необязательно декларировать методы класса чтобы совершает операции над его объектами. Более дата-ориентированный подход
+	states       map[string]State //реестр исторических состояний автомата
+}
+
+func (sm *StateMachine) setState(s State) { //функция не относится к тому или иному классу, она вызывается всегда тогда когда есть соответствие
+	sm.currentState = s //ее интерфейсу. В данном случае изменяется автомат и вызывается действие, связанное с соответствующим состоянием
+	sm.currentState.Enter()
+}
+
+func (sm *StateMachine) Transition() {
+	sm.currentState.Pass_state(sm) // Функция смотрит на состояние и передает его вместе с автоматом интерфейсной функции для дифференциации
+}
+
+type RedLight struct{} //пустой объект который соответствует интерфейсу и потому приравнивается к State
+
+func (g RedLight) Enter() {
+	fmt.Println("Red light is on. Stop driving.") // здесь конкретизируются действия выполняемые при переходе
+	time.Sleep(time.Second * 5)
+}
+func (g RedLight) Exit() {} //здесь конкретизируются действия выполняемые при переходе (пусто)
+func (g RedLight) Pass_state(l *StateMachine) {
+
+	l.setState(&GreenLight{}) //Transition передает состояние и автомат к Pass_state, а Pass_state передает
+} //пустой объект setState в качестве State. Два перехода нужны потому что на первом переходе происходит дифференциация
+ //а на втором приравнивание к State объекту
+type GreenLight struct{}
+
+func (g GreenLight) Enter() {
+	fmt.Println("Green light is on. You can drive.")
+	time.Sleep(time.Second * 5)
+}
+func (g GreenLight) Exit() {}
+func (g GreenLight) Pass_state(l *StateMachine) {
+	l.setState(&YellowLight{})
+}
+
+type YellowLight struct{}
+
+func (g YellowLight) Enter() {
+	fmt.Println("Yellow light is on. Prepare to stop.")
+	time.Sleep(time.Second * 5)
+}
+func (g YellowLight) Exit() {}
+func (g YellowLight) Pass_state(l *StateMachine) {
+	l.setState(&RedLight{})
+}
+func NewStateMachine(initialState State) *StateMachine {
+	sm := &StateMachine{
+		currentState: initialState,
+		states:       make(map[string]State),
+	}
+
+	sm.currentState.Enter()
+	return sm
+}
+
+func main() {
+	sm := NewStateMachine(&RedLight{})
+
+	for {
+		sm.Transition()
+	}
+}
