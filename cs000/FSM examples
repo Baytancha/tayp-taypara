@@ -1,22 +1,31 @@
 Go:
+package main
+
+import (
+	"fmt"
+
+	"time"
+)
+
 type State interface {
 	Enter()
 	Exit()
 	Update(l *StateMachine)
 }
 type StateMachine struct {
-    currentState State
-    states       map[string]State
+	currentState State
+	states       map[string]State
 }
 
 func (sm *StateMachine) setState(s State) {
 	sm.currentState = s
-  sm.currentState.Enter()
+	sm.currentState.Enter()
 }
 
 func (sm *StateMachine) Transition() {
 	sm.currentState.Update(sm)
 }
+
 type RedLight struct{}
 
 func (g RedLight) Enter() {
@@ -55,17 +64,17 @@ func NewStateMachine(initialState State) *StateMachine {
 		states:       make(map[string]State),
 	}
 
-  sm.currentState.Enter()
-  return sm
+	sm.currentState.Enter()
+	return sm
 }
+
 func main() {
-  sm := NewStateMachine(&RedLight{})
+	sm := NewStateMachine(&RedLight{})
 
 	for {
 		sm.Transition()
 	}
 }
-
 
 
 
