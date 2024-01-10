@@ -112,6 +112,16 @@ Don't communicate by sharing memory, share memory by communicating.
 PS C:\Users\mk\GoHello3>
 
 
+PS C:\Users\mk> cd Try
+PS C:\Users\mk\Try> go mod init github.com/Baytancha/Goproj007
+go: creating new go.mod: module github.com/Baytancha/Goproj007
+PS C:\Users\mk\Try> go run .
+Hello, world.
+PS C:\Users\mk\Try> go install
+PS C:\Users\mk\Try> cd ..
+PS C:\Users\mk> GoProj007
+Hello, world.
+PS C:\Users\mk>
 
 
 
