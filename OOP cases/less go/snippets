@@ -125,7 +125,15 @@ PS C:\Users\mk>
 
 
 
-
+PS C:\Users\mk\Try> cd morestrings
+PS C:\Users\mk\Try\morestrings> go build
+PS C:\Users\mk\Try\morestrings> cd ..
+PS C:\Users\mk\Try> Goproj007
+Hello, world.
+PS C:\Users\mk\Try> go install
+PS C:\Users\mk\Try> Goproj007
+Hello, Go!
+PS C:\Users\mk\Try>
 
 
 
