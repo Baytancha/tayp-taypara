@@ -18,155 +18,15 @@ try {
 	for (int i = 1; i < x + 1; ++i)
 		t.push_back(std::to_string(i));
 
-	for (std::string s : t)
-		std::cout << s << " ";
-
-	std::cout << "\n";
 	fizzbuzz(t);
 	for (std::string s : t)
 		std::cout << s << " ";
 	return 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void fizzbuzz(std::vector<int>& v, std::vector<std::string>& t) {     // -2 = fizz; -1 = buzz; 1=fizzbuzz
-
-
-	for (int i = 2; i < v.size(); i+=3)
-		v[i] = -2;
-
-	for (int i = 4; i < v.size(); i+=5) {
-
-		if (std::stoi(t[i]) % 3 == 0) v[i] = 1;
-		else  v[i] = -1;
-
-	}
-
-}
-
-int main()
-try {
-	int x = 0;
-	std::cin >> x;
-	std::cout << "\n";
-	std::vector<int>v( x );
-	std::vector<std::string>t;
-
-	for (int i = 1; i < x + 1; ++i)
-		t.push_back(std::to_string(i));
-
-	for (std::string s : t)
-		std::cout << s << " ";
-
-	std::cout << "\n";
-
-	fizzbuzz(v,t);
-	
-	for (int i = 0; i < v.size(); ++i) {
-		if (v[i] == 1) t[i] = "fizz buzz";
-
-		if (v[i] == -1) t[i] = "buzz";
-
-		if (v[i] == -2) t[i] = "fizz";
-
-	}
-
-	for (std::string s : t)
-		std::cout << s << " ";
-
-	return 0;
-
-
-
-
-
-
-
-
-void fizzbuzz(std::vector<int>& v) {     // -2 = fizz; -1 = buzz; 1=fizzbuzz
-
-	for (int i = 2; i < v.size(); i+=3)
-		v[i] = -2;
-
-	for (int i = 4; i < v.size(); i+=5) 
-		  v[i] = -1;
-
-	for (int i = 14; i < v.size(); i += 15)
-		v[i] = 1;
-
-}
-
-int main()
-try {
-   
-	int x = 0;
-	std::cin >> x;
-	std::cout << "\n";
-	std::vector<int>v(x);
-	std::vector<std::string>t;
-
-	for (int i = 1; i < x + 1; ++i)
-		t.push_back(std::to_string(i));
-
-	for (std::string s : t)
-		std::cout << s << " ";
-
-	std::cout << "\n";
-
-	fizzbuzz(v);
-
-	for (int i = 0; i < v.size(); ++i) {
-		if (v[i] == 1) t[i] = "fizzbuzz";
-
-		if (v[i] == -1) t[i] = "buzz";
-
-		if (v[i] == -2) t[i] = "fizz";
-
-	}
-
-	for (std::string s : t)
-		std::cout << s << " ";
-
-	return 0;
-
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
+////////////////////////////////////////////////////////////////////////////////
 
 std::string fizzbuzz2(int x) {
-
 	if (x % 15 == 0) return "fizz buzz";
 	else  if (x % 3 == 0) return "fizz";
 	else if (x % 5 == 0) return "buzz";
@@ -175,22 +35,16 @@ std::string fizzbuzz2(int x) {
 
 int main()
 try {
-   
 	int x = 0;
-
 	std::cin >> x;
 	std::cout << "\n";
 	
-	for (int i = 1; i < x+1; ++i) {
+	for (int i = 1; i < x+1; ++i) 
 		std::cout << fizzbuzz2(i) << " ";
 
-	}
-
-
-
+///////////////////////////////////////////////////////////////////////////////
 
 void fizzbuzz3(int n) {
-
 	int threes = 1;
 	int fives = 1;
 
@@ -218,10 +72,46 @@ void fizzbuzz3(int n) {
 
 }
 
+///////////////////////////////////////////////////////////////////////////////
+std::optional <std::string> fizzbuzz4(int x) {
 
+	if (x % 15 == 0) return "fizz buzz";
+	else  if (x % 3 == 0) return "fizz";
+	else if (x % 5 == 0) return "buzz";
+	else return  std::nullopt;
+}
 
+int main()
+try {
+        int x = 0;
+	std::cin >> x;
+	std::cout << "\n";
 
+	for (int i = 1; i < x + 1; ++i) {
+		if (fizzbuzz4(i).has_value())
+			std::cout << fizzbuzz4(i).value() << " ";
+		else std::cout << i << " ";
+	}
+	
+///////////////////////////////////////////////////////////////////////////////
+std::variant <std::string, int> fizzbuzz5(int x) {
+	if (x % 15 == 0) return "fizz buzz";
+	else  if (x % 3 == 0) return "fizz";
+	else if (x % 5 == 0) return "buzz";
+	else return  x;
+}
 
+int main()
+try {
+	int x = 0;
+	std::cin >> x;
+	std::cout << "\n";
+
+	for (int i = 1; i < x + 1; ++i) {
+		if (std::holds_alternative<std::string>(fizzbuzz5(i)))
+			std::cout << std::get<std::string>(fizzbuzz5(i)) << " ";
+		else std::cout << i << " ";
+	}
 
 
 
