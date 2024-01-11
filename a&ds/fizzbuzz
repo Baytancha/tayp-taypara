@@ -1,0 +1,47 @@
+void fizzbuzz(std::vector<int>& v, std::vector<std::string>& t) {     // -2 = fizz; -1 = buzz; 1=fizzbuzz
+
+
+	for (int i = 2; i < v.size(); i+=3)
+		v[i] = -2;
+
+	for (int i = 4; i < v.size(); i+=5) {
+
+		if (std::stoi(t[i]) % 3 == 0) v[i] = 1;
+		else  v[i] = -1;
+
+	}
+
+}
+
+int main()
+try {
+   
+	int x = 0;
+	std::cin >> x;
+	std::cout << "\n";
+	std::vector<int>v( x );
+	std::vector<std::string>t;
+
+	for (int i = 1; i < x + 1; ++i)
+		t.push_back(std::to_string(i));
+
+	for (std::string s : t)
+		std::cout << s << " ";
+
+	std::cout << "\n";
+
+	fizzbuzz(v,t);
+	
+	for (int i = 0; i < v.size(); ++i) {
+		if (v[i] == 1) t[i] = "fizz buzz";
+
+		if (v[i] == -1) t[i] = "buzz";
+
+		if (v[i] == -2) t[i] = "fizz";
+
+	}
+
+	for (std::string s : t)
+		std::cout << s << " ";
+
+	return 0;
