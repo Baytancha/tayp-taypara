@@ -2,3 +2,63 @@ The default rule for type deduction is that reference types can never be the res
 
 https://stackoverflow.com/questions/46560123/understanding-type-deduction-for-universal-references
 
+TYPE OF AN ENTITY VS TYPE AND VALUE CATEGORY OF AN EXPRESSION
+
+ Otherwise, if e is any other expression, decltype(e) produces a type that reflects the type and
+value category of that expression as follows:
+– If e is an lvalue of type T, decltype(e) produces T&.
+– If e is an xvalue of type T, decltype(e) produces T&&.
+– If e is a prvalue of type T, decltype(e) produces T.
+
+decltype can also be useful when the value-producing auto deduction is not sufficient. For
+example, assume we have a variable pos of some unknown iterator type, and we want to create a
+variable element that refers to the element stored by pos. We could use
+auto element = *pos;
+However, this will always make a copy of the element. If we instead try
+auto& element = *pos;
+then we will always receive a reference to the element, but the program will fail if the iterator’s
+operator* returns a value.12 To address this problem, we can use decltype so that the value- or
+reference-ness of the iterator’s operator* is preserved:
+decltype(*pos) element = *pos;
+
+
+
+
+
+
+
+
+
+
+
+
+void g (std::string&& s)
+{
+// check the type of s:
+std::is_lvalue_reference<decltype(s)>::value; // false
+std::is_rvalue_reference<decltype(s)>::value; // true (s as declared)
+std::is_same<decltype(s),std::string&>::value; // false
+std::is_same<decltype(s),std::string&&>::value; // true
+// check the value category of s used as expression:
+std::is_lvalue_reference<decltype((s))>::value; // true (s is an lvalue)
+std::is_rvalue_reference<decltype((s))>::value; // false
+std::is_same<decltype((s)),std::string&>::value; // true (T& signals an lvalue)
+std::is_same<decltype((s)),std::string&&>::value; // false
+}
+
+
+int i = 42; // i has type int
+int const& ref = i; // ref has type int const& and refers to i
+auto x = ref; // x1 has type int and is a new independent object
+decltype(auto) y = ref; // y has type int const& and also refers to i
+The type of y is obtained by applying decltype to the initializer expression, here ref, which is int
+const&. In contrast, the rules for auto type deduction produce type int
+
+
+
+
+
+
+
+
+
