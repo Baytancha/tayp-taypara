@@ -41,6 +41,25 @@ until a value_type* return type occurs. Madness! :)
 
 
 
+OVERLOADING OSTREAM OPERATOR FOR STD VECTOR
+
+template<class T> std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
+{
+	os << "{";
+	for (int i = 0; i < v.size() - 1; ++i)
+		os << ' ' << v[i] << ',';
+	os << ' ' << v[v.size() - 1] << " }";
+	return os;
+}
+
+ std::ostream& operator<<(std::ostream& os, const std::vector<double>& v)
+{
+	os << "[";
+	for (int i = 0; i < v.size() - 1; ++i)
+		os << ' ' << v[i] << ',';
+	os << ' ' << v[v.size() - 1] << "]";
+	return os;
+}
 
 
 
