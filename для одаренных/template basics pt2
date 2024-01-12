@@ -1,0 +1,4 @@
+The default rule for type deduction is that reference types can never be the result of deduction:
+
+https://stackoverflow.com/questions/46560123/understanding-type-deduction-for-universal-references
+
