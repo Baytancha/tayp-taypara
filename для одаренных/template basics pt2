@@ -2,7 +2,30 @@ The default rule for type deduction is that reference types can never be the res
 
 https://stackoverflow.com/questions/46560123/understanding-type-deduction-for-universal-references
 
+
+////
+
 TYPE OF AN ENTITY VS TYPE AND VALUE CATEGORY OF AN EXPRESSION
+
+int z = 10;
+	decltype(auto) zz = z; 
+	decltype(auto) zzz = (z);
+	
+	z = 20;
+
+	std::cout << zz << "\n";
+
+	std::cout << zzz;
+
+
+
+
+
+
+
+
+
+
 
  Otherwise, if e is any other expression, decltype(e) produces a type that reflects the type and
 value category of that expression as follows:
@@ -23,6 +46,10 @@ decltype(*pos) element = *pos;
 
 
 
+
+int x;
+decltype(auto) z = x; // object of type int
+decltype(auto) r = (x); // reference of type int&
 
 
 
