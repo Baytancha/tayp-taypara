@@ -1,0 +1,135 @@
+//Write a template function f() that adds the elements of one vector<T> to 
+//the elements of another; for example, f(v1, v2) should do v1[i] += v2[i] for
+//each element of v1.
+
+template<typename T>
+void vector_add(T&& t, T&& t1) { //accepts any arguments, not just vectors
+
+	int sz = t.size() <= t1.size() ? t.size() : t1.size();
+	
+		for (int i = 0; i < sz; ++i)
+			t[i] += t1[i];
+}
+
+template<typename T>
+void vector_add2(std::vector<T>& t, std::vector<T>& t1) {
+
+	int sz = t.size() <= t1.size() ? t.size() : t1.size();
+
+	for (int i = 0; i < sz; ++i)
+		t[i] += t1[i];
+}
+
+
+template<typename T>
+concept Addable = requires(T a, T b) {
+    a + b;
+};
+
+template<Addable T>
+void vector_add3(std::vector<T>& t, std::vector<T>& t1) {
+
+	int sz = t.size() <= t1.size() ? t.size() : t1.size();
+
+	for (int i = 0; i < sz; ++i)
+		t[i] += t1[i];
+}
+
+
+//template<typename T>
+//requires Addable<T>
+//void vector_add3_1(std::vector<T>& t, std::vector<T>& t1) {
+//
+//	int sz = t.size() <= t1.size() ? t.size() : t1.size();
+//
+//	for (int i = 0; i < sz; ++i)
+//		t[i] += t1[i];
+//}
+
+
+struct SS {
+	int x;
+	double y;
+};
+
+std::ostream& operator<<(std::ostream& os, const SS& d) {
+	return os << d.x << "," << d.y << "\n";
+}
+
+int main()
+try {
+  
+	std::vector<double> dd{ 5.23, 21.8 }; //types must be identical lest compile error occurs
+	std::vector<double> dd1{ 23, 8, 67, 86 };
+
+
+	std::vector<char> cc{ 'd', 't', '5', '.'};
+	std::vector<char> cc1{ 'd', 't', '5', '.' };
+
+	std::vector<SS> ss{ SS{5,4}, SS{3,2} };
+	std::vector<SS> ss1{ SS{53, 6}, SS{32, 1}, SS{1, 1}, SS{56, 31} };
+
+
+	vector_add(std::vector<double> { 5.23, 21.8, 67.9, 80 }, std::vector<double>{ 5.23, 21.8, 67.9, 80 });
+
+
+
+	vector_add2(dd, dd1);
+	for (double d : dd)
+		std::cout << d << " ";
+	std::cout << "\n";
+	for (double d : dd1)
+		std::cout << d << " ";
+	std::cout << "\n";
+
+
+	vector_add2(cc, cc1);
+	for (char d : cc)
+		std::cout << d << " ";
+	std::cout << "\n";
+	for (char d : cc1)
+		std::cout << d << " ";
+	std::cout << "\n";
+
+	vector_add2(ss, ss1); // C2676: no oprator overload for '+='
+	for (SS d : ss)
+		std::cout << d << " ";
+	std::cout << "\n";
+	for (SS d : ss1)
+		std::cout << d << " ";
+
+
+	vector_add3(dd, dd1);
+	for (double d : dd)
+		std::cout << d << " ";
+	std::cout << "\n";
+	for (double d : dd1)
+		std::cout << d << " ";
+	std::cout << "\n";
+
+
+	vector_add3(cc, cc1);
+	for (char d : cc)
+		std::cout << d << " ";
+	std::cout << "\n";
+	for (char d : cc1)
+		std::cout << d << " ";
+	std::cout << "\n";
+
+
+	//vector_add3(ss, ss1); // instant compile error
+	//for (SS d : ss)
+	//	std::cout << d << " ";
+	//std::cout << "\n";
+	//for (SS d : ss1)
+	//	std::cout << d << " ";
+
+
+	return 0;
+}
+catch (std::exception& e) {
+	std::cerr << e.what() << '\n';
+}
+catch (...) {
+	std::cerr << "something bad happened\n";
+}
