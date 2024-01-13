@@ -98,3 +98,48 @@ S<(v)> sv; // #2 produces S<(int&)v>
 
 
 
+
+
+decltype(auto) foo()
+{
+	int m = 1;
+	return (m);
+}
+
+int& fool()
+{
+	int m = 1;
+	return m;
+}
+
+int main()
+try {
+
+	decltype(auto) x = foo();
+	
+	int& x1 = fool();
+
+	std::cout << x1;
+
+	std::cout << std::is_lvalue_reference<decltype(x)>::value; // false
+	std::cout << std::is_rvalue_reference<decltype(x)>::value; // true (s as declared)
+	std::cout << std::is_same<decltype(x), int&>::value; // false
+	std::cout << std::is_same<decltype(x), int&&>::value; // true
+	std::cout << "\n";
+	std::cout << std::is_lvalue_reference<decltype((x))>::value; // true (s is an lvalue)
+	std::cout << std::is_rvalue_reference<decltype((x))>::value; // false
+	std::cout << std::is_same<decltype((x)), int&>::value; // true (T& signals an lvalue)
+	std::cout << std::is_same<decltype((x)), int&&>::value; // false
+
+
+
+
+
+
+
+
+
+
+
+
+
