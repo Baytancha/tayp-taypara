@@ -1,0 +1,50 @@
+template<typename T, typename U>
+class Pair
+{ public:
+	Pair(T t, U u) : tt{ t }, uu{ u } {};
+	T get_first() const { return tt; }
+	U get_second() const { return uu; }
+private:
+	T tt{};
+	U uu{};
+
+};
+
+
+template<typename T, typename U>
+struct Pair2
+{
+	T tt{};
+	U uu{};
+
+};
+
+int main()
+try {
+
+	Pair p1{ int{5}, char{'x'} };
+	Pair2 pp1{ int{5}, char{'x'} };
+
+	Pair p2{ 5, 6 };
+	Pair2 pp2{ 5, 6 };
+
+	Pair p3(int(5), double(6));
+	//Pair2 pp3(int(5), double(6)); // error
+	Pair p4(int(5), double(6));
+
+	Pair2 pp3{ 5, 6 }; //copy assignment
+	p3 = p4;
+	pp2 = pp3;
+
+	Pair p5 = p1; //copy constructor
+	Pair2 pp5 = pp1;
+
+
+	std::cout << p3.get_first() << " " << p3.get_second() << "\n";
+
+	std::cout << pp2.tt << " " << pp2.uu << "\n";
+
+	return 0;
+}
+
+
