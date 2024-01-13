@@ -1,1 +1,49 @@
-vfd
+template<typename T, typename U>
+decltype(auto) vector_mult(std::vector<T>& vt, std::vector<U>& vu)  {     //decltype(auto) to preserve type and value cat
+	int sz = vt.size() <= vu.size() ? vt.size() : vu.size();
+	int sum = 0;
+	for (int i = 0; i < sz; ++i)
+		sum = sum+(vt[i] * vu[i]);
+	return sum;
+}
+
+template<typename T, typename U>
+concept Multipliable = requires(T a, U b) {
+	a * b;
+};
+
+template<typename T, typename U>
+requires Multipliable<T,U>
+decltype(auto) vector_mult2(std::vector<T>& vt, std::vector<U>& vu) {     //decltype(auto) to preserve type and value cat
+	int sz = vt.size() <= vu.size() ? vt.size() : vu.size();
+	int sum = 0;
+	for (int i = 0; i < sz; ++i)
+		sum = sum + (vt[i] * vu[i]);
+	return sum;
+}
+
+int main()
+try {
+
+	
+	std::vector<double> dd{ 5.2, 21.8 }; //types must be identical lest compile error occurs
+	std::vector<int> dd1{ 23, 8, 67, 86 };
+
+
+	std::vector<char> cc{ 'd', 't', '5', '.' };
+	std::vector<char> cc1{ 'd', 't', '5', '.' };
+	//std::vector<std::string> cc1{ "d", "t", "5", "."}; error
+
+	std::cout << vector_mult(dd, dd1) << "\n";
+	std::cout << vector_mult(cc, cc1) << "\n";
+
+
+	std::cout << vector_mult2(dd, dd1) << "\n";
+	std::cout << vector_mult2(cc, cc1) << "\n";
+
+
+	return 0;
+}
+
+
+
