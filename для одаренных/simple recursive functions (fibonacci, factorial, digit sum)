@@ -133,6 +133,35 @@ int main()
 }
 
 
+recursive instantiations of template types:
+template<unsigned N>
+struct count_t;
+
+// Stopping condition.
+template<>
+struct count_t<0>
+{
+  enum { value = 0 };
+};
+
+// General computation.
+template<unsigned N>
+struct count_t
+{
+  enum
+    {
+      value = 1 + count_t<N - 1>::value
+    };
+};
+
+
+void foo()
+{
+  // The array size is a constant.
+  int array[count_t<24>::value];
+}
+
+
 
 
 
