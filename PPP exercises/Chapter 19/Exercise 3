@@ -19,6 +19,11 @@ struct Pair2
 
 };
 
+template <typename T, typename U>
+Pair2(T,U) -> Pair2<T,U>;              //deduction guide y to have CTAD for aggregate classes under C++17
+
+
+
 int main()
 try {
 
@@ -26,7 +31,7 @@ try {
 	Pair2 pp1{ int{5}, char{'x'} };
 
 	Pair p2{ 5, 6 };
-	Pair2 pp2{ 5, 6 };
+	Pair2 pp2{ 5, 6 }; //deduction guide auto generated under C++20
 
 	Pair p3(int(5), double(6));
 	//Pair2 pp3(int(5), double(6)); // error
