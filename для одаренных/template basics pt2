@@ -25,8 +25,6 @@ int z = 10;
 
 
 
-
-
  Otherwise, if e is any other expression, decltype(e) produces a type that reflects the type and
 value category of that expression as follows:
 – If e is an lvalue of type T, decltype(e) produces T&.
@@ -134,6 +132,54 @@ try {
 
 
 
+
+CTAD TYPE DEDUCTION FUNNY CASES
+#include <cstddef>
+#include <cstring>
+#include <iostream>
+#include <string>
+#include <string_view>
+
+template<std::size_t N>
+struct String
+{
+    char carr[N] {};
+
+    String(const char * cstr)
+    {
+        std::memcpy(carr, cstr, N);
+    }
+
+    String(const std::string_view & sv)
+    {
+        std::memcpy(carr, sv.data(), N);
+    }
+
+    constexpr std::size_t size() const
+    {
+        return N;
+    }
+};
+
+// user-defined class template argument deduction guide for string literal
+template<std::size_t N> String(const char (&)[N]) -> String<N-1>;
+
+int main()
+{
+    String s1("hello");
+    static_assert(s1.size() == 5);
+
+    constexpr std::string_view sv("view");
+    String<4> s2(sv);
+    static_assert(s2.size() == 4);
+
+    // Question: How to write class template argument deduction guide
+    //           so that the following lines would compile?
+    // String s3(sv);
+    // static_assert(s3.size() == 4);
+
+    return 0;
+}
 
 
 
