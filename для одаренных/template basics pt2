@@ -181,7 +181,30 @@ int main()
     return 0;
 }
 
+You need guides when the deduction of the type from the arguments is not based on the type of one of those arguments. 
+Initializing a vector from an initializer_list explicitly uses the vector's T, so it doesn't need a guide.
 
+The left side doesn't necessarily specify an actual constructor. The way it works is that, 
+if you use template constructor deduction on a type, it matches the arguments you pass against all deduction guides (actual constructors of the primary template provide implicit guides). If there is a match, it uses that to determine which template arguments to provide to the type.
+
+But once that deduction is done, once the compiler figures out the template parameters for the type, 
+initialization for the object of that type proceeds as if none of that happened. That is, the deduction 
+guide selected does not have to match the constructor selected.
+
+This also means that you can use guides with aggregates and aggregate initialization:
+
+template<typename T>
+struct Thingy
+{
+  T t;
+};
+
+Thingy(const char *) -> Thingy<std::string>;
+
+Thingy thing{"A String"}; //thing.t is a `std::string`.
+So deduction guides are only used to figure out the type being initialized. 
+The actual process of initialization works exactly as it did before, 
+once that determination has been made.
 
 
 
