@@ -1,0 +1,16 @@
+struct Z {
+private:
+    int x;
+public:
+    Z(int xx) : x{xx} { }
+
+    void modify(Z s);
+
+};
+
+void Z::modify(Z s) {
+
+    s.x = 10;
+
+
+}
