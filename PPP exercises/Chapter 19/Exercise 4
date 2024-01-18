@@ -1,1 +1,268 @@
-fg
+struct God {
+
+    std::string name{}, mythology{}, vehicle{}, weapon{};
+    static void print_Gds(God g) {
+        std::cout << " God: " << "[" << g.name << "]" << " Mythology: " << g.mythology
+            << " Vehicle: " << g.vehicle << " Weapon: " << g.weapon << "\n";
+    };
+};
+
+std::ostream& operator<<(std::ostream& os, const God& g) {                            //overloading for print_all fct
+    return os << "God: " << "[" << g.name << "]" << " Mythology: " << g.mythology
+        << " Vehicle: " << g.vehicle << " Weapon: " << g.weapon;
+}
+
+template<typename T>
+class Link {
+
+private:
+    Link* prev;
+    Link* succ;
+public:
+    T value{};
+
+    Link(T v, Link<T>* p = nullptr, Link<T>* s = nullptr)
+        : value{ v }, prev{ p }, succ{ s } { }
+
+    Link* next() const { return succ; }
+    Link* previous() const { return prev; }
+
+    Link<God>* add_ordered(Link<God>* n)  {     //takes a node as arg and inserts it into a new linked list
+        if (n == nullptr) return this;
+        std::vector<std::string> names;
+        names.push_back(n->value.name);
+        std::vector<God> nodes;
+        std::vector<God> temp;
+        temp.push_back(n->value);
+        Link<God>* p = this;
+        Link<God>* clean = p;
+
+        while (p) {
+            names.push_back(p->value.name); //fills up the vectors
+            temp.push_back(p->value);
+            p = p->succ;   
+        }
+      
+        while (clean->succ) { //cleans up previous linked list
+           clean = clean->succ;
+           delete clean->prev;
+        }
+          
+        delete clean; // deletes 1st node
+
+        std::sort(names.begin(), names.end()); // sorts the strings to 
+        //then put God values into the vector in correct order
+
+        for (std::string n : names) {
+            for (int i = 0; i< temp.size(); ++i)
+                if (n == temp[i].name) { nodes.push_back(temp[i]); }
+        }
+
+        Link<God>* ordered = new Link{ nodes[0] };
+        Link<God>* first = ordered; // to return ptr to the 1st element
+        for (int i = 1; i < nodes.size(); ++i) {
+
+            ordered = ordered->add(new Link{ nodes[i] }); //using add() to build up the new linked list
+
+        }
+        return first;
+
+    }
+
+    Link* insert(Link* n)         // insert n before p; return n
+    {
+        if (n == nullptr) return this;  // nothing to insert
+        if (this == nullptr) return n;  // nothing to insert into
+        n->succ = this;               // this comes after n
+        if (prev) prev->succ = n;
+        n->prev = prev;               // this' predecessor becomes n's predecessor
+        prev = n;                       // n becomes this' predecessor
+        return n;
+    }
+
+    Link* add(Link* n)
+    {
+        if (n == nullptr) return this;  // nothing to add
+        if (this == nullptr) return n;  // nothing to add into
+        n->prev = this;               // n comes after this
+        if (succ) succ->prev = n;
+        n->succ = succ;
+        succ = n;
+        return n;
+    }
+
+    Link* erase()                 // remove this object from the list
+    {
+        if (this == nullptr) return nullptr;
+        if (succ) succ->prev = prev;
+        if (prev) prev->succ = succ;
+        return succ;
+    }
+
+    Link* find(T s)   // find s as value in list
+    {
+        Link* p = this;
+        while (p) {
+            if (p->value == s) return p;
+            p = p->next();
+        }
+        return nullptr;
+    }
+
+
+    const Link* cfind(T s) const
+    {
+        if (value == s)
+            return this;
+        else if (succ)
+            return succ->find(s);
+
+        return nullptr;
+    }
+
+    const Link* advance(int n) const
+    {
+        if (0 < n) {
+            if (succ == nullptr) return nullptr;
+
+            return succ->advance(--n);
+        }
+        else if (n < 0) {
+            if (prev == nullptr) return nullptr;
+
+            return prev->advance(++n);
+        }
+        return this;
+    }
+
+    Link* advance(int n) 
+    {
+        if (0 < n) {
+            if (succ == nullptr) return nullptr;
+
+            return succ->advance(--n);
+        }
+        else if (n < 0) {
+            if (prev == nullptr) return nullptr;
+
+            return prev->advance(++n);
+        }
+        return this;
+    }
+
+    //static void print_all(Link<T>)
+    //{
+    //    std::cout << "{ ";
+    //    while (p) {
+    //        std::cout << p->value;
+    //        if (p = p->next()) std::cout << ", ";
+    //    }//    std::cout << " }";
+
+
+};
+
+template<typename T>
+void print_Link(Link<T>* p) {
+    std::cout << "{ ";
+    while (p) {
+        std::cout << p->value;
+        if (p = p->next()) std::cout << ", ";
+    }
+    std::cout << " }";
+}
+
+template<>                               //specialization for the God type
+void print_Link(Link<God>* p) {
+   
+    while (p) {
+        std::cout << p->value;
+        if (p = p->next()) std::cout << "\n";
+    }
+    
+}
+
+Link(const char* v, Link<const char*>* p = nullptr, Link<const char*>* s = nullptr) -> Link<std::string_view>;
+Link(std::string* v, Link<std::string>* p = nullptr, Link<std::string>* s = nullptr)->Link<std::string_view>;
+//User-defined deduction guides do not have to be templates
+
+
+int main()
+try {
+    
+  
+    God Zeus{ "Zeus", "Greek", "", "lightning" };
+    God Odin{ "Odin", "Norse", "Eight-legged flying horse called Sleipner","Spear called Gungnir" };
+
+  auto* norse_gods = new Link{ "Thor" }; // template arg deduction doesn't work fot ptr types;
+
+    norse_gods = norse_gods->insert(new Link{ "Odin" });
+    norse_gods = norse_gods->insert(new Link{ "Zeus" });
+    norse_gods = norse_gods->insert(new Link{ "Freia" });
+    auto* greek_gods = new Link{ "Hera" };
+    greek_gods = greek_gods->insert(new Link{ "Athena" });
+    greek_gods = greek_gods->insert(new Link{ "Mars" });
+    greek_gods = greek_gods->insert(new Link{ "Poseidon" });
+
+    //norse_gods = norse_gods->advance(2);
+
+    print_Link(norse_gods);
+
+    std::cout << "\n";
+    print_Link(greek_gods);
+    std::cout << "\n";
+
+    auto* p = greek_gods->find("Mars"); //you can use decltype(auto) or auto*
+
+    if (p) p->value = "Ares";
+
+    print_Link(greek_gods);
+
+
+    decltype(auto) p2 = norse_gods->find("Zeus");
+
+    if (p2) {
+        if (p2 == norse_gods) norse_gods = p2->advance(1);
+        p2->erase();
+        greek_gods = greek_gods->advance(1);
+        greek_gods = greek_gods->insert(p2);
+        greek_gods = greek_gods->advance(-1);
+    }
+
+
+    print_Link(norse_gods);
+    std::cout << "\n";
+    print_Link(greek_gods);
+    std::cout << "\n";
+    std::cout << "\n";
+
+    auto* new_gods = new Link{ God{"TV"} };
+    new_gods = new_gods->insert(new Link{ God{"SMARTPHONES"} });
+    new_gods = new_gods->insert(new Link{ God{"BURGER"} });
+    new_gods = new_gods->insert(new Link{ God{"VIDEO GAME"} });
+    auto* old_gods = new Link{ God{"Hera"} };
+    old_gods = old_gods->insert(new Link{ God{"Athena"} });
+    old_gods = old_gods->insert(new Link{ God{"Mars"} });
+    old_gods = old_gods->insert(new Link{ God{"Poseidon"} });
+
+
+    print_Link(new_gods);
+    std::cout << "\n";
+    std::cout << "\n";
+    print_Link(old_gods);
+
+    std::cout << "\n";
+    std::cout << "\n";
+
+    new_gods = new_gods->add_ordered(new Link{ God{"FAMILYGUY"} });
+
+    print_Link(new_gods);
+
+
+	return 0;
+}
+catch (std::exception& e) {
+	std::cerr << e.what() << '\n';
+}
+catch (...) {
+	std::cerr << "something bad happened\n";
+}
