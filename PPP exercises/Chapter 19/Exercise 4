@@ -1,15 +1,15 @@
 struct God {
 
     std::string name{}, mythology{}, vehicle{}, weapon{};
-    static void print_Gds(God g) {
-        std::cout << " God: " << "[" << g.name << "]" << " Mythology: " << g.mythology
-            << " Vehicle: " << g.vehicle << " Weapon: " << g.weapon << "\n";
+     void print_Gds(std::ostream& os) {
+        os << " God: " << "[" << name << "]" << " Mythology: " << mythology
+            << " Vehicle: " << vehicle << " Weapon: " << weapon << "\n";
     };
 };
 
-std::ostream& operator<<(std::ostream& os, const God& g) {                            //overloading for print_all fct
-    return os << "God: " << "[" << g.name << "]" << " Mythology: " << g.mythology
-        << " Vehicle: " << g.vehicle << " Weapon: " << g.weapon;
+std::ostream& operator<<(std::ostream& os,  God& g) {  //overloading for print_all fct
+    g.print_Gds(os);
+    return os;
 }
 
 template<typename T>
