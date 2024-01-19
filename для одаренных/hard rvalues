@@ -1,3 +1,27 @@
+Primary categories
+The primary value categories correspond to two properties of expressions:
+
+has identity: it's possible to determine whether the expression refers to the same entity as another expression, such as by comparing addresses of the objects or the functions they identify (obtained directly or indirectly);
+
+can be moved from: move constructor, move assignment operator, or another function overload that implements move semantics can bind to the expression.
+
+Expressions that:
+
+have identity and cannot be moved from are called lvalue expressions;
+have identity and can be moved from are called xvalue expressions;
+do not have identity and can be moved from are called prvalue expressions;
+do not have identity and cannot be moved from are not used.
+
+
+
+
+
+
+
+
+
+
+
 An lvalue is an expression that identifies an object that could in principle be 
 modified (but obviously an lvalue that has a const type is protected against modification by the type system) and have its address taken. The complement to lvalue 
 is rvalue, that is, an expression that identifies something that may not be modified 
