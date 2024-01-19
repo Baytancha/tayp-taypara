@@ -1,0 +1,170 @@
+class Int {
+private:
+    int number{};
+
+public:
+    Int() { };
+    Int (int n) : number(n) { std::cout << "\nctored\n"; }
+
+    int number_() const {  return number; }
+
+    ~Int () {
+        std::cout << "\ndestructed\n";
+    }
+
+    Int (const Int& other)  {
+        number = other.number;
+        std::cout << "\ncopy_ctored\n";
+    }
+
+    Int& operator=(const Int& other) {
+        if (this == &other) return *this;
+        number = other.number;
+        std::cout << "\ncopy_assigned\n";
+        return *this;
+    }
+
+    // Move constructor
+    Int(Int&& other) noexcept  {
+        number = other.number;
+        other.number = 0;
+        std::cout << "\nmove_ctored\n";
+
+    }
+
+    // Move assignment 
+    Int& operator=(Int&& other) noexcept {
+        if (this == &other) return *this; 
+        number = other.number;
+        std::cout << "\nmove_assigned\n";
+        return *this;
+    }
+
+     Int& operator+=(const Int& rhs)
+     {
+         number = number + rhs.number;
+         return *this;
+     }
+
+     Int& operator-=(const Int& rhs)
+     {
+         number = number - rhs.number;
+         return *this;
+     }
+
+     Int& operator*=(const Int& rhs)
+     {
+         number = number * rhs.number;
+         return *this;
+     }
+
+     Int& operator/=(const Int& rhs)
+     {
+         number = number / rhs.number;
+         return *this;
+     }
+
+
+};
+
+//non-members
+Int operator+(const Int& lhs, const Int& rhs) {
+   
+    int sum = lhs.number_() + rhs.number_();
+    Int result(sum);
+    return result;
+}
+
+Int operator*(const Int& lhs, const Int& rhs) {
+
+    int prod = lhs.number_() * rhs.number_();
+    Int result(prod);
+    return result;
+}
+
+Int operator-(const Int& lhs, const Int& rhs) {
+
+    int dif = lhs.number_() - rhs.number_();
+    Int result(dif);
+    return result;
+}
+
+Int operator/(const Int& lhs, const Int& rhs) {
+
+    int prod = lhs.number_() / rhs.number_();
+    Int result(prod);
+    return result;
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Int& g) {                           
+    return os << "Number " << g.number_() << "\n";
+}
+
+
+std::istream& operator>>(std::istream& is, Int& g)
+{
+    int t{};
+    is >> t;
+    g = t;
+    if (!is) {
+        is.clear(std::ios_base::failbit);
+        return is;
+    }
+    return is;
+}
+
+Int&& ret_rval(Int& x) {
+    return std::move(x);
+}
+
+
+int main()
+try {
+    
+    Int x1{5};
+    Int x2{9};
+
+    std::cout << x1 << x2;
+   
+    Int x3 = x1 + x2; // constructor invoked
+
+    std::cout << x3;
+
+    x3 *= x2;
+
+    std::cout << x3;
+
+    x2 = std::move(x3); //move assigned
+
+    std::cout << x2;
+
+    Int x4 = std::move(x2); // move constructed
+
+    std::cout << x4;
+
+
+    Int&& x5 = std::move(x4); // no member functiom invoked?
+
+    std::cout << x5;
+
+    x1 = x5; //copy assigned
+
+    std::cout << x1;
+
+
+    Int x6{ 100 };
+
+    x1 = ret_rval(x6); //move assigned because ret_val returns an unnamed rvalue (xvalue)
+
+    std::cout << x1;
+
+
+	return 0;
+}
+catch (std::exception& e) {
+	std::cerr << e.what() << '\n';
+}
+catch (...) {
+	std::cerr << "something bad happened\n";
+}
