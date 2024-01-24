@@ -1,0 +1,232 @@
+template<typename T, typename U, typename Sum = T> //third template arg to choose the sum type
+decltype(auto) vector_mult(std::vector<T>& vt, std::vector<U>& vu) {     //decltype(auto) to preserve type and value cat
+    int sz = vt.size() <= vu.size() ? vt.size() : vu.size();
+     Sum sum{};
+    for (int i = 0; i < sz; ++i)
+        sum = sum + (vt[i] * vu[i]);
+    return sum;
+}
+
+template<typename T, typename U>
+concept Multipliable = requires(T a, U b) {
+    a* b;
+};
+
+template<typename T, typename U>
+    requires Multipliable<T, U>
+decltype(auto) vector_mult2(std::vector<T>& vt, std::vector<U>& vu) {     //decltype(auto) to preserve type and value cat
+    int sz = vt.size() <= vu.size() ? vt.size() : vu.size();
+    int sum = 0;
+    for (int i = 0; i < sz; ++i)
+        sum = sum + (vt[i] * vu[i]);
+    return sum;
+}
+
+
+template<typename T>
+concept Arifmetic = requires(T a, T b) {
+    a + b && a * b && a/b && a - b;
+};
+
+template<Arifmetic T>
+class Number{
+private:
+    T n{};
+
+public:
+    Number() { };
+    Number(T nn) : n(nn) { std::cout << "\nctored\n"; }
+
+    T number_() const { return n; }
+
+    ~Number() {
+        std::cout << "\ndestructed\n";
+    }
+
+    Number(const Number& other) {
+        n = other.n;
+        std::cout << "\ncopy_ctored\n";
+    }
+
+    Number& operator=(const Number& other) {
+        if (this == &other) return *this;
+        n = other.n;
+        std::cout << "\ncopy_assigned\n";
+        return *this;
+    }
+
+    // Move constructor
+    Number(Number&& other) noexcept {
+        n = other.n;
+        other.n = 0;
+        std::cout << "\nmove_ctored\n";
+
+    }
+
+    // Move assignment 
+    Number& operator=(Number&& other) noexcept {
+        if (this == &other) return *this;
+        n = other.n;
+        std::cout << "\nmove_assigned\n";
+        return *this;
+    }
+
+    template<Arifmetic U>
+    Number& operator+=(const Number<U>& rhs); //declaration of member template to allow operands of different types
+   
+     
+    Number& operator-=(const Number& rhs)
+    {
+        n = n - rhs.n;
+        return *this;
+    }
+
+    Number& operator*=(const Number& rhs)
+    {
+        n = n * rhs.n;
+        return *this;
+    }
+
+   Number& operator/=(const Number& rhs)
+    {
+        n = n / rhs.n;
+        return *this;
+    }
+
+
+};
+
+
+template<Arifmetic T, Arifmetic U>
+Number<T> operator%(const Number<T>lhs, const Number<U>& rhs) {
+
+    decltype(auto) mod = lhs.number_() % rhs.number_();
+    Number<T> result(mod);
+    return result;
+}
+
+template<Arifmetic T, Arifmetic U>
+Number<T> operator+(const Number<T>lhs, const Number<U>& rhs) {
+
+    decltype(auto) sum = lhs.number_() + rhs.number_();
+    Number<T> result(sum);
+    return result;
+}
+
+
+template<Arifmetic T, Arifmetic U>
+Number<T> operator*(const Number<T>lhs, const Number<U>& rhs) {
+
+    decltype(auto) prod = lhs.number_() * rhs.number_();
+    Number<T> result(prod);
+    return result;
+}
+
+template<Arifmetic T, Arifmetic U>
+Number<T> operator-(const Number<T>lhs, const Number<U>& rhs) {
+    decltype(auto) dif = lhs.number_() - rhs.number_();
+    Number<T> result(dif);
+    return result;
+    
+}
+
+template<Arifmetic T, Arifmetic U>
+Number<T> operator/(const Number<T>lhs, const Number<U>& rhs) {
+
+    int prod = lhs.number_() / rhs.number_();
+    Number<T> result(prod);
+    return result;
+}
+
+template<Arifmetic T>
+std::ostream& operator<<(std::ostream& os, const Number<T>& g) {
+    return os << "Number " << g.number_();
+}
+
+template<Arifmetic T>
+std::istream& operator>>(std::istream& is, Number<T>& g)
+{
+    double t{};
+    is >> t;
+    g = t;
+
+    if (!is) {
+        is.clear(std::ios_base::failbit);
+        return is;
+    }
+    return is;
+}
+
+
+template<Arifmetic T>
+template<Arifmetic U>                                           // member function template can't be declared with template<Arifmetic T, U>
+Number<T>& Number<T>::operator+=(const Number<U>& rhs)         // Number<T> and Number<U> are different classes, you can't
+{                                                   //access Number<U> private fields from a Number<T> method
+    n = n + rhs.number_(); // conversion happnes here
+    return *this;
+}
+
+
+int main()
+try {
+
+    std::vector <Number<double>> dd{ Number{5.24}, Number{21.89} }; 
+    std::vector<Number<int>> dd1{ 23, 8, 67, 86 }; //implicit conversion 
+
+    std::cout << "THE VECTOR SUM: "<< vector_mult(dd, dd1) << "\n"; // default sum type is double (295.64)
+   
+    std::cout << "THE VECTOR SUM: " << vector_mult<Number<double>, Number<int>, Number<int>>(dd, dd1) << "\n"; 
+                                                                     //sum type is declated to be int (295)
+
+
+
+
+
+    Number z1{ 21 }; // int
+    Number z2{ 64.676 }; // double
+
+    z1 += z2; // result type is int
+
+    std::cout << z1;
+
+    z2 += z1; //result type is double
+
+    std::cout << z2;
+
+
+    //std::cout << 5%5.0; // error
+
+    //std::cout << Number{ 15 } % Number{ 3.00 }; //C3356, C2296 errors, clang diagnostic error: invalid operands to binary expression
+
+
+    std::cout << Number{ 15 } % Number{ 30 } << " " << Number{ 15 } % Number{ 5 } << " " << Number{ 15 } % Number{ 8 };
+ 
+
+    Number x{ 21 };
+
+    Number x1{ 22 };
+
+    Number y{ 21.67 };
+
+    Number z{ 20u };
+
+    Number t{ 'f' };
+   
+    x = x + x1;
+
+    Number res = x + y;
+
+    std::cout << res;
+
+
+
+
+
+	return 0;
+}
+catch (std::exception& e) {
+	std::cerr << e.what() << '\n';
+}
+catch (...) {
+	std::cerr << "something bad happened\n";
+}
