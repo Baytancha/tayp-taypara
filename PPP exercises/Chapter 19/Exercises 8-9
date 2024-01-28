@@ -1,0 +1,292 @@
+#include <string>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#include <list>
+#include <array>
+#include <type_traits>
+#include <optional>
+#include <variant>
+#include <initializer_list>
+#include <string_view> 
+
+template<typename T> 
+class Allocator {
+public:
+    Allocator() {};
+    T* allocate(int n); // allocate space for n objects of type T
+    void deallocate(T* p, int n); // deallocate n objects of type T starting at p
+    void construct(T* p, const T& v); // construct a T with the value v in p
+    void destroy(T* p); // destroy the T in p
+};
+
+template<typename T> 
+T* Allocator<T>::allocate(int n) {
+    if (n > size_t(-1) / sizeof(T))
+        throw std::bad_alloc();
+    auto p = static_cast<T*>(std::malloc(n * sizeof(T)));
+    if (!p) throw std::bad_alloc();
+    return p;
+}
+
+template<typename T>
+void Allocator<T>::deallocate(T* p, int n) { //destroy and deallocate the whole block
+    if (p) {
+  
+        for (int i = 0; i < n; ++i)
+        {
+            p[i].~T(); 
+        }
+        std::free(p); 
+    }
+    else throw std::bad_alloc();
+}
+
+template<typename T>
+void Allocator<T>::construct(T* p, const T& v) {
+    new (static_cast<void*>(p)) T{v};
+}
+
+template<typename T>
+void Allocator<T>::destroy(T* p) {    //destroy particular object
+    if (p) {
+        p->~T();
+        
+    }
+    else throw std::bad_alloc();
+}
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+
+
+template<class T, class A = Allocator<T> >
+class vector {
+    A alloc;                       // use allocate to handle memory for elements
+    int sz;                        // the size
+    T* elem;                       // a pointer to the elements
+    int space;                     // size+free_space
+public:
+    vector() : sz{ 0 }, elem{ nullptr }, space{ 0 } { }
+
+    vector(int s) : sz{ s }, elem{ alloc.allocate(sz)}, space{sz} {
+
+        //for (int i = 0; i < sz; ++i) elem[i] = new T{};
+        for (int i = 0; i < sz; ++i) alloc.construct(&elem[i], T{});
+
+    }
+
+    vector(std::initializer_list<T> lst) // initializer-list constructor
+        :sz{ static_cast<int>(lst.size()) }, elem{ alloc.allocate(sz) }, space{ sz } // uninitialized memory 
+        // for elements
+    {
+        std::copy(lst.begin(), lst.end(), elem); // initialize (using std::copy(); §B.5.2)
+    }
+
+    vector(const vector&);            // copy constructor
+    vector& operator=(const vector&); // copy assignment
+
+    ~vector() { //std::cout << "destructed\n"; 
+        alloc.deallocate(elem, sz); }     // malloc() must be matched with free()
+                                                                         // new with delete
+    T& at(int n);                     // checked access    
+    const T& at(int n) const;         // checked access
+
+    T& operator[ ] (int n);           // access: return reference
+    const T& operator[ ] (int n) const;
+
+    int size() const { return sz; }   // the current size
+    int capacity() const { return space; }
+
+    void resize(int newsize, T def = T());         // growth
+    void push_back(const T& d);
+    void reserve(int newalloc);
+
+};
+
+
+template<class T, class A >
+vector<T, A>::vector(const vector<T, A>& arg)
+// allocate elements, then initialize them by copying
+    :sz{ arg.sz }, elem{ alloc.allocate(sz) }, space{ sz }
+{
+    for (int i = 0; i < sz; ++i)
+        elem[i] = arg.elem[i];         
+}
+
+
+template<class T, class A >
+vector<T, A>& vector<T, A>::operator=(const vector<T, A>& a)
+{
+    if (this == &a) return *this;    // self-assignment, no work needed
+
+    if (a.sz <= space) {             // enough space, no need for new allocation
+        for (int i = 0; i < a.sz; ++i) elem[i] = a.elem[i]; // copy elements
+        sz = a.sz;
+        return *this;
+    }
+
+    T* p = alloc.allocate(a.sz);
+    for (int i = 0; i < a.sz; ++i) alloc.construct(&p[i], a.elem[i]); // copy
+    for (int i = 0; i < a.sz; ++i) alloc.destroy(&elem[i]);        // destroy
+    space = sz = a.sz;             // set new size
+    elem = p;                      // set new elements
+    return *this;                  //  return a self-reference
+}
+
+
+
+template<class T, class A >
+T& vector<T, A>::at(int n)
+{
+    if (n < 0 || sz <= n) throw std::range_error("out of range");
+    return elem[n];
+}
+
+template<class T, class A >
+const T& vector<T, A>::at(int n) const
+{
+    if (n < 0 || sz <= n) throw std::range_error("out of range");
+    return elem[n];
+}
+
+
+//------------------------------------------------------------------------------
+
+template<class T, class A >
+T& vector<T, A>::operator[ ](int n)
+{
+    return elem[n];
+}
+
+template<class T, class A >
+const T& vector<T, A>::operator[ ](int n) const
+{
+    return elem[n];
+}
+
+template<class T, class A>
+void vector<T, A>::reserve(int newalloc)
+{
+    if (newalloc <= space) return;     // never decrease allocation
+    T* p = alloc.allocate(newalloc); // allocate new space
+
+    for (int i = 0; i < sz; ++i) alloc.construct(&p[i], elem[i]); // copy
+   // for (int i = 0; i < sz; ++i) alloc.destroy(&elem[i]);        // objects get destroyed with deallocate()
+
+    if (elem)
+    alloc.deallocate(elem, space);    // deallocate old space
+    elem = p;
+    space = newalloc;
+}
+
+//------------------------------------------------------------------------------
+
+template<class T, class A>
+void vector<T, A>::push_back(const T& val)
+{
+    // no more free space: get more
+    if (space == 0) {
+        reserve(8);
+    }
+    else
+        if (space == sz) {
+            reserve(2 * space);
+        }
+
+    alloc.construct(&elem[sz], val);  // add val at end
+    ++sz;                            // increase the size
+}
+
+//------------------------------------------------------------------------------
+
+template<class T, class A>
+void vector<T, A>::resize(int newsize, T val)
+{
+    reserve(newsize);
+    for (int i = sz; i < newsize; ++i) alloc.construct(&elem[i], val); // construct elements beyond old size but within new size
+    for (int i = newsize; i < sz; ++i) alloc.destroy(&elem[i]); // destroy elements beyond the new size if newsize is smaller than old size
+    sz = newsize;
+}
+
+struct S {
+    S() : x{99} { }
+    S(int xx) : x{ xx } { }
+    int x{ 0 };
+    void print() { std::cout << "I'm here!\n"; }
+};
+
+
+int main()
+try {
+
+
+    {
+        vector<int> vett{ 2,5,73,1 };                 //destructor call
+
+    }
+
+    vector<int> nul; //default ctor
+
+    nul.push_back( 12 ); // size = space = 0
+
+    //std::cout << nul.capacity(); // space = 8, size = 1;
+
+    vector<int> vett { 2,5,73,1 }; //init_list ctor
+
+    vett.push_back(20);
+
+    std::cout << vett.capacity() << " " << vett.size() << "\n";
+
+    vett.resize(7);
+
+    std::cout << vett.capacity() << " " << vett.size() << "\n"; // size and capacity after resizing are equal
+
+    for (int i = 0; i < vett.size(); ++i)
+        std::cout << vett[i] << " ";
+    
+    std::cout << "\n";
+
+    vector<int> vett2 = vett;
+
+    vett2.push_back(1000);
+
+    vett = vett2;
+
+    for (int i = 0; i < vett.size(); ++i)
+        std::cout << vett[i] << " ";
+
+
+    vector<int> vet(6); //single-arg ctor
+
+    vector<S> vet3 (5); //user-type 
+
+    vet3.push_back(S{ 12 });
+
+    for (int i = 0; i < vet3.size(); ++i)
+        std::cout << vet3[i].x << " ";
+
+
+   /* try {
+
+        std::cout << vett.at(5);                    //range-checked access
+
+    }
+    catch (std::runtime_error) {
+        std::cerr << "OUT OF RANGE" << '\n';
+    }*/
+
+
+
+return 0;
+}
+catch (std::exception& e) {
+	std::cerr << e.what() << '\n';
+}
+catch (...) {
+	std::cerr << "something bad happened\n";
+}
