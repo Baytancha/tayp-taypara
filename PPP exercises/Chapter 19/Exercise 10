@@ -6,11 +6,12 @@ public:
   
     explicit UniquePtr(T* ptr = nullptr) : resource{ ptr } {} //explicit to disallow confusing conversions
 
-    //template<std::derived_from<T> U, class Deleter2 = std::default_delete<U> >                   //for conversions between unique_ptrs holding related types
-    //         UniquePtr(UniquePtr<U>, Deleter2&& other) noexcept
-    //        : resource{ other.release() }
-    //         
-    //         { }
+    template<std::derived_from<T> U, class Deleter2 =
+        std::default_delete<U> >
+    UniquePtr(UniquePtr<U, Deleter2>&& other) noexcept
+        : resource{ other.release() }, D{ std::move(other.get_deleter()) }
+    { }
+    
 
     UniquePtr(const UniquePtr<T, Deleter>&) = delete;
     UniquePtr& operator=(const UniquePtr<T, Deleter>&) = delete;
@@ -86,6 +87,7 @@ public:
     int x{ 0 };
     void print() { std::cout << "I'm here!\n"; }
     virtual void bar() { std::cout << "S::bar\n"; }
+    virtual ~S() = default;
 };
 
 class D :public S {
@@ -141,7 +143,9 @@ try {
   
     UniquePtr<D> derived(new D{});
 
-    //UniquePtr<S>based(std::move(derived));
+    UniquePtr<S>based{ std::move(derived) };
+
+    based->bar();
 
 return 0;
 }
