@@ -1,0 +1,153 @@
+template<typename T, class Deleter = std::default_delete<T>>
+class UniquePtr {
+public:
+
+    constexpr UniquePtr() = default; //class members default initialized
+  
+    explicit UniquePtr(T* ptr = nullptr) : resource{ ptr } {} //explicit to disallow confusing conversions
+
+    //template<std::derived_from<T> U, class Deleter2 = std::default_delete<U> >                   //for conversions between unique_ptrs holding related types
+    //         UniquePtr(UniquePtr<U>, Deleter2&& other) noexcept
+    //        : resource{ other.release() }
+    //         
+    //         { }
+
+    UniquePtr(const UniquePtr<T, Deleter>&) = delete;
+    UniquePtr& operator=(const UniquePtr<T, Deleter>&) = delete;
+
+    UniquePtr(UniquePtr&& other)  noexcept
+    {
+        resource = other.release();  //{} doesn't work because of how move ctors work, () doesn't work because compiler
+                                     // assumes it'a operator() function object call 
+        D = std::move(other.get_deleter());
+
+    }
+
+    UniquePtr& operator=(UniquePtr&& other) noexcept
+    {
+        if (&other == this) return *this;
+        reset(other.release()); // other transfers ownership and cleans up, this accepts new resource and cleans up
+        D = std::move(other.get_deleter());
+        return *this;
+    }
+
+    ~UniquePtr() noexcept {  // resource clean-up when unique_ptr object gets destroyed (like exiting block lifetime)
+        D(resource);        //any deleter must satisfy this syntax where ptr is passed into a function and resource is deleted
+    }
+
+    Deleter& get_deleter() noexcept { return D; }
+    const Deleter& get_deleter() const noexcept { return D; }
+
+    void reset(T* ptr = nullptr) noexcept {      //assume control of new resource and clear up memory occupied by old resource
+        T* old_resource = resource;
+        resource = ptr;
+        if (old_resource)  D(old_resource);
+
+    }
+
+    T* release() noexcept {
+        if (resource) {                 //transfer raw pointer to a different unique_ptr
+            T* released = resource;
+            resource = nullptr;
+            return released;
+        }
+    }
+
+    T* operator->() const noexcept {
+        return resource;
+    }
+
+
+    T& operator* () const noexcept {
+        return *resource;
+    }
+
+    // getters
+    T& get_value() const noexcept { return *resource; }
+
+    T* get() const noexcept { return resource; }
+
+    explicit operator bool() const noexcept {
+
+        return resource ? true : false; // () around resource are optional
+    }
+
+
+
+private:
+    T* resource; 
+    /*[[msvc::no_unique_address]]*/ Deleter D{ }; // to save space because deleter object has no state
+};
+
+class S {
+public:
+    S() : x{ 99 } { }
+    S(int xx) : x{ xx } { }
+    int x{ 0 };
+    void print() { std::cout << "I'm here!\n"; }
+    virtual void bar() { std::cout << "S::bar\n"; }
+};
+
+class D :public S {
+public:
+    void der() { std::cout << "derived\n"; }
+    void bar() override { std::cout << "D::bar\n"; }
+};
+
+
+
+
+
+int main()
+try {
+
+    UniquePtr<int> ptr(new int(100));
+
+    if (ptr) std::cout << "valid unique_ptr\n"; 
+
+
+    UniquePtr<int> ptr2 = std::move(ptr); //move ctor
+
+
+    if (ptr) std::cout << "valid unique_ptr\n";
+    else std::cout << "cleaned up\n";
+
+
+    UniquePtr<S> ptr3(new S(20));
+
+
+    ptr3->x = 150;
+
+    std::cout << ptr3->x << "\n";
+
+    *ptr3 = S{ 150 };
+
+    int* pp = new int(20);
+
+    *pp = 10;
+
+    std::cout << *pp << "\n";
+
+    auto ppp = ptr2.get_value(); // get stored value
+    auto* ppp2 = ptr2.get();     // get ptr to resource
+    
+
+    std::cout << ppp << " " << *ppp2;
+
+    UniquePtr<S> temp(new D{});
+
+    temp->bar(); //calls D::bar
+    temp->print();//calls S::print
+  
+    UniquePtr<D> derived(new D{});
+
+    //UniquePtr<S>based(std::move(derived));
+
+return 0;
+}
+catch (std::exception& e) {
+	std::cerr << e.what() << '\n';
+}
+catch (...) {
+	std::cerr << "something bad happened\n";
+}
