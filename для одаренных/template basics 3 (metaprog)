@@ -1,0 +1,57 @@
+template<unsigned p, unsigned d> // p: number to check, d: current divisor
+struct DoIsPrime {
+    static constexpr bool value = (p % d != 0) && DoIsPrime<p, d - 1>::value;
+};
+template<unsigned p> // end recursion if divisor is 2
+struct DoIsPrime<p, 2> {
+    static constexpr bool value = (p % 2 != 0);
+};
+template<unsigned p> // primary template
+struct IsPrime {
+    // start recursion with divisor from p/2:
+    static constexpr bool value = DoIsPrime<p, p / 2>::value;
+};
+// special cases (to avoid endless recursion with template instantiation):
+template<>
+struct IsPrime<0> { static constexpr bool value = false; };
+template<>
+struct IsPrime<1> { static constexpr bool value = false; };
+template<>
+struct IsPrime<2> { static constexpr bool value = true; };
+template<>
+struct IsPrime<3> { static constexpr bool value = true; };
+
+
+Before C++11, it was common to declare the value members as enumerator constants instead of static data
+members to avoid the need to have an out-of-class definition of the static data member (see Section 23.6 on
+page 543 for details). For example:
+enum { value = (p%d != 0) && DoIsPrime<p,d-1>::value };
+
+
+template<unsigned N>
+struct count_t;
+
+// Stopping condition.
+template<>
+struct count_t<0>
+{
+    enum { value = 0 };
+};
+
+// General computation.
+template<unsigned N>
+struct count_t
+{
+    enum
+    {
+        value = 1 + count_t<N - 1>::value
+    };
+};
+
+
+void foo()
+{
+    // The array size is a constant.
+    int array[count_t<24>::value];
+}
+
