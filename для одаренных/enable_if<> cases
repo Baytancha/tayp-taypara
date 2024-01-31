@@ -1,0 +1,52 @@
+struct M {
+
+
+    virtual ~M();
+};
+
+struct M1 : M {
+
+
+
+};
+
+
+
+template<typename T, template<typename, typename> class Cont>
+void foo() { std::cout<<"instantiated\n"; }
+
+
+template<typename T, typename Cont>
+void foo() { std::cout << "instantiated2\n"; }
+
+
+template<typename T, typename = std::enable_if_t<(std::is_polymorphic_v<T>)>>
+void foo2() { std::cout << "enabled\n"; }
+
+
+template<typename T, typename = std::enable_if_t<(std::is_arithmetic_v<T>)>>
+T foo3(T arg) { return arg; }
+
+
+template<typename T,typename C, typename = std::enable_if_t<(std::is_object_v<T>)>, 
+                                typename = std::enable_if_t < (std::is_object_v<C>)> >
+void foo4(T arg1, C arg2) { std::cout << arg1 << " " << arg2 << "\n"; }
+
+
+int main()
+try {
+
+    foo<int, std::vector>();
+
+    foo<int, double>();
+
+
+    //foo2<std::vector>();
+
+    foo2<M>();
+    double x = 100;
+
+    foo3(x);
+
+    foo4("enabled", "or not");
+
