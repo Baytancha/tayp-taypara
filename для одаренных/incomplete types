@@ -1,0 +1,20 @@
+Types can be complete or incomplete, which is a notion closely related to the distinction between a
+declaration and a definition. Some language constructs require complete types, whereas others are
+valid with incomplete types too.
+Incomplete types are one of the following:
+• A class type that has been declared but not yet defined.
+• An array type with an unspecified bound.
+• An array type with an incomplete element type.
+• void
+• An enumeration type as long as the underlying type or the enumeration values are not defined.
+• Any type above to which const and/or volatile are applied.
+All other types are complete. For example:
+class C; // C is an incomplete type
+C const* cp; // cp is a pointer to an incomplete type
+extern C elems[10]; // elems has an incomplete type
+extern int arr[]; // arr has an incomplete type
+...
+class C { }; // C now is a complete type (and therefore cpand elems
+// no longer refer to an incomplete type)
+int arr[10]; // arr now has a complete type
+See Section 11.5 on page 171 for hints about how to deal with incomplete types in templates.
