@@ -69,3 +69,15 @@ Cont& Cont::operator = (Cont&& rhs) {
 
 https://www.reddit.com/r/learnprogramming/comments/drkd1d/c_assignment_operator_copy_constructor_for_a/
 
+
+
+https://mropert.github.io/2019/01/07/copy_swap_20_years/
+
+
+
+
+
+
+
+
+
