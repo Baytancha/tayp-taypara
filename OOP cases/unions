@@ -17,3 +17,36 @@ int main()
 }
 
 https://stackoverflow.com/questions/34581372/unions-in-c11-default-constructor-seems-to-be-deleted
+
+
+struct non_trivially {
+    non_trivially() {};
+};
+
+struct non_trivially2 {
+    non_trivially2() {};
+};
+
+union U {
+    bool dummy{};
+    non_trivially value;
+    non_trivially2 value2;
+};
+
+union U2 {
+    int x = 10;
+    double y;
+    non_trivially value;
+    non_trivially2 value2;
+};
+
+
+int main()
+try {
+
+    U2 x;
+
+    U u;
+    non_trivially n;
+    u.dummy = true;
+    u.value = n;
