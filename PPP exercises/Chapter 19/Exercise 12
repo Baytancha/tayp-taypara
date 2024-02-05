@@ -1,1 +1,118 @@
-fddg
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <memory>
+#include <stdexcept>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#include <list>
+#include <array>
+#include <type_traits>
+#include <optional>
+#include <variant>
+#include <initializer_list>
+#include <string_view>
+
+template<typename T>
+concept readable_writable = requires(T a, T b, std::fstream obj) {
+    a + b; obj << a; obj >> a;
+
+};
+
+template<typename T>
+class File_handle {
+public:
+    File_handle(std::string filename) : name{ filename } {
+        _file.open(filename, std::ios::in | std::ios::out | std::ios::app);
+        if (!_file) {
+            throw std::runtime_error("Failed to open file");
+        }
+    }
+
+    template<readable_writable A>
+    void write(A data) {
+        if (!_file.is_open())
+            _file.open(name, std::ios::in);
+        _file << data;
+        _file.close();
+    }
+
+    template<readable_writable A>
+    void read(A& data)
+    {
+        if (!_file.is_open())
+        _file.open(name, std::ios::in);
+        A t;
+        while (_file >> t)
+            data += t;
+        _file.close();
+    }
+
+    ~File_handle() {
+        if (_file.is_open()) {
+            _file.close();
+        }
+    }
+
+private:
+    std::fstream _file;
+    std::string name;
+};
+
+class S {
+public:
+    S() : x{ 99 } { }
+    S(int xx) : x{ xx } { }
+    int x{ 0 };
+    void print() { std::cout << "I'm here!\n"; }
+    virtual void bar() { std::cout << "S::bar\n"; }
+    virtual ~S() = default;
+};
+
+//S operator+(const S& arg, const S& arg2) { }
+//
+//std::ostream& operator<<(std::ostream& ost, const S& arg) {
+//
+//    ost << arg.x;
+//    return ost;
+//}
+//
+//std::istream& operator>>(std::istream& ist, const S& arg) {
+//
+//    int x{}; 
+//    ist >> x;
+//    return ist;
+//
+//}
+
+int main()
+try {
+
+    File_handle<std::string> s{ "NEWFILE" };
+
+    std::string write = "writer";
+
+    s.write(write);
+
+    std::string val;
+
+    s.read(val);
+
+    std::cout << val;
+
+    File_handle<S> s1{ "NEWFILE2" };
+    S ss = 20;
+
+    s1.write(ss); // compile errors due to concept constraint
+    s1.read(ss);
+
+
+    return 0;
+}
+catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+catch (...) {
+    std::cerr << "something bad happened\n";
+}
