@@ -140,6 +140,95 @@ above with a bad type we'll get a fairly helpful error saying that a suitable fu
 
 
 
+//an example of how overload resolution fails when several candidates with default args are considered
+
+template<class T>
+void fooc(T, typename std::enable_if<std::is_fundamental<T>::value, std::string>::type* = 0) { //takes pointer
+    //second arg is defaulted to zero but if you provide one, it must be a pointer to T
+}
+
+template<class T>
+void fooc(T, typename std::enable_if<std::is_fundamental<T>::value, std::string>::type = 0) { //takes by value
+    //second arg is defaulted to zero or is passed by value. If there are several functions with default enable_ifs
+}   // all args must be provided
+
+
+template<class T>
+void fooc(const T& x, typename std::enable_if<std::is_fundamental<T>::value, T>::type ) { 
+//requires explicitly provided second arg T
+
+}                                     
+
+
+template<typename T>
+std::string ToString1(const T& x, typename std::enable_if<std::is_fundamental<T>::value, T>::type = 0  )
+{
+    //it seems that when enable if is a parameter, second argument must be provided
+}
+
+
+template<typename T, std::enable_if_t<std::is_fundamental<T>::value, int> >
+std::string ToString2(const T& x) {
+    //second arg is provided in the <BRACKETS>, not in the func signature, because it's not necessary for the function
+
+}
+
+
+template<typename T, std::enable_if_t<std::is_fundamental<T>::value, int> = 0 >
+std::string ToString2(const T& x) {
+    //same as the above one, but second template arg can be omitted
+
+}
+
+
+template<typename T, std::enable_if_t<std::is_fundamental<T>::value, std::string> >
+std::string ToString2(const T& x) {
+    //second arg is provided in the <BRACKETS>, not in the func signature, because it's not necessary for the function
+
+}
+
+
+template<typename T>
+auto ToString3(const T& x)
+-> std::enable_if_t<std::is_fundamental<T>::value, std::string> 
+
+{ //cleaner interface  
+}  
+
+
+int main()
+try {
+     
+    std::cout<< DoToString<SimpleClass>();
+    std::string x = "fds";
+
+    fooc<int>(2,&x);
+
+    fooc<int>(2, x);
+
+    fooc<int>(2,10);
+
+    ToString1<int>(10);
+
+    ToString2<int,6>(10); // for some reason fits both int and char variants
+
+    ToString2<int, 9>(10);
+
+    ToString2<int>(10);
+
+    ToString3<int>(20);
+
+
+    return 0;
+}
+catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+catch (...) {
+    std::cerr << "something bad happened\n";
+}
+
+
 
 
 
