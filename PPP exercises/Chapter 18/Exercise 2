@@ -1,0 +1,65 @@
+char* findx(const char* s, const char* x) {
+
+	const char* t_s = s;  // for counting chars
+
+	int s_count = 0;
+	while (*t_s != '\0') {
+		++s_count;
+		++t_s;
+	}
+	++s_count;
+
+	const char* t_x = x;
+	int x_count = 0;
+	while (*t_x != '\0') {
+		++x_count;
+		++t_x;
+	}
+const char* ts = s; // for tracking the s[i] in the main for loop
+	int count = 0;
+	int address_x = 0;
+	for (int i = 0; i < s_count; ++i) {
+		address_x = i;
+		const char* tss = ts;
+		const char* txx = x;
+		for (int z = 0; z < x_count; ++z) {
+			if (s_count <= z + i) {
+				return nullptr;
+			}
+		    tss += z;
+			if (*tss == *txx) { ++count; 
+			}
+			else count = 0;
+			++txx;
+			tss -= z;
+		}
+		if (count == x_count) { break; } //searching for the first occurence only
+		++ts;	
+	}
+	const char* rtrn = s;
+	rtrn += address_x;
+	char* p = const_cast<char*>(rtrn);
+	return p;
+}
+
+int main()
+try {
+    
+	char d[] = "Find it, and find it now too fast";
+	char w[] = "now";
+	const char* n = findx(d, w);
+	std::cout << "The first occurence if the word " << w << " is at: " << n;
+
+
+    return 0;
+
+}
+catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+catch (...) {
+    std::cerr << "something bad happened\n";
+}
+
+
+
