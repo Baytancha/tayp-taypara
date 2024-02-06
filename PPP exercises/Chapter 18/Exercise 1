@@ -18,8 +18,25 @@ char* strrdup(const char* s) {
 	return p;
 }
 
-char* pp = strrdup("HeLLO");
+int main()
+try {
+    
+	char* pp = strrdup("Where's my money Frank");
 
 
-    for (int i = 0;pp[i] != '\0'; i++)
-        std::cout << pp[i];
+    /*for (int i = 0;pp[i] != '\0'; i++)
+        std::cout << pp[i];*/
+
+
+	std::cout << pp; // cout know not to read beyond null
+
+
+    return 0;
+
+}
+catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+catch (...) {
+    std::cerr << "something bad happened\n";
+}
