@@ -132,9 +132,16 @@ char* zz = d;
 char* ddd = zz; // it's alright, chat* ddd points to  the stack object that char* zz also points to 
 
 
+char d[] = "nnower";
 
+const char* zet = d;
+++zet;
+++zet;
+++zet;
 
-
+//cout knows how to print both arrays and pointers to them
+std::cout << zet; // prints ''wer''
+std::cout << d; // prints ''nower''  
 
 
 
