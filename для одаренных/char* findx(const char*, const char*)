@@ -1,0 +1,173 @@
+char* findx(const char* s, const char* x) {
+
+	const char* t_s = s;  // for counting chars in s
+	int s_count = 0;
+	while (*t_s != '\0') {
+		++s_count;
+		++t_s;
+	}
+	++s_count;
+
+	const char* t_x = x;  // for counting chars in x
+	int x_count = 0;
+	while (*t_x != '\0') {
+		++x_count;
+		++t_x;
+	}
+	 // we don't include null in the count 
+	const char* ts = s; // for tracking the s[i] in the main for loop
+	int count = 0; //if we count enough matches we break the loop
+	int address_x = 0; //the index of the first character where we get successful match 
+	//main loop where we iterate over each character and compare it with the x sequence
+	int index = 0; //to check for out of bounds access
+	for (int i = 0; i < s_count; ++i) {
+		address_x = i;
+		const char* tss = ts;
+		const char* txx = x;
+		//folded loop where we match with x starting from current index 
+		for (int z = 0; z < x_count; ++z) {
+			if (s_count <= z + i) { // return null if word is larger then the sequence
+				return nullptr;
+			}
+		    tss += z;
+			if (*tss == *txx) { ++count; } //comparing characters
+			else count = 0;
+			++txx; //advancing to next character
+			tss -= z; //resetting pointer to avoid comparing with wrong index 
+		}
+		if (count == x_count) { break; } //searching for the first occurence only
+		//advancing to the next character in the sequence
+		++ts;	
+	}
+	const char* rtrn = s;
+	rtrn += address_x; //advance to the correct index 
+	char* p = const_cast<char*>(rtrn); 
+	return p;
+}
+
+
+
+const char* findxx(const char* s, const char* x) {
+	// finds the first occurrence of x in s.
+	// pre-condition: s and x must point to a
+	// valid state.
+
+	if (!s || !x) return nullptr;
+
+	const auto* x_orig = x;
+	const char* start{};
+	while (*s) {
+		if (!*x) {
+
+			std::cout << "EXIT" << "\n";
+
+			return s;
+		}
+		if (*x == *s) {
+			if (!start) start = s;
+			++x;
+
+			std::cout << "START is non-zero" << start << "\n";
+
+
+		}
+		else {
+			x = x_orig;
+			start = nullptr;
+
+			std::cout << "START is zero"  << "\n";
+
+		}
+		++s;
+	}
+
+	return start;
+}
+
+//*s != '\0' means !*s; s == nullptr means !s;
+char* findx2(const char* s, const char* x) {
+	if (!s || !x)   return nullptr; 
+	int count = 0; //out param to check results of the for loop
+	for (; *s; ++s) {
+		const char* temp = x; //to reset the word ptr after loop break;
+		for (; *temp; ++temp) {
+			if (!*s) {  return nullptr; } //if we reach end of sequence during successful matching
+			if (*s == *temp) ++count; 
+			else { if (count!=0) --s; //set back by one char in case the word starts with the same char as previous one (eg, now and nnow
+			count = 0; 
+			break; }
+			++s; //advance to next char
+		}
+		if (count != 0) { s-=count; break; } //reset ptr to where the word starts
+	}
+	return  *s ? const_cast<char*>(s) : nullptr; //if we reach end of sequence after failed matches
+}
+
+
+
+
+
+
+
+
+char* findxxx(const char* s, const char* x) {
+	if (x == 0 || !*x) return const_cast<char*>(s);
+	if (s == 0 || !*s) return 0;
+
+	for (int i = 0; *(s + i); ++i) {
+		if (*(s + i) == *x) {
+			for (int j = 0; *(x + j); ++j) {
+				if (!*(s + i + j)) return 0;    // reached end of s
+				if (*(s + i + j) != *(x + j)) break;    // x not found
+				if (!*(x + j + 1)) return const_cast<char*>(s + i);   // found x
+			}
+		}
+	}
+	return 0;   // reached end of s
+}
+
+int strcmp(const char* s1, const char* s2) {
+	if (s1 == 0 || s2 == 0) std::runtime_error("Null pointer sent to strcmp()");
+	for (int i = 0; *(s1 + i); ++i) {
+		// if only s1 ends or s1[i]<s2[i], s1<s2
+		if (*(s1 + i) == 0 && *(s2 + i) || *(s1 + i) < *(s2 + i)) return -1;
+
+		// if only s2 ends or s1[i]>s2[i], s1>s2
+		if (*(s2 + i) == 0 && *(s1 + i) || *(s1 + i) > *(s2 + i)) return 1;
+	}
+
+	// s1 and s2 are identical
+	return 0;
+}
+
+
+
+char* findxxxx(const char* s, int sn, const char* x, int xn)
+{
+	char* p = nullptr;
+	while (*s && *x) {
+		if (*s == *x) {
+			const char* save = x;
+			p = const_cast<char*>(s);       // function signature demands cast
+			while (*s && *x) {
+				if (*s != *x) {
+					x = save;
+					p = nullptr;
+					break;
+				}
+				++s;
+				++x;
+			}
+		}
+		else {
+			++s;
+		}
+	}
+
+	return p;
+}
+
+
+
+
+
