@@ -1,46 +1,23 @@
+
+//*s != '\0' means !*s; s == nullptr means !s;
 char* findx(const char* s, const char* x) {
-
-	const char* t_s = s;  // for counting chars
-
-	int s_count = 0;
-	while (*t_s != '\0') {
-		++s_count;
-		++t_s;
-	}
-	++s_count;
-
-	const char* t_x = x;
-	int x_count = 0;
-	while (*t_x != '\0') {
-		++x_count;
-		++t_x;
-	}
-const char* ts = s; // for tracking the s[i] in the main for loop
-	int count = 0;
-	int address_x = 0;
-	for (int i = 0; i < s_count; ++i) {
-		address_x = i;
-		const char* tss = ts;
-		const char* txx = x;
-		for (int z = 0; z < x_count; ++z) {
-			if (s_count <= z + i) {
-				return nullptr;
-			}
-		    tss += z;
-			if (*tss == *txx) { ++count; 
-			}
-			else count = 0;
-			++txx;
-			tss -= z;
+	if (!s || !x)   return nullptr; 
+	int count = 0; //out param to check results of the for loop
+	for (; *s; ++s) {
+		const char* temp = x; //to reset the word ptr after loop break;
+		for (; *temp; ++temp) {
+			if (!*s) {  return nullptr; } //if we reach end of sequence during successful matching
+			if (*s == *temp) ++count; 
+			else { if (count!=0) --s; //set back by one char in case the word starts with the same char as previous one (eg, now and nnow
+			count = 0; 
+			break; }
+			++s; //advance to next char
 		}
-		if (count == x_count) { break; } //searching for the first occurence only
-		++ts;	
+		if (count != 0) { s-=count; break; } //reset ptr to where the word starts
 	}
-	const char* rtrn = s;
-	rtrn += address_x;
-	char* p = const_cast<char*>(rtrn);
-	return p;
+	return  *s ? const_cast<char*>(s) : nullptr; //if we reach end of sequence after failed matches
 }
+
 
 int main()
 try {
