@@ -168,6 +168,32 @@ char* findxxxx(const char* s, int sn, const char* x, int xn)
 }
 
 
-
+char* findx(const char *s, const char *x)
+{
+    char *head_x = const_cast<char*>(x), *concur = nullptr;
+    char *ss = const_cast<char*>(s), *xx = const_cast<char*>(x);
+    bool ocur = true;
+    while (*ss) {
+        if (*ss == *head_x) {
+            concur = const_cast<char*>(ss);
+            while (*xx && *ss) {
+                ss++; xx++;
+                if ( *ss != *xx ) {
+                    if (*xx)
+                        ocur = false;
+                    else
+                        ocur = true;
+                    break;
+                }
+            }
+            if ( ocur )
+                return concur;
+        }
+        if (*ss) ss++;
+        xx = head_x;
+        ocur = true;
+    }
+    return nullptr;
+}
 
 
