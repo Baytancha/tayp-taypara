@@ -1,1 +1,38 @@
+int strcmpp(const char* s1, const char* s2) {
+	if (s1 == nullptr || s2 == nullptr) return -2;
+	for (int i = 0; ++i;) { //don't include terminating null condition to capture it in comparison 
 
+		if ((*(s1 + i) == '\0') && (*(s2 + i) == '\0')) break; // only if all chars match and both reach null are they equal
+
+		if (*(s1 + i) == '\0' && *(s2 + i)) return -1; //if first string is shorter
+
+		if (*(s1 + i) < *(s2 + i)) return -1; //if first string has a 'bigger' char 
+
+		if (*(s2 + i) == '\0' && *(s1 + i)) return 1; // if second string is shorter
+
+		if (*(s1 + i) > *(s2 + i)) return 1; // if second string has a 'bigger' char
+	}
+
+	return 0;
+}
+
+
+int main()
+try {
+
+	
+	char d[] = "transmogrification";
+	char w[] = "transmogrification";
+
+	std::cout << strcmpp(d, w);
+
+
+
+
+}
+catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+catch (...) {
+    std::cerr << "something bad happened\n";
+}
