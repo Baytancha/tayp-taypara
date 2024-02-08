@@ -1,0 +1,104 @@
+std::string cat_dot(const std::string& s1, const std::string& s2) {
+
+	std::string cat_dot = s1 + "." + s2;
+	return cat_dot;
+}
+
+std::string cat_dot2(const std::string& s1, const std::string& s2, const std::string& s3) {
+
+	std::string cat_dot = s1 + "(" + s3 + ")" + s2;
+	return cat_dot;
+}
+
+
+char* cat_dot3(const char* s1, const char* s2, const char* s3) {
+
+	const char* ts1 = s1;  // for counting chars in s
+	int s1_count = 0;
+	while (*ts1 != '\0') {
+		++s1_count;
+		++ts1;
+	}
+	
+	const char* ts2 = s2;  // for counting chars in x
+	int s2_count = 0;
+	while (*ts2 != '\0') {
+		++s2_count;
+		++ts2;
+	}
+
+	const char* ts3 = s3;  // for counting chars in x
+	int s3_count = 0;
+	while (*ts3 != '\0') {
+		++s3_count;
+		++ts3;
+	}
+
+	char* conc = new char[s1_count + s2_count + s3_count + 1]; 
+	char* p = conc;
+
+	for (int i = 0; i < s1_count; ++i) { *conc = *(s1 + i); ++conc; }
+		
+	for (int i = 0; i < s3_count; ++i) { *conc = *(s3 + i); ++conc; }
+
+	for (int i = 0; i < s2_count; ++i) { *conc = *(s2 + i); ++conc; }
+
+	*conc = '\0';
+
+	return p;
+}
+
+
+char* cat_dot4(const char* s1, const char* s2) {
+
+	const char* ts1 = s1;  
+	int s1_count = 0;
+	while (*ts1 != '\0') {
+		++s1_count;
+		++ts1;
+	}
+
+	const char* ts2 = s2;  
+	int s2_count = 0;
+	while (*ts2 != '\0') {
+		++s2_count;
+		++ts2;
+	}
+
+
+	char* conc = new char[s1_count + s2_count + 2];
+	char* p = conc;
+
+	for (int i = 0; i < s1_count; ++i) { *conc = *(s1 + i); ++conc; }
+
+	*conc = '.'; ++conc;
+	for (int i = 0; i < s2_count; ++i) { *conc = *(s2 + i); ++conc; }
+
+	*conc = '\0';
+
+	return p;
+}
+
+int main()
+try {
+
+	//std::cout<<cat_dot("Niels", "Bohr");
+	//std::cout << cat_dot2("Niels", "Bohr", "dot");
+
+	const char* n = "Niels";
+	const char* b = "Bohr";
+	const char* d = "dot";
+
+	std::cout << cat_dot3("Fellas", "wilding","be");
+
+	//std::cout << cat_dot4(n,b);
+
+
+}
+catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+catch (...) {
+    std::cerr << "something bad happened\n";
+}
+
