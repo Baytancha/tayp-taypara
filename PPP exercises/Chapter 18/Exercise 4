@@ -1,0 +1,102 @@
+char* strrdup_size(const char* s, int sz) {
+	
+	char* tp = new char[sz+1];
+	char* p = tp;
+
+	for (int i = 0; i < sz; ++i) {
+
+		*tp = *s;
+		++tp;
+		++s;
+	}
+
+	*tp = '\0';
+	return p;
+}
+
+
+
+char* findx_size(const char* s, const char* x, int sz1, int sz2) {
+
+	
+	// we don't include null in the count 
+	const char* ts = s; // for tracking the s[i] in the main for loop
+	int count = 0; //if we count enough matches we break the loop
+	int address_x = 0; //the index of the first character where we get successful match 
+	//main loop where we iterate over each character and compare it with the x sequence
+	int index = 0; //to check for out of bounds access
+	for (int i = 0; i < sz1; ++i) {
+		address_x = i;
+		const char* tss = ts;
+		const char* txx = x;
+		//folded loop where we match with x starting from current index 
+		for (int z = 0; z < sz2; ++z) {
+			if (sz1 <= z + i) { // return null if word is larger then the sequence
+				return nullptr;
+			}
+			tss += z;
+			if (*tss == *txx) { ++count; } //comparing characters
+			else count = 0;
+			++txx; //advancing to next character
+			tss -= z; //resetting pointer to avoid comparing with wrong index 
+		}
+		if (count == sz2) { break; } //searching for the first occurence only
+		//advancing to the next character in the sequence
+		++ts;
+	}
+	const char* rtrn = s;
+	rtrn += address_x; //advance to the correct index 
+	char* p = const_cast<char*>(rtrn);
+	p[sz1- 1 -address_x] = '\0'; //to find where to append null we subtract address_x from (sz1-1)
+	return p;
+}
+
+int main()
+try {
+
+	
+	char d[] = "now then here";
+	char w[] = "here";
+
+	char* null = d;
+	char* null2 = w;
+
+	null[13] = '!'; //deleting null
+	null2[4] = '!';
+
+	//std::cout << null;
+
+	char chars[] = { 'a', 'b', 'c' }; // a static allocated char array without terminating null
+
+	const char* t_x = d;  // heap allocated char array without terminating null
+	int count = 0;
+	while (*t_x != '\0') {
+		++count;
+		++t_x;
+	}
+
+	char* newd = new char[count];
+	char* p = d;
+	char* newd1 = newd;
+
+	for (int i = 0; i < count; ++i) {
+
+		*newd = *p;
+		++p;
+		++newd;
+	}
+
+	//std::cout << strcmpp(chars, w); //returns -1 (before we reach end of chars)
+	//std::cout << strrdup(chars); //expects null, enters infinite loop and crashes
+	//std::cout << findxx(newd, w); //causes an exception
+
+	std::cout << strrdup_size(chars, 3);
+	std::cout << findx_size(d,w,14,5);
+
+}
+catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+catch (...) {
+    std::cerr << "something bad happened\n";
+}
