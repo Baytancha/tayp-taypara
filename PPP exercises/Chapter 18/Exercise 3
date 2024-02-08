@@ -1,3 +1,4 @@
+//(s1 + i) -- we iterate thru ptr without changing the value of ptr (expression return a temporary ptr)
 int strcmpp(const char* s1, const char* s2) {
 	if (s1 == nullptr || s2 == nullptr) return -2;
 	for (int i = 0; ++i;) { //don't include terminating null condition to capture it in comparison 
