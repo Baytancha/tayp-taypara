@@ -1,3 +1,35 @@
+important ptr observation:
+char I[] = "ABC";
+char* x = I;
+std::cout << (x + 1) << "\n"; //prints BC
+std::cout << *(x + 1) << "\n"; //prints B
+
+ADDRESS + int = ADDRESS;
+""x+1"" returns a memory ADDRESS (temporary ptr) where second char is stored without 
+changing the value of the original ptr
+
+In C++, the expression (x + 1) where x is a pointer to char, 
+does not actually modify the pointer x. Instead, it computes a 
+temporary pointer that points to the next element in the sequence 
+that x points to. Since the + operator is not modifying x itself, 
+the original pointer x remains unchanged and continues to point to the first character of the array I.
+
+When you output (x + 1), you're printing the address that is one position 
+ahead of where x points to, which is the second character of the array I. 
+However, the pointer x itself has not been changed and still points to the first character of the array.
+
+On the other hand, when you output x, you are printing the address that x 
+originally pointed to, which is the first character of the array I.
+
+Here's a breakdown of what happens:
+
+char I[] = "ABC"; defines an array of characters and initializes it with the ASCII representation of the string "ABC".
+char* x = I; sets the pointer x to point to the first element of the array I.
+std::cout << (x + 1) << "\n"; prints the address of the second character in the array I, but the pointer x remains unchanged.
+std::cout << x << "\n"; prints the address that x points to, which is the address of the first character in the array I.
+In summary, the pointer x still points to the first character of the array after (x + 1) because (x + 1) is a temporary expression that calculates a new address without modifying x.
+
+
 //all print the same string
 char b[] = "Nello";
 
