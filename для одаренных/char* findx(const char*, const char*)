@@ -197,3 +197,67 @@ char* findx(const char *s, const char *x)
 }
 
 
+
+
+
+
+
+
+
+
+
+////////////////////////////////////////////////////
+
+int strcomp2(const char* s1, const char* s2) {
+	if (s1 == 0 || s2 == 0) return -2;
+	for (int i = 0; *(s1 + i); ++i) {
+		// if only s1 ends or s1[i]<s2[i], s1<s2
+		if (*(s1 + i) == 0 && *(s2 + i) || *(s1 + i) < *(s2 + i)) return -1;
+
+		// if only s2 ends or s1[i]>s2[i], s1>s2
+		if (*(s2 + i) == 0 && *(s1 + i) || *(s1 + i) > *(s2 + i)) return 1;
+	}
+
+	// s1 and s2 are identical
+	return 0;
+}
+
+
+int strcmpp(const char* s1, const char* s2) {
+	if (s1 == nullptr || s2 == nullptr) return -2;
+	for (int i = 0; ++i;) {
+
+		if ((*(s1 + i) == '\0') && (*(s2 + i) == '\0')) break;
+
+		if (*(s1 + i) == '\0' && *(s2 + i)) return -1;
+
+		if (*(s1 + i) < *(s2 + i)) return -1;
+
+		if (*(s2 + i) == '\0' && *(s1 + i)) return 1;
+
+		if (*(s1 + i) > *(s2 + i)) return 1;;
+	}
+
+	// s1 and s2 are identical
+	return 0;
+}
+
+
+
+
+int strcmp3(const char* s1, const char* s2)
+{
+	while (*s1) {
+		if (!*s2) return 1;
+		if (*s1 < *s2) return -1;
+		if (*s1 > *s2) return 1;
+		++s1;
+		++s2;
+	}
+	if (*s2) return -1;
+	return 0;
+}
+
+
+
+
