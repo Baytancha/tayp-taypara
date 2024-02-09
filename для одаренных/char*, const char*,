@@ -178,6 +178,18 @@ std::cout << d; // prints ''nower''
 
 
 
+When you read or write a char* with cin and cout, it treats it as a C-style string. 
+cin adds a null terminator at the end of the line, and cout only writes until it 
+gets to the null terminator. strlen() counts characters until the null terminator
+
+std::cin.width(10);
+char* x = new char[10];
+char x1;
+
+std::cin >> x >> x1; //cin>> automantically adds a null-terminating zero to the char
+
+std::cout << x;
+
 
 
 
