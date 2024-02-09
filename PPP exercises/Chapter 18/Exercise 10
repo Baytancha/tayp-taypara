@@ -1,0 +1,85 @@
+bool is_palindrome(char* s, int n)
+// s points to the first character of an array of n characters
+{
+    int first = 0; // index of first letter
+    int last = n-1; // index of last letter
+    while (first < last) { // we haven’t reached the middle
+        if (s[first] != s[last]) return false;
+        ++first; // move forward
+        --last; // move backward
+    }
+    return true;
+}
+
+std::istream& long_word_report(std::istream& is, char* buffer, int max)
+{ //separate each word with a '!' terminator
+    char x{};
+    is.width(max); 
+    is >> buffer;
+    is >> x; // if buffer is overflown or a wrong terminator entered, warning appears
+    if (x != '!') { is.unget(); //probably unnecessary because we move ptr to the end of line
+    std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n'); //'clearing' the stream to prevent input slicing
+    std::cout << "WARNING: POTENTIAL BUFFER OVERFLOW\n"; }
+    return is;
+}
+
+char* read_arbitrary(std::istream& is, char* p) { //function returns an arbitrary-length array separated by '!'
+    char x;
+    int c = 0;
+    while (true) {
+        is >>x; //is.get() replaced to prevent reading whitespace chars into the array
+        ++c;
+        if (x == '!') {
+            if (p == nullptr)  break;
+            char* tp = new char[c];
+            for (int i = 0; i < c - 1; ++i)
+            {
+                tp[i] = p[i];
+            }
+            tp[c - 1] = '\0';
+            delete[] p;
+            p = tp; break;
+        }
+        char* tp = new char[c];
+        for (int i = 0; i < c - 1; ++i)
+        {
+            tp[i] = p[i];
+        }
+        tp[c - 1] = x;
+        delete[] p;
+        p = tp;
+    }
+    return p;
+}
+
+
+
+int main()
+try {
+   
+
+    constexpr int max = 10;
+    for (char s[max]; long_word_report(std::cin, s, max); ) {
+        std::cout << s << " is";
+        if (!is_palindrome(s, strlen(s))) std::cout << " not";
+        std::cout << " a palindrome\n";
+    }
+
+
+
+
+    while (std::cin) {
+        char* s = nullptr; // we 'pass' ptr s but then we must reassign the return pointer back to it again
+        s = read_arbitrary(std::cin, s);
+        std::cout << s << " is";
+        if (!is_palindrome(s, strlen(s))) std::cout << " not";
+        std::cout << " a palindrome\n";
+    }
+
+}
+catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+catch (...) {
+    std::cerr << "something bad happened\n";
+}
