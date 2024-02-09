@@ -208,7 +208,16 @@ template<>
 struct IsPrime<3> { static constexpr bool value = true; };
 
 
-
+//palindrome fct taking two char array pointers
+bool is_palindrome(const char* first, const char* last)
+ // first points to the first letter, last to the last letter
+{
+ if (first<last) {
+ if (*first!=*last) return false;
+ return is_palindrome(first+1,last–1);
+ }
+ return true;
+}
 
 
 
