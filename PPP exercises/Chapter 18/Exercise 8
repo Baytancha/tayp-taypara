@@ -12,13 +12,32 @@ bool is_palindrome(const std::string& s1)
 	return true;
 }
 
+bool is_palindrome2(const char* s1, int n)
+{
+	char* s2 = new char[n];
+	int count = 0;
+	
+	for (int i = (n-1); i >= 0; --i) { //we start with last char before null
+		*(s2+count) = s1[i];
+		++count;
+		//std::cout << s2+z;
+	}
+
+	s2[n] = '\0';
+	std::cout << s2;
+
+	for (int i = 0; i < n; ++i)
+		if (s1[i] != s2[i]) return false;
+
+	return true;
+}
+
+
 int main()
 try {
 
-	if (is_palindrome("tattarrattat")) std::cout << "true";
-
-
-	//std::cout << cat_dot4(n,b);
+if (is_palindrome("tattarrattat")) std::cout << "true";
+if (is_palindrome2("tattarrattat", strlen("tattarrattat"))) std::cout << "true"; // we pass (size - 1) to not include null into the copying
 
 
 }
