@@ -1,0 +1,150 @@
+sing namespace std;
+
+double* get_from_jack(int* count);  // jack puts doubles into an array
+// and returns the number of elements
+// in *count
+std::vector<double>* get_from_jill();    // Jill fills the vector
+
+//------------------------------------------------------------------------------
+
+void fct()
+{
+    int jack_count = 0; //array size
+    double* jack_data = get_from_jack(&jack_count); //return an array with n elements and modifies the value of int to reflect number
+    std::vector<double>* jill_data = get_from_jill();
+    double h = -1;
+    double* jack_high;    // jack_high will point to the element with the highest value
+    double* jill_high;    // jill_high will point to the element with the highest value
+
+    for (int i = 0; i < jack_count; ++i)
+        if (h < jack_data[i]) //interplay of ptrs and refs: jack data is a ptr which returns a reference
+            jack_high = &jack_data[i];    // save address of largest element
+
+    std::vector<double>& v = *jill_data; //avoid awkward semantic by creating a ref to a pointee of jill_data
+    for (int i = 0; i < v.size(); ++i)
+        if (h < v[i])
+            jill_high = &v[i];
+
+    h = -1;
+    for (int i = 0; i < jill_data->size(); ++i)
+        if (h < (*jill_data)[i])
+            jill_high = &(*jill_data)[i];    // save address of largest element
+
+    std::cout << "Jill's max: " << *jill_high
+        << "; Jack's max: " << *jack_high;
+
+    delete[] jack_data;
+    delete jill_data; // we must delete a HEAP allocated vector: delete triggers the object's destructor which sets off the member destructor chain
+}
+
+
+double* get_from_jack(int* count)
+{
+   
+    if (!count)
+        return 0;
+
+    const int n = 10;
+
+    double* arr = new double[n];
+
+    if (arr)
+    {
+        *count = n;
+
+        for (int i = 0; i < n; ++i)
+            arr[i] = i;
+    }
+
+    return arr;
+}
+
+//------------------------------------------------------------------------------
+
+std::vector<double>* get_from_jill()
+{
+    const int n = 10;
+
+    std::vector<double>* arr = new std::vector<double>(n);
+
+    if (arr)
+    {
+        for (int i = 0; i < n; ++i)
+            (*arr)[i] = i;
+    }
+
+    return arr;
+}
+
+
+double* high(double* first, double* last)
+// return a pointer to the element in [first,last) that has the highest value
+{
+    double h = -1;
+    double* high;
+	for (double* p = first; p != last; ++p) // we interate through elements by incrementing p because we deal with contiguous blocks of memory
+        if (h < *p) high = p;
+    return high;
+}
+
+
+double* find_highest(vector<double>& v) //returnr ptr to the highest element
+{
+    double h = -1;
+    double* high = 0;
+    for (int i = 0; i < v.size(); ++i)
+        if (h < v[i]) high = &v[i];
+    return high;
+}
+
+
+
+
+
+void fct2()
+{
+    int jack_count = 0;
+    double* jack_data = get_from_jack(&jack_count);
+    vector<double>* jill_data = get_from_jill();
+
+    double* jack_high = high(jack_data, jack_data + jack_count); //possible issue with out of bounds access
+    vector<double>& v = *jill_data;
+	double* jill_high = high(&v[0], &v[0] + v.size()); // we pass address of first item to ptr1 and address of last item to ptr2 via ptr arithmetic (a temporary ptr is created and assigned to parameter)
+
+    cout << "Jill's max: " << *jill_high
+        << "; Jack's max: " << *jack_high;
+
+
+
+    double* middle = &v[0] + v.size() / 2;   // WE CAN VARY SEARCH AREA BY POINTER ARITHMETIC 
+    double* high1 = high(&v[0], middle);          // max of first half
+    double* high2 = high(middle, &v[0] + v.size()); // max of second half
+
+    cout << "max of first half: " << *high1
+        << "; max of second half: " << *high2;
+
+
+    delete[] jack_data;
+    delete jill_data;
+}
+
+
+
+int main()
+try {
+
+    
+
+
+
+
+
+
+
+}
+catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+catch (...) {
+    std::cerr << "something bad happened\n";
+}
