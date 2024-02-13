@@ -1,9 +1,46 @@
+double* get_from_jack(int* count)
+{
+   
+    if (!count)
+        return 0;
+
+    const int n = 10;
+
+    double* arr = new double[n];
+
+    if (arr)
+    {
+        *count = n;
+
+        for (int i = 0; i < n; ++i)
+            arr[i] = i;
+    }
+
+    return arr;
+}
+
+//------------------------------------------------------------------------------
+
+std::vector<double>* get_from_jill()
+{
+    const int n = 10;
+
+    std::vector<double>* arr = new std::vector<double>(n);
+
+    if (arr)
+    {
+        for (int i = 0; i < n; ++i)
+            (*arr)[i] = i;
+    }
+
+    return arr;
+}
 
 void fct3()
 {
     int jack_count = 0;
     double* jack_data = get_from_jack(&jack_count);
-    vector<double>* jill_data = get_from_jill();            //if we get zero evalues at some iterations of a loop
+    vector<double>* jill_data = get_from_jill();            //if we get zero evalues at some iterations of the loop
                                                             //we need to account for that
     double* jack_high = nullptr;
 	double* jill_high = nullptr;
@@ -19,3 +56,31 @@ void fct3()
     delete[] jack_data;
     delete jill_data;
 }
+
+/////////////////////////////////////////////////////////////////////
+
+template<class T, class A>
+void vector<T, A>::push_front(const T& val)
+{
+    if (space == 0) {
+        reserve(8);
+    }
+    else
+        if (space == sz) {
+            reserve(2 * space);
+        }
+
+	for (int i = sz; i > 0; --i) alloc.construct(&elem[i], elem[i - 1]); // using alloc because we can't assign elem[sz-1] to uninitialized memory
+    alloc.construct(&elem[0], val);  // construct in case we adding first element
+    ++sz;                            // increase the size
+}
+
+
+//////////////////////////////////////////////////////////////////////////
+template<class Iter> Iter advance(Iter p, int n)
+{
+    if (n > 0) while (n > 0){ ++p; --n; }    // go forwards
+    else if (n < 0) while (n < 0) { --p; ++n; }
+    return p;
+}
+//////////////////////////////////////////////////////////////////////////
