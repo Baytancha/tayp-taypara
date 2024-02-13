@@ -1,3 +1,4 @@
+
 void fct3()
 {
     int jack_count = 0;
