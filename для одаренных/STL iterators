@@ -1,3 +1,25 @@
+Iterators are used to connect our code (algorithms) to our data. The writer 
+of the code knows about the iterators (and not about the details of how the iterators actually get to the data), and the data provider supplies iterators rather than 
+exposing details about how the data is stored to all users. The result is pleasingly 
+simple and offers an important degree of independence between algorithms and 
+containers. To quote Alex Stepanov: “The reason STL algorithms and containers 
+work so well together is that they don’t know anything about each other.” Instead, 
+both understand about sequences defined by pairs of iterators.
+
+
+In other words, my algorithms no longer have to know about the bewildering 
+variety of ways of storing and accessing data; they just have to know about iterators. Conversely, if I’m a data provider, I no longer have to write code to serve a 
+bewildering variety of users; I just have to implement an iterator for my data. At 
+the most basic level, an iterator is defined by just the *, ++, ==, and != operators. 
+That makes them simple and fast.
+
+
+
+
+
+
+
+
 #include <string>
 #include <iostream>
 #include <memory>
