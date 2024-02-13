@@ -14,7 +14,11 @@ the most basic level, an iterator is defined by just the *, ++, ==, and != opera
 That makes them simple and fast.
 
 
-
+The iterator is central to the definition of an STL list. Iterators are used to 
+identify places for insertion and elements for removal (erasure). They are also 
+used for “navigating” through a list rather than using subscripting. This use of 
+iterators is very similar to the way we used pointers to traverse arrays and vectors 
+in §20.1 and §20.3.1. This style of iterators is the key to the standard library algorithms (§21.1–3).
 
 
 
