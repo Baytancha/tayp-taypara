@@ -84,3 +84,77 @@ template<class Iter> Iter advance(Iter p, int n)
     return p;
 }
 //////////////////////////////////////////////////////////////////////////
+template<typename Iter>
+void prnt(Iter begin, Iter end) {
+
+    int count{ 0 };
+    for (Iter p = begin; p != end; ++p)
+        ++count;
+
+    std::cout << "TOTAL COUNT OF CHARACTERS: " << count << "\n";
+
+    for (Iter p = begin; p != end; ++p)
+        std::cout << *p;
+    std::cout<< "\n";
+
+    char* howdy = new char[count]{'H', 'o', 'w', 'd', 'y'};
+    
+    for (int i = 0; i < count; ++i) {
+        if (*begin > *howdy) std::cout << "arg is greater than howdy\n";
+        else std::cout << "howdy is greater than arg\n";
+        ++begin;
+        ++howdy;
+    }
+}
+
+
+template<typename T>
+void pass(T arg) {
+
+    int count{ 0 };
+    for (auto p = arg.begin(); p != arg.end(); ++p)
+        ++count;
+
+    std::cout << "TOTAL COUNT OF CHARACTERS: " << count << "\n";
+
+    for (auto p = arg.begin(); p != arg.end(); ++p)
+        std::cout << *p;
+    std::cout << "\n";
+
+    T howdy = { 'H', 'o', 'w', 'd', 'y' };
+
+    if (arg > howdy) std::cout << "arg is greater than howdy\n";
+    else std::cout << "howdy is greater than arg\n";
+
+    T arg2 = arg;  
+
+}
+
+int main()
+try {
+
+    char s1[] = { "Hello" };
+    string s2 = { "Hello" };
+	vector<char> s3 = { 'H', 'e', 'l', 'l', 'o' }; 
+	list<char> s4 = { 'H', 'e', 'l', 'l', 'o' }; 
+
+
+    prnt(s1, s1 + 6);
+    /*prnt(s2.begin(), s2.end());
+    prnt(s3.begin(), s3.end());
+    prnt(s4.begin(), s4.end());*/
+
+    //pass(s1);
+    pass(s2);
+    pass(s3);
+    pass(s4);
+
+
+    vector<int> i1 = { 1, 2, 3, 4, 5 };
+    list<int> i2 = { 1, 2, 3, 4, 5 };
+    int i3[] = {1, 2, 3, 4, 5};
+
+}
+
+
+
