@@ -1,3 +1,21 @@
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& vec) {
+    os << "{ ";
+    std::copy(vec.begin(), vec.end(), std::ostream_iterator<T>(os, ", "));
+    os << "}";
+    return os;
+}
+
+template<typename T>
+std::istream& operator>>(std::istream& is, std::vector<T>& vec) {
+    T temp;
+    while (is >> temp) {
+        vec.push_back(temp);
+    }
+    return is;
+}
+
+
 ostream& operator<<(ostream& os, const Book& d)
 {
     return os << "title: " << d.title_get() <<"\n"
