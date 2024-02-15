@@ -5,6 +5,7 @@ double* get_from_jack(int* count)
         return 0;
 
     const int n = 10;
+     if (n < 0) return nullptr;
 
     double* arr = new double[n];
 
@@ -41,18 +42,27 @@ void fct3()
     int jack_count = 0;
     double* jack_data = get_from_jack(&jack_count);
     vector<double>* jill_data = get_from_jill();            //if we get zero evalues at some iterations of the loop
-                                                            //we need to account for that
+    //we need to account for that
     double* jack_high = nullptr;
-	double* jill_high = nullptr;
-    if (jack_data) jack_high = high(jack_data, jack_data + jack_count);
-    
+    double* jill_high = nullptr;
+    if (jack_data) jack_high = high(jack_data, jack_data + jack_count); else { std::cout << "EMPTY\n"; return; }
+
     vector<double>& v = *jill_data;
-	if (v.size() > 0) jill_high = high(&v[0], &v[0] + v.size());
+    if (v.size() > 0) jill_high = high(&v[0], &v[0] + v.size()); else { std::cout << "EMPTY\n"; return; }
 
 
     if (jack_high && jill_high) //check for null 
-    cout << "Jill's high " << *jill_high << "; Jack's high " << *jack_high;
-    // . . .
+        cout << "Jill's high " << *jill_high << "; Jack's high " << *jack_high;
+
+
+    double* middle = &v[0] + v.size() / 2;   // WE CAN VARY SEARCH AREA BY POINTER ARITHMETIC 
+    double* high1 = high(&v[0], middle);          // max of first half
+    double* high2 = high(middle, &v[0] + v.size()); // max of second half
+
+    cout << "\nmax of first half: " << *high1
+        << "\nmax of second half: " << *high2;
+
+
     delete[] jack_data;
     delete jill_data;
 }
