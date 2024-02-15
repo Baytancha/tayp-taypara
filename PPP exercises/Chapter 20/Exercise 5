@@ -1,0 +1,17 @@
+template<typename T>
+std::ostream& operator<<(std::ostream& os, const std::vector<T>& vec) {
+    os << "{ ";
+    for (auto i : vec)
+        os << i << ", ";
+    os << "}";
+    return os;
+}
+
+template<typename T>
+std::istream& operator>>(std::istream& is, std::vector<T>& vec) {
+    T temp;
+    while (is >> temp) {
+        vec.push_back(temp);
+    }
+    return is;
+}
