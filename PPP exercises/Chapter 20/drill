@@ -1,1 +1,51 @@
-df
+template<typename Iter1, typename Iter2>
+// requires Input_iterator<Iter1>() && Output_iterator<Iter2>()
+Iter2 copy2(Iter1 f1, Iter1 e1, Iter2 f2) {
+
+    while (f1 != e1) {
+        *f2 = *f1;
+        ++f1;
+        ++f2;
+    }
+	return f2;
+
+}
+
+
+int main()
+try {
+
+    //int arr[10] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    array<int, 10> arr = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+    vector<int> vec = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    list<int> lst = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+
+    array<int,10> arr2 = arr;
+    vector<int> vec1 = vec;
+    list<int> lst2 = lst;
+
+
+    for (auto& arr : arr) { arr += 2; }
+    for (auto& vec : vec) { vec += 3; }
+    for (auto& lst : lst) { lst += 5; }
+   
+
+    copy2(arr.begin(), arr.end(), vec.begin());
+
+    copy2(lst.begin(), lst.end(), arr.begin());
+
+
+    for (auto arr : arr) { std::cout<<arr << " "; }
+    std::cout << "\n";
+    for (auto vec : vec) { std::cout << vec << " "; }
+    std::cout << "\n";
+    for (auto lst : lst) { std::cout << lst << " "; }
+
+
+    auto xx = find(vec.begin(), vec.end(), 3); if (xx != vec.end()) std::cout << "Found\n"; 
+
+	auto xx1 = find(lst.begin(), lst.end(), 27); if (xx1 != lst.end()) std::cout << "Found\n"; 
+
+
+}
