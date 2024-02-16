@@ -1,3 +1,15 @@
+vector<string>& fill(vector<string>& vec) {
+
+    ifstream obj;
+
+    obj.open("vect.txt", std::ios::in);
+
+    for (string t; obj >> vec;)
+        vec.push_back(t);
+
+    return vec;
+}
+
 string lexical_sort(const vector<string>& vec) {
 
     string high = vec[0];
