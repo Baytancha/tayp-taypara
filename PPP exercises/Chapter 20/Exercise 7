@@ -1,0 +1,35 @@
+string lexical_sort(const vector<string>& vec) {
+
+    string high = vec[0];
+
+    for (int i = 0; i < vec.size(); ++i)
+        if (vec[i] > high) high = vec[i];
+
+    return high;
+
+}
+
+string lexical_sort2(const vector<string>& vec) {
+
+    auto high = *vec.begin();
+
+    for (auto i = vec.begin(); i!=vec.end(); ++i)
+        if (*i > high) high = *i;
+
+    return high;
+
+}
+
+
+int main()
+try {
+
+    vector<string> vect;
+
+    fill(vect);
+
+    cout << vect << "\n";
+
+    //cout<<lexical_sort(vect);
+    cout << lexical_sort2(vect);
+}
