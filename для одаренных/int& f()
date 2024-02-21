@@ -5,18 +5,18 @@ int& func2() { int* x = new int(10); return *x; }
 int main()
 try {
 
-	std::cout << func() << "\n";
-
-
 	int* z = new int(30);
 
-	int& z1 = *z;
+int& z1 = *z;
 
-    int t1 = z1;
-    int& t2 = z1;
-    const int& t3 = z1;
+int t1 = z1; t1 = 40;
+std::cout << *z << "\n"; //30
+int& t2 = z1; t2 = 400;
+std::cout << *z << "\n"; //400
+const int& t3 = z1; //t3 = 4000;
 
-    //z = &z1;
+std::cout << *z << "\n";
+//z = &z1;
 
 
     int x2 = func();
