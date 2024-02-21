@@ -1,0 +1,36 @@
+int& func() { int* x = new int(10); return *x; }
+
+int& func2() { int* x = new int(10); return *x; }
+
+int main()
+try {
+
+	int* z = new int(30);
+
+	int& z1 = *z;
+
+    int t1 = z1; t1 = 40;
+    std::cout << *z << "\n"; //30
+    int& t2 = z1; t2 = 400;
+    std::cout << *z << "\n"; //400
+	const int& t3 = z1; //t3 = 4000;
+
+    std::cout << *z << "\n";
+    //z = &z1;
+
+
+
+
+    int x2 = func();
+    int& x1 = func();
+    const int& x = func();
+
+
+
+    Document my_dok;
+    std::fstream dok;
+
+    dok.open("get_doc.txt", std::ios::in);
+    if (!dok) std::cout << "ERROR!\n";
+
+    dok >> my_dok;
