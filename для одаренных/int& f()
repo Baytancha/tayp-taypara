@@ -1,0 +1,21 @@
+int func() { int* x = new int(10); return *x; }
+
+int& func2() { int* x = new int(10); return *x; }
+
+int main()
+try {
+
+	std::cout << func() << "\n";
+
+
+
+
+    int z = 10;
+    int z1 = 20;
+
+    //z = &z1;
+
+
+    int x2 = func();
+    int& x1 = func();
+    const int& x = func();
