@@ -12,7 +12,9 @@ try {
 
     int z = 10;
     int z1 = 20;
+    int* z2 = new int(30);
 
+     int& z3 = *z2;
     //z = &z1;
 
 
