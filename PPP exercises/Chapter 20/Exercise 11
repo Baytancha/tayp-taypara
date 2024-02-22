@@ -1,1 +1,35 @@
-gd
+std::vector<double> copy_list(const std::list<int>& x) 
+{ 
+    std::vector<double> v;
+    std::copy(x.begin(), x.end(), std::back_inserter(v));
+
+    std::sort(v.begin(), v.end());
+    return v;
+
+
+
+}
+
+
+int main()
+try {
+
+    std::list<int> myList = { 100,  24,  32,  48,  52,  6,  700,  88,  9,  108 };
+
+
+    std::vector<double> v = copy_list(myList);
+
+
+    for (auto a:v) std::cout << a << ' ';
+
+   
+
+
+}
+
+catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+catch (...) {
+    std::cerr << "something bad happened\n";
+}
