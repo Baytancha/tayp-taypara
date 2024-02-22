@@ -1,1 +1,498 @@
-gd
+#include <string>
+#include <iostream>
+#include <memory>
+#include <stdexcept>
+#include <vector>
+#include <cmath>
+#include <algorithm>
+#include <list>
+#include <array>
+#include <random>
+#include <fstream>
+#include <sstream>
+
+   // a line is a vector of characters
+using Line = std::vector<char>;
+//------------------------------------------------------------------------------
+
+struct Document {
+
+    std::list<Line> line; // a list of vector of chars 
+
+    class Text_iterator { // keep track of line and character position within a line
+        std::list<Line>::iterator ln;
+        Line::iterator pos;
+        size_t No;
+    public:
+        typedef std::forward_iterator_tag iterator_category;
+        typedef char value_type;
+        typedef size_t difference_type;
+        typedef char* pointer;
+        typedef char& reference;
+
+        // start the iterator at line ll's character position pp:
+        Text_iterator(std::list<Line>::iterator ll, Line::iterator pp)
+            :ln(ll), pos(pp), No(1) { }
+
+        Text_iterator(std::list<Line>::iterator ll, Line::iterator pp, size_t n) 
+            :ln(ll), pos(pp), No(n) { }
+        // a second ctor incase we want to specify line
+
+		Text_iterator() = default;
+
+        reference operator*() { return *pos; }
+        size_t line_number() const { return No; }
+		Line::iterator get_line_iter() const { return pos; }
+		std::list<Line>::iterator get_list_iter() const { return ln; }
+
+        Text_iterator& operator++();
+        Text_iterator& operator--();
+        Text_iterator& operator+=(const Text_iterator& other);
+        bool operator==(const Text_iterator& other) const;
+        bool operator!=(const Text_iterator& other) const { return !(*this == other); }
+        Text_iterator operator+(int x);
+        Text_iterator operator-(int x);
+    };
+
+    Document() { line.push_back(Line()); }// push empty line whose begin() == end()
+    Text_iterator begin()      // first character of first line
+    {
+        return Text_iterator(line.begin(), line.begin()->begin());
+    }
+    Text_iterator end()        // one beyond the last line
+    {
+        std::list<Line>::iterator last = line.end();
+        --last; //backtrack from the one_beyond_link
+
+       return Text_iterator(last, last->end()); 
+       //last->end() returns the one_beyond_last char,for an empty line it's equal to begin()
+
+    }
+
+    Line& get_line(size_t n) { std::list<Line>::iterator p = line.begin(); p = advance(p, n-1); return *p; }
+
+    template<class Iter> 
+    Iter advance(Iter p, int n);
+
+    void print();
+
+    Text_iterator find_text(const std::string& s);
+
+    void erase_line(int n);
+
+    bool match(Text_iterator first, Text_iterator second, const std::string& s);
+
+    Text_iterator find_replace(const std::string& f, const std::string& r);
+
+    int count_char();
+    int word_count_ws();
+    int word_count_al();
+    int word_count_al(std::string x);
+};
+
+std::istream& operator>>(std::istream& is, Document& d)
+{
+    char ch;
+    while (is.get(ch)) {
+        //std::cout << "\nPUSHED\n";
+        d.line.back().push_back(ch);    // add the character
+        if (ch == '\n') {
+            //std::cout << "\nLINE\n";
+            d.line.push_back(Line());   // add another line
+        }
+    }
+    if (d.line.back().size()) { //std::cout << "\nFINAL LINE\n"; 
+    d.line.push_back(Line{}); } //to avoid invalid dereference when incrementing
+    //else std::cout << "\nEMPTY LINE\n";
+    return is;
+}
+
+
+template<class Iter> 
+Iter Document::advance(Iter p, int n)
+{
+    if (n > 0) while (n > 0) { ++p; --n; }    // go forwards
+    else if (n < 0) while (n < 0) { --p; ++n; }
+    return p;
+}
+
+
+void Document::print() 
+{ 
+    for (Document::Text_iterator p = this->begin(); p != this->end(); ++p) std::cout << *p; 
+}
+
+
+
+void Document::erase_line(int n)
+{
+
+    if (n < 0 || this->line.size() <= n) return;    // ignore out-of-range lines
+    this->line.erase(advance(this->line.begin(), n)); // returns a List iterator
+}
+
+//------------------------------------------------------------------------------
+
+bool Document::match(Text_iterator first, Text_iterator last, const std::string& s)
+{
+    std::string::const_iterator p;
+    for (p = s.begin(); p != s.end() && first != last; ++p)
+    {
+        if (*p != *first) break;
+        ++first;
+    }
+    return p == s.end(); // if we reached end of string, we matched it all
+}
+//------------------------------------------------------------------------------
+
+Document::Text_iterator Document::find_text(const std::string& s)
+{
+    Document::Text_iterator first = this->begin();
+    Document::Text_iterator last = this->end();
+
+    if (s.size() == 0) return last;    // can't find an empty string
+    char first_char = s[0];
+    while (true) {
+        Document::Text_iterator p = std::find(first, last, first_char);
+        if (p == last || match(p, last, s)) return p;
+        ++p; first = p;
+    }
+}
+//------------------------------------------------------------------------------
+
+
+Document::Text_iterator Document::find_replace(const std::string& f, const std::string& r)
+{
+    Document::Text_iterator first = this->begin();
+    Document::Text_iterator last = this->end();
+
+    if (f.size() == 0) return last;    // can't find an empty string
+    char first_char = f[0];
+    int char_skip{ 0 };
+    size_t line_skip{ 1 };
+
+    while (true) {
+        Document::Text_iterator first = this->begin(); // we always redefine new iter to avoid invalidation
+        Document::Text_iterator last = this->end();
+
+        std::list<Line>::iterator ln = advance(first.get_list_iter(), line_skip - 1); // jump to line starting from line 1
+        first = Document::Text_iterator{ ln, ln->begin(), line_skip }; // assign first with correct coordinates
+        for (int i = 0; i < char_skip; ++i) { //std::cout << *first; 
+            ++first;
+        } //let iter point to the first char after the previous find() result
+
+        Document::Text_iterator p = std::find(first, last, first_char); // p holds the No of line where the char is found
+
+        if (p == last) return p; // we reached the end after either replacing all words or finding nothing
+    
+        if (p.line_number() != first.line_number()) { //we're on line x but the letter is found on line x+1
+            char_skip = 0;
+            line_skip = p.line_number(); //we need to get coordinates for the next line
+            std::list<Line>::iterator ln = advance(first.get_list_iter(), line_skip - first.line_number());
+            first = Document::Text_iterator{ ln, ln->begin(), line_skip }; // we must skip to the line to know the position
+
+        }
+
+        //let iter point to the first char after the previous find() result
+        while (first.get_line_iter() != p.get_line_iter() + 1)
+        {
+            ++char_skip;
+            ++first;
+        }
+        if (match(p, last, f)) {
+            //we redefine iters to avoid invalidation
+            for (int i = 0; i < r.size(); i++) {
+                Document::Text_iterator temp = { first.get_list_iter(),first.get_list_iter()->begin(), line_skip };
+                get_line(line_skip).insert(temp.get_line_iter() + (char_skip - 1) + i, r[i]);
+            }
+
+            for (int i = 0; i < f.size(); i++) {
+                Document::Text_iterator temp = { first.get_list_iter(),first.get_list_iter()->begin(), line_skip };
+                get_line(line_skip).erase(temp.get_line_iter() + (char_skip - 1) + (r.size()));
+            }
+
+            char_skip = char_skip + r.size() - 1;
+            //char_skip adjusted to skip to the first char after the end of the replaced word
+        }
+        // we dont' do anything if we didn't match because we already got the coordinates for adjustment
+    }
+}
+
+int Document::count_char() {
+
+    Document::Text_iterator first = this->begin();
+    Document::Text_iterator last = this->end();
+    int count{ 0 };
+
+    while (first != last) {
+        ++count;
+        ++first;
+    }
+
+    return count;
+    
+}
+
+int Document::word_count_ws() {
+
+    Document::Text_iterator first = this->begin();
+    Document::Text_iterator last = this->end();
+    int count{ 0 };
+
+    while (first != last) {
+        if (first.get_line_iter() != first.get_list_iter()->begin())
+        {
+            Document::Text_iterator prev = first - 1;
+            if (std::isspace(*first)) if (!std::isspace(*prev)) { ++count; }
+        }
+        ++first;
+    }
+	if (!std::isspace(*--last)) { ++count; } //counting last word in the case where last line doesn't end with whitespace
+
+    return count;
+
+}
+
+
+int Document::word_count_al() {
+
+    Document::Text_iterator first = this->begin();
+    Document::Text_iterator last = this->end();
+    int count{ 0 };
+
+    std::stringstream line;
+
+    while (first != last) {
+
+        if ((first.get_line_iter() == first.get_list_iter()->begin())) {
+            std::string str_line{ get_line(first.line_number()).begin(), get_line(first.line_number()).end() };
+
+            std::stringstream str{str_line};
+
+            std::string word{};
+            while (str>>word) {
+               std::string::iterator first_c = word.begin();
+                for (first_c = word.begin(); first_c != word.end(); ++first_c)
+                    if (std::isalpha(*first_c))  break; 
+                    //the loop ends as soon as we find the first alphabetic char
+				if (first_c == word.end())  first_c = word.begin();
+  
+				for (std::string::iterator iter = first_c; iter != word.end(); ++iter)     
+					if (iter != word.end() - 1 && !std::isalpha(*iter) && std::isalpha(*(iter + 1)))  ++count;
+				//don't allow several consecutive non-alphabetic chars to increase count
+				//non-alphabetic chars in the beginning or end of the word are not counted
+                 if (std::isalpha(*first_c)) ++count; //don't increase count for non-alpha strings
+            }
+        }
+        ++first; 
+    }
+    return count;
+}
+
+int Document::word_count_al(std::string x) {
+
+	std::string set{ x.begin(), x.end() };
+    
+    for (std::string::iterator iter = set.begin(); iter != set.end(); ++iter)
+		if (std::isalpha(*iter)) return 0; // all chars in the set musst be non-alphabetic
+
+    Document::Text_iterator first = this->begin();
+    Document::Text_iterator last = this->end();
+    int count{ 0 };
+
+    std::stringstream line;
+
+    while (first != last) {
+        if ((first.get_line_iter() == first.get_list_iter()->begin())) {
+            std::string str_line{ get_line(first.line_number()).begin(), get_line(first.line_number()).end() };
+
+            std::stringstream str{ str_line };
+
+            std::string word{};
+            while (str >> word) {
+                std::string::iterator first_c = word.begin();
+
+
+                while (first_c != word.end()) {
+                    int match{ 0 };
+                    for (std::string::iterator s_iter = set.begin(); s_iter != set.end(); ++s_iter) 
+                        if (*first_c == *s_iter) {  ++match; }
+
+                        if (match > 0) ++first_c; else break;
+                } //the loop ends as soon as we find a char that is not in the set
+
+                if (first_c == word.end())  first_c = word.begin();
+
+                for (std::string::iterator w_iter = first_c; w_iter != word.end(); ++w_iter) {
+                    for (std::string::iterator s_iter = set.begin(); s_iter != set.end(); ++s_iter)
+                        if (w_iter != word.end() - 1 && *w_iter == *s_iter && std::isalpha(*(w_iter + 1))) ++count;
+                }          //if a separator is followed by an alpha char we assume it's a word
+                if (std::isalpha(*first_c)) ++count; //don't increase count for string that consist of separators
+            }
+        }
+        ++first;
+    }
+    return count;
+}
+
+
+Document::Text_iterator Document::Text_iterator::operator+(int x) {
+
+	Document::Text_iterator a = *this;
+    for (int i = 0; i < x; i++) {
+		++a;
+    }
+    return a;
+}
+
+Document::Text_iterator Document::Text_iterator::operator-(int x) {
+
+    Document::Text_iterator a = *this;
+    for (int i = 0; i < x; i++) {
+        --a;
+    }
+    return a;
+}
+
+
+Document::Text_iterator& Document::Text_iterator::operator++()
+{
+    ++pos;
+    if (pos == (*ln).end()) {
+        ++ln;            // proceed to next line
+		++No;            // increment line number
+        pos = (*ln).begin();
+    }
+    return *this;
+}
+
+Document::Text_iterator& Document::Text_iterator::operator--()
+{
+    if (pos == (*ln).begin()) {
+        --ln;            // decrement line
+        --No;            // decrement line number
+        pos = (*ln).end() - 1;
+    }
+    else --pos;
+    return *this;
+}
+
+
+Document::Text_iterator& Document::Text_iterator::operator+=(const Document::Text_iterator& other)
+{
+    if (*this == other) return *this;
+    while (*this != other)
+        ++(*this);
+    return *this;
+}
+
+
+bool Document::Text_iterator::operator==(const Document::Text_iterator& other) const
+{
+    return ln == other.ln && pos == other.pos;
+}
+
+
+int main()
+try {
+
+    std::vector<char> set{ '\n', '\t', '\v', '\f' };
+
+
+    Document my_dok;
+    std::fstream dok;
+
+    dok.open("get_doc.txt", std::ios::in);
+    if (!dok) std::cout << "ERROR!\n";
+
+    dok >> my_dok;
+
+
+
+    Document::Text_iterator iter2 = my_dok.find_text("home");
+    if (iter2 == my_dok.end())
+        std::cout << "not found\n";
+    else {
+        std::cout << "found\n";
+
+    }
+
+    my_dok.print();
+    std::cout << "\n";
+    std::cout << "\n";
+
+
+
+    Document::Text_iterator iter = my_dok.find_replace("algorithm", "shmalgorithm");
+    if (iter == my_dok.end())
+        std::cout << "nothing to replace\n";
+    else {
+        std::cout << "items replaced\n";
+    }
+
+    std::cout << "\n";
+    std::cout << "\n";
+
+    my_dok.print();
+
+    std::cout << "\n";
+    std::cout << "\n";
+
+    Document my_dok2;
+    std::fstream dok2;
+
+    dok2.open("get_doc2.txt", std::ios::in);
+    if (!dok2) std::cout << "ERROR!\n";
+
+    dok2 >> my_dok2;
+
+	std::cout<< my_dok2.count_char();
+
+    std::cout << "\n";
+    std::cout << "\n";
+
+    std::cout << my_dok2.word_count_ws();
+
+    std::cout << "\n";
+    std::cout << "\n";
+
+  
+    Document my_dok3;
+    std::fstream dok3;
+
+    dok3.open("get_doc3.txt", std::ios::in);
+    if (!dok3) std::cout << "ERROR!\n";
+
+    dok3 >> my_dok3;
+
+    std::cout << my_dok3.word_count_al();
+
+    std::cout << "\n";
+    std::cout << "\n";
+
+
+    Document my_dok4;
+    std::fstream dok4;
+
+    dok4.open("get_doc4.txt", std::ios::in);
+    if (!dok4) std::cout << "ERROR!\n";
+
+    dok4 >> my_dok4;
+
+    std::cout << my_dok3.word_count_al();
+
+    std::cout << "\n";
+    std::cout << "\n";
+
+    std::cout << my_dok4.word_count_al("1!7");
+
+
+}
+
+catch (std::exception& e) {
+    std::cerr << e.what() << '\n';
+}
+catch (...) {
+    std::cerr << "something bad happened\n";
+}
+
