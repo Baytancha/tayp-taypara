@@ -1,4 +1,8 @@
-
+reference collapsing rules:
+& & -> &
+& && -> &
+&& & -> &
+&& && -> &&
 
 COPY:
 Inside generateResource(), local variable res is created and initialized with a dynamically allocated Resource, which causes the first “Resource acquired”.
