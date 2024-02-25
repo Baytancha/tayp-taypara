@@ -98,26 +98,51 @@ struct Widget : Object
 
 
 
-Can you tell me if this wouldn't work, and why? Wouldn't the Property Prop function directly get the pointer to the base object Object without the need for templates and conversions?
+Can you tell me if this wouldn't work, and why? Wouldn't the Property Prop function directly 
+get the pointer to the base object Object without the need for templates and conversions?
 
 
 
 
-So when we create an object Widget x, a base object Object and a base object PropertyHelper<Widget> with their own addresses are created underneath it, and the this pointer in x points to all those base classes as well, is that correct?
+So when we create an object Widget x, a base object Object and a base object PropertyHelper<Widget> 
+with their own addresses are created underneath it, and the this pointer in x points to all those 
+base classes as well, is that correct?
 
-Not quite. The base classes aren't separate objects, they are the same object. Given a class B that inherits from class A. Rather than creating an object B that owns an object A, what actually happens is that B is an object that contains all of its own members and methods, while also containing all of the members and methods of class A. Think of B as a superset of A, that can use the methods / members from both A and B.
+Not quite. The base classes aren't separate objects, they are the same object. Given a class B that 
+inherits from class A. Rather than creating an object B that owns an object A, what actually happens 
+is that B is an object that contains all of its own members and methods, while also containing all o
+f the members and methods of class A. Think of B as a superset of A, that can use the methods / members from both A and B.
 
-But because with PropertyHelper<Widget> we don't actually pass the address of the x anywhere but just instantiate the template, we need some way to pass the information about x to the Property Prop function, so that it would ''find'' the correct pointer. We do so by making it convert from the this pointer to the base class object to the pointer of the object itself. And because PropertyHelper<Widget> is a base object of x and thus 'tied to it', the compiler deduces wher the object is by converting from the base. Is that it?
+But because with PropertyHelper<Widget> we don't actually pass the address of the x anywhere but 
+just instantiate the template, we need some way to pass the information about x to the Property 
+Prop function, so that it would ''find'' the correct pointer. We do so by making it convert from 
+the this pointer to the base class object to the pointer of the object itself. And because 
+PropertyHelper<Widget> is a base object of x and thus 'tied to it', the compiler deduces wher the
+object is by converting from the base. Is that it?
 
-The code above isn't "finding" any pointers. What's happening here is that we are changeing the way we interpret the memory of the this pointer by calling static_cast
+The code above isn't "finding" any pointers. What's happening here is that we are changeing the way
+we interpret the memory of the this pointer by calling static_cast
 
-A pointer is just an address in memory, nothing more. The type that we interpret the pointer as is used as a guide for how to read that memory. So a pointer of type "Widget" would know that the object being pointed to is sizeof(Widget) and what offsets it needs to apply to the pointer address to access it's members ect.
+A pointer is just an address in memory, nothing more. The type that we interpret the pointer as is
+used as a guide for how to read that memory. So a pointer of type "Widget" would know that the 
+object being pointed to is sizeof(Widget) and what offsets it needs to apply to the pointer address 
+to access it's members ect.
 
-While we are inside a member method of the base class, the process only knows about the direct class that we are inside of. So calling this when inside PropertyHelper<Widget> will return PropertyHelper<Widget>*. But here's the thing, the object that we are calling this method on may actually be a subclass of PropertyHelper<Widget> such as Widget.
+While we are inside a member method of the base class, the process only knows about the direct class
+that we are inside of. So calling this when inside PropertyHelper<Widget> will return PropertyHelper<Widget>*. 
+But here's the thing, the object that we are calling this method on may actually be a subclass of 
+PropertyHelper<Widget> such as Widget.
 
-Here's where this code gets clever. Because you have no way of knowing which subclass this is, if any. They have added the type of the child class as a template parameter to PropertyHelper. So you know that a PropertyHelper<Widget> has a subclass of type Widget. This code makes the assumption that no one would inherit from PropertyHelper<Widget> with a different class. But it is not enforced and could be misused, resulting in bad casts that result in garbage data (if the pointer was interpreted as the wrong type, it would make no sense)
+Here's where this code gets clever. Because you have no way of knowing which subclass this is, if any. 
+They have added the type of the child class as a template parameter to PropertyHelper. So you know that 
+a PropertyHelper<Widget> has a subclass of type Widget. This code makes the assumption that no one would 
+inherit from PropertyHelper<Widget> with a different class. But it is not enforced and could be misused, 
+resulting in bad casts that result in garbage data (if the pointer was interpreted as the wrong type, 
+it would make no sense)
 
-I have simplified how this works somewhat, by explaining everything as if there were only single inheritance occuring. The existence of Object complicates matters but the other comments have already explained why that is fine and it is not important for this specific answer.
+I have simplified how this works somewhat, by explaining everything as if there were only single 
+inheritance occuring. The existence of Object complicates matters but the other comments have already 
+explained why that is fine and it is not important for this specific answer.
 
 
 
@@ -185,9 +210,12 @@ catch (...) {
 
 
 
-Ah, so this is where multiple inheritance does become important. Because widget inherits from both Object and PropertyHelper<Widget>, the data of PropertyHelper<Widget> is actually offset a bit inside the Widget object.
+Ah, so this is where multiple inheritance does become important. Because widget inherits from both Object and 
+PropertyHelper<Widget>, 
+the data of PropertyHelper<Widget> is actually offset a bit inside the Widget object.
 
-Classes are generally organised by laying out their base class members followed by the sub class members. So given my A and B example above it would look something like this:
+Classes are generally organised by laying out their base class members followed by the sub class members. 
+So given my A and B example above it would look something like this:
 
 Instance of B
 
@@ -195,7 +223,8 @@ data from A
 
 data from B
 
-If you introduce multiple inheritance, both of these base classes get packed at the start of the classes data. So from the code above it would be:
+If you introduce multiple inheritance, both of these base classes get packed at the start of 
+the classes data. So from the code above it would be:
 
 Instance of Widget
 
@@ -205,11 +234,19 @@ data from PropertyHelper<Widget>
 
 data from Widget
 
-Due to this, the compiler does some trickery when we call things such as this and static_cast to adjust the pointer to point to the correct offset within the object. So when you call this inside a method in PropertyHelper<Widget>, rather than getting a pointer with the address of the Widget object, you get a pointer that is "address of widget + sizeof(Object)". However if you called this inside a method on Object, this would be the same as calling it on Widget, as the data is not offset in the case.
+Due to this, the compiler does some trickery when we call things such as this and static_cast 
+to adjust the pointer to point to the correct offset within the object. So when you call this 
+inside a method in PropertyHelper<Widget>, rather than getting a pointer with the address of 
+the Widget object, you get a pointer that is "address of widget + sizeof(Object)". However 
+if you called this inside a method on Object, this would be the same as calling it on Widget, 
+as the data is not offset in the case.
 
-In this particular instance, we are casting the pointer back to its actual type of Widget, and the compiler will perform a down cast and adjust the address of the pointer to accommodate, so that it actually points at Widget, rather than widget + sizeof(Object)
+In this particular instance, we are casting the pointer back to its actual type of Widget, and 
+the compiler will perform a down cast and adjust the address of the pointer to accommodate, so
+that it actually points at Widget, rather than widget + sizeof(Object)
 
-Your code could work if you were only inheriting from one class (or if PropertyHelper<Widget> was the first base class), but multiple inheritance makes the static_cast necessary here
+Your code could work if you were only inheriting from one class (or if PropertyHelper<Widget> 
+was the first base class), but multiple inheritance makes the static_cast necessary here
 
 
 
