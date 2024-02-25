@@ -1,4 +1,65 @@
 
+template<typename T>
+struct Base {
+    T& derived() { return static_cast<T&>(*this); }
+    void print() { derived().print(); };
+};
+
+
+struct nonDerived {
+    void print() { cout << "nonDerived\n"; };
+};
+
+
+struct Derived : public Base<Derived> {
+	void print() { cout << "Derived\n"; };
+};
+
+
+template<typename T>
+void interface_(Base<T>* t) {
+    t->print();
+}
+
+template<typename T>
+void interface_2(Base<T>& t) {
+t.print();
+}
+
+int main()
+try {
+    Derived d;
+    nonDerived n;
+
+    Base<Derived>* b1 = &d;
+    Base<Derived>* b2 = new Derived();
+    Base<Derived>& b3 = d;
+
+    //Base<nonDerived>* b3 = &n;
+    //Base<nonDerived>* b4 = new nonDerived();
+
+    interface_(b2);
+
+    interface_(&d);
+    interface_(b1);
+
+    interface_2(d);
+    interface_2(b3);
+
+
+    int x = 0;
+    cin >> x;
+
+    if (x >0)
+        interface_(&d);
+	else if (x < 0)
+        interface_(&d);
+
+
+
+
+
+
 template<typename D>
 struct PropertyHelper
 {
