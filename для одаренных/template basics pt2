@@ -1,3 +1,28 @@
+template<typename T>
+struct X
+{
+    void baz(T&& c);  //This is an r-value ref
+};
+
+
+template<typename T>
+void bar(T&& b);
+
+int main()
+try {
+    int i = 42;
+
+    bar(42);
+    bar(i);
+
+    bar<int>(42);
+    bar<int&>(i);
+
+
+
+
+
+
 The default rule for type deduction is that reference types can never be the result of deduction:
 
 https://stackoverflow.com/questions/46560123/understanding-type-deduction-for-universal-references
