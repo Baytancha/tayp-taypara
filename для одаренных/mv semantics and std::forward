@@ -4,6 +4,37 @@ reference collapsing rules:
 && & -> &
 && && -> &&
 
+
+The results of the special deduction rule for rvalue references are very useful for perfect forwarding.
+However, they can come as a surprise, because function templates typically generalize the types in the
+function signature without affecting what kinds of arguments (lvalue or rvalue) it allows. Consider
+this example:
+
+void int_lvalues(int&); // accepts lvalues of type int
+template<typename T> void lvalues(T&); // accepts lvalues of any type
+void int_rvalues(int&&); // accepts rvalues of type int
+template<typename T> void anything(T&&); // SURPRISE: accepts lvalues and
+// rvalues of any type
+
+Programmers who are simply abstracting a concrete function like int_rvalues to its template equivalent would 
+likely be surprised by the fact that the function template anything accepts lvalues. Fortunately, 
+this deduction behavior only applies when the function parameter is written specifically with
+the form template-parameter &&, is part of a function template, and the named template parameter
+is declared by that function template. Therefore, this deduction rule does not apply in any of the
+following situations:
+
+template<typename T>
+class X
+{
+public:
+X(X&&); // X is not a template parameter
+X(T&&); // this constructor is not a function template
+template<typename Other> X(X<U>&&); // X<U> is not a template parameter
+template<typename U> X(U, T&&); // T is a template parameter from
+// an outer template
+};
+
+
 COPY:
 Inside generateResource(), local variable res is created and initialized with a dynamically allocated Resource, which causes the first “Resource acquired”.
 Res is returned back to main() by value. We return by value here because res is a local variable -- it can’t be returned by address or reference because res will be destroyed when generateResource() ends. So res is copy constructed into a temporary object. Since our copy constructor does a deep copy, a new Resource is allocated here, which causes the second “Resource acquired”.
