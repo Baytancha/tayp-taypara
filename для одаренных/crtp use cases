@@ -1,20 +1,49 @@
+REUSABLE FUNCTIONALITY USE CASE:
+template <class T>
+struct MakeDouble {
+    T double() {
+        auto& me = static_cast<T&>(*this);
+        return me + me;
+};
+class Matrix : MakeDouble<Matrix> ...
 
+Matrix m;
+auto m2 = m.double();
+
+The trick is to declare a helper method inside Widget that creates the Property and adds 
+the Widget‘s this pointer as the final parameter.
+
+You can make this reusable by factoring it into a helper base class that 
+uses the curiously recurring template pattern (commonly known as CRTP).
+
+template<typename D>
+struct PropertyHelper
+{
+    Property Prop(char const* name, int initial)
+    { return Property(name, initial, static_cast<D*>(this)); }
+};
+
+struct Widget : Object, PropertyHelper<Widget>
+{
+    Property Height{ Prop("Height", 10) };
+    Property Width{ Prop("Width", 10) };
+};
+
+
+POLYMORPHIC INTERFACE USE CASE:
 template<typename T>
 struct Base {
     T& derived() { return static_cast<T&>(*this); }
     void print() { derived().print(); };
 };
 
-
 struct nonDerived {
     void print() { cout << "nonDerived\n"; };
 };
 
-
 struct Derived : public Base<Derived> {
 	void print() { cout << "Derived\n"; };
 };
-
 
 template<typename T>
 void interface_(Base<T>* t) {
