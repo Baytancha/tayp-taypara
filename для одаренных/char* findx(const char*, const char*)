@@ -1,3 +1,17 @@
+x[] and *x DON'T MIX WELL TOGETHER:
+
+ char dd[] = "Hello";
+ char* ddd = dd;
+
+ ++ddd; ++ddd; ++ddd;
+ ddd[4] = 'Z';   ///pointer wont't start from the beginning of the array after it was incremented!!
+
+ std::cout << ddd << "\n";
+
+
+
+
+
 char* findx(const char* s, const char* x) {
 
 	const char* t_s = s;  // for counting chars in s
