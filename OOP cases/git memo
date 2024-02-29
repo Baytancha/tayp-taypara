@@ -1,0 +1,23 @@
+The Git output statements "Merge made by the 'ort' strategy." and "Merge made by the 'recursive' strategy." 
+indicate the merge strategy used by Git during a merge operation. These statements are part of the merge 
+commit message, providing information about how the merge was performed.
+
+Merge made by the 'ort' strategy
+The 'ort' strategy, which stands for "Ostensibly Recursive Three-way," is a newer merge strategy 
+introduced to address performance issues and enhance conflict resolution capabilities. It is 
+designed to be more efficient, particularly for large repositories or situations where performance 
+is a concern. The 'ort' strategy can automatically resolve some conflicts when possible, making 
+the conflict resolution process smoother and less manual. It's intended to replace the traditional 
+'recursive' strategy over time, offering a more flexible architecture for handling merges and making 
+it easier to implement custom merge strategies or integrate third-party merge tools 24.
+Merge made by the 'recursive' strategy
+The 'recursive' strategy is the traditional default merge strategy in Git. It provides basic 
+conflict resolution capabilities, marking conflicted areas for manual resolution by the user. 
+Despite being well-established and widely supported, it can be less efficient in some cases, 
+especially when dealing with large repositories or complex merge histories. The 'recursive' 
+strategy is still widely used but is expected to be gradually replaced by the 'ort' strategy 
+as Git evolves 24.
+In summary, the choice between the 'ort' and 'recursive' strategies depends on the specific 
+needs of the merge operation, with 'ort' being more efficient and capable of automatically 
+resolving certain conflicts, while 'recursive' remains a well-understood and widely supported 
+strategy for basic conflict resolution.
