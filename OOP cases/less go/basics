@@ -222,6 +222,21 @@ func main() {
 
 
 
+func Pic(dx, dy int) [][]uint8 {
+
+	sl := make([][]uint8,0)
+	
+	for y:= 0; y< dy; y++  { 
+		
+	var elem []uint8 
+	
+	for x:= 0; x< dx; x++ { 
+		elem = append(elem, uint8(x*x + y*y)) 
+	}
+	sl = append(sl, elem)
+	}
+	return sl
+	}
 
 
 
