@@ -259,6 +259,9 @@ func main() {
 	}
 }
 
+??????????func (p IPAddr) String() string {
+    return fmt.Sprintf("%v.%v.%v.%v", p)
+}
 
 
 
