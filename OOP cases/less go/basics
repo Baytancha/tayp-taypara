@@ -267,4 +267,51 @@ func main() {
 
 
 
+package main
+import (
+	"fmt"
+)
+
+type ErrNegativeSqrt float64
+
+func (e ErrNegativeSqrt) Error() string {
+      val := float64(e)
+     return fmt.Sprintf("Error: %v is a negative value",
+		val)
+}
+
+func Sqrt(x float64) (float64, error) {
+
+    if (x < 0) { 
+	return 0, ErrNegativeSqrt(x)
+	}
+	var z float64 = 1.0
+	z1 := z + 1
+	for z != z1 {
+		z1 = z
+		z -= (z*z - x) / (2 * z)
+		//fmt.Println(z)
+	}
+	return z, nil
+}
+
+func main() {
+    if val, err := Sqrt(-25); err != nil {
+	fmt.Println(err)
+	} else {fmt.Println(val) }
+	
+ }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
