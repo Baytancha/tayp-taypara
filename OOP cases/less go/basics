@@ -318,6 +318,52 @@ func main() {
 
 
 
+Wrapper funс:
+package main
+
+import (
+	"io"
+	"os"
+	"strings"
+)
+
+func rot13(b byte) byte {
+	var a, z byte
+	switch {
+	case 'a' <= b && b <= 'z':
+		a, z = 'a', 'z'
+	case 'A' <= b && b <= 'Z':
+		a, z = 'A', 'Z'
+	default:
+		return b
+	}
+	// return (b-a+13)%26 + a
+	return (b-a+13)%(z-a+1) + a
+}
+
+
+type rot13Reader struct {  		//to the interface it's a io.Reader implementer, while in reality it redirects 
+	r io.Reader                     //to the Read func of the underlying object and then modifies the result
+}
+
+func (R *rot13Reader)Read (b []byte) (int, error) {
+
+      val, err := R.r.Read(b)
+	  
+	  for i:=0; i<val; i++ { 
+	  b[i] = rot13(b[i]) }
+	  
+	  return val, err
+}
+
+func main() {
+	s := strings.NewReader("Lbh penpxrq gur pbqr!")
+	r := rot13Reader{s}
+	io.Copy(os.Stdout, &r)
+}
+
+
+
 
 
 
