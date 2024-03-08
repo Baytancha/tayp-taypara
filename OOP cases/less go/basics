@@ -78,16 +78,6 @@ func pow1(x, n, lim float64) float64 { //C-style control flow
 	return lim
 }
 
-func Sqrt(x float64) float64 {
-	var z float64 = 1.0
-	z1 := z + 1
-	for z != z1 {
-		z1 = z
-		z -= (z*z - x) / (2 * z)
-		fmt.Println(z)
-	}
-	return z
-}
 
 func main() {
 
@@ -264,9 +254,6 @@ func main() {
 }
 
 
-
-
-
 package main
 import (
 	"fmt"
@@ -281,26 +268,35 @@ func (e ErrNegativeSqrt) Error() string {
 }
 
 func Sqrt(x float64) (float64, error) {
-
+	if (x == 0) {return 0.0, nil} //special case for 0
     if (x < 0) { 
 	return 0, ErrNegativeSqrt(x)
 	}
 	var z float64 = 1.0
-	z1 := z + 1
-	for z != z1 {
+	z1 := z + 0.1 //this to enter the loop
+	var first = true
+	for z < z1 {      //as long as values are decreasing
 		z1 = z
-		z -= (z*z - x) / (2 * z)
-		//fmt.Println(z)
+		z -= (z*z - x) / (2 * z)	
+		if first {     //this ugliness to pass the first loop
+		z1 = z + 0.1
+		first = false}
 	}
 	return z, nil
 }
 
 func main() {
-    if val, err := Sqrt(-25); err != nil {
+
+   for i:= 0.0; i<100; i++ {
+   val, err := Sqrt(i);
+    if err != nil {
 	fmt.Println(err)
 	} else {fmt.Println(val) }
 	
+	}
+
  }
+
 
 
 
