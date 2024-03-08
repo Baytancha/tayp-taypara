@@ -183,14 +183,6 @@ func main() {
 }
 
 
-
-
-
-
-
-
-
-
 import (
 	"fmt"
 	"math"
@@ -227,6 +219,40 @@ func Pic(dx, dy int) [][]uint8 {
 	}
 	return sl
 	}
+
+
+package main
+
+import (
+	"golang.org/x/tour/wc"
+	"strings"
+	
+)
+
+func WordCount(s string) map[string]int {
+    m := make(map[string]int)
+    sl := strings.Fields(s)
+	for i:=0; i<len(sl); i++ {
+	m[sl[i]]++
+	}
+	return m
+	
+	
+}
+
+func main() {
+	wc.Test(WordCount)
+}
+
+
+
+
+
+
+
+
+
+
 
 
 package main
