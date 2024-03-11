@@ -1,0 +1,46 @@
+struct Derived1: Base1 {
+
+    void printType() { std::cout << "returned a Derived1\n"; }
+};
+
+
+
+class Base
+{
+public:
+    virtual Base1* getThis() { std::cout << "called Base::getThis()\n"; return new Base1{}; }
+    void printType() { std::cout << "returned a Base\n"; }
+};
+
+class Derived : public Base
+{
+public:
+    Derived1* getThis() override { std::cout << "called Derived::getThis()\n";  return new Derived1{}; }
+    void printType() { std::cout << "returned a Derived\n"; }
+};
+
+
+int main()
+try {
+
+    Derived d{};
+    Base* b{ &d };
+    Derived* d1{ &d };
+    d.getThis()->printType(); // calls Derived::getThis(), returns a Derived*, calls Derived::printType
+    b->getThis()->printType(); //upcasting from Derived1 to Base1 because the compiler must know all the types 
+    d1->getThis()->printType();
+    return 0;
+
+
+    /*called Derived::getThis()
+     returned a Derived1
+     called Derived::getThis()
+     returned a Base1
+     called Derived::getThis()
+     returned a Derived1*/
+
+
+
+
+
+}
