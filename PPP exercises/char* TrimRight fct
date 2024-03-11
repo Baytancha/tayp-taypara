@@ -1,0 +1,74 @@
+//обрезает путем вставки нуль-терминатора
+void TrimRight_(char* s) {
+    char* last = s + std::strlen(s) - 1; //указывает на первый char перед нуль-терминатором
+
+    while (std::isspace(*last)) //итерация до первого не пробельного char
+        --last;
+
+    *(last + 1) = '\0';
+};
+
+
+//возвращает указатель на укороченную строку
+char* TrimRight(char* s) {
+    char* last = s + std::strlen(s) - 1; //указывает на первый char перед нуль-терминатором
+
+    while (std::isspace(*last)) //итерация до первого не пробельного char
+        --last;
+    int count{ 0 };
+
+    while (s + count != last + 1)  //подсчет кол-ва символов в обрезанной строке
+        ++count;
+
+    char* trim = new char[count]; //выделяем новое место
+
+    for (int i = 0; i < count; ++i) 
+        *(trim + i) = *(s + i);
+        
+    trim[count] = '\0'; 
+
+    //delete[] s при передаче строки на куче
+
+    return trim;
+};
+
+
+int main()
+try {
+
+    char AA[] = "TRIMMING    \n    \t  ";
+
+    char BB[] = "Continuous data protection (CDP), also called continuous backup or real-time backup, refers to backup of computer data by automatically saving a copy of every change made to that data, essentially capturing every version of the data that the user saves. In its true form it allows the user or administrator to restore data to any point in time. The technique was patented by British entrepreneur Pete Malcolm in 1989 as a backup system in which a copy [editor's emphasis] of every change made to a storage medium is recorded as the change occurs [editor's emphasis].\n       \t   ";
+
+    char* s = BB;
+    char* s1 = AA;
+
+    char* trimmed = TrimRight(s1);
+
+    std::cout << trimmed << "\n";
+    std::cout << std::strlen(trimmed) << "\n";
+
+    char* trimmed2 = TrimRight(s);
+    std::cout << trimmed2 << "\n";
+    std::cout << std::strlen(trimmed2) << "\n";
+
+
+    TrimRight_(s);
+    std::cout << s << "\n";
+    TrimRight_(s1);
+    std::cout << s1 << "\n";
+
+
+    return 0;
+
+}
+catch (exception& e) {
+    cerr << e.what() << endl;
+    keep_window_open("~~");
+    return 1;
+}
+catch (...) {
+    cerr << "exception \n";
+    keep_window_open("~~");
+    return 2;
+}
