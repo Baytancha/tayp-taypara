@@ -144,3 +144,160 @@ int main()
 
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#include <string>
+#include <WS2tcpip.h>
+#include <iostream>
+#include <fstream>
+#include <memory>
+#include <stdexcept>
+#include <vector>
+#include <array>
+#include <initializer_list>
+#include <string_view> 
+
+
+#pragma comment(lib, "ws2_32.lib")
+
+
+
+int main()
+{
+
+    std::string IPaddr = "127.0.0.1";  //IP and port of the server
+    int port = 54000;
+
+
+    //Init winsock 
+    WSADATA wsData;
+    WORD ver = MAKEWORD(2, 2); //the version of the Windows Sockets specification requested by the application
+    int Wscock = WSAStartup(ver, &wsData); //fills wsData up  with information about the Windows Sockets implementation. 
+    if (Wscock != 0)
+    {
+        std::cerr << "Can't initialize winsock! Quitting" << std::endl;
+        return 1;
+    }
+
+
+    // create a socket 
+    SOCKET sock = socket(AF_INET, SOCK_STREAM, 0); //socket is a number which maps to an IP addr and port
+    //in the socket constructor you specify address family, open a sock_stream for a TCP socket
+
+    if (sock == INVALID_SOCKET) {
+        std::cerr << "Can't create a socket! Quitting" << WSAGetLastError() << std::endl;
+        closesocket(sock);
+        WSACleanup();
+        return 1;
+
+    }
+
+    //filling up hint with the server IP and port
+    sockaddr_in hint;
+    hint.sin_family = AF_INET;
+    hint.sin_port = htons(port); //networks are big endianeess and PCs are local endianness
+    //hint.sin_addr.S_un.S_addr = INADDR_ANY; //bind to any address
+    //could also use inet_pton
+    inet_pton(AF_INET, IPaddr.c_str(), &hint.sin_addr); //store a concrete address in hint taken from IPaddr
+
+     int connResult = connect(sock, (sockaddr*)&hint, sizeof(hint));
+     if (connResult == SOCKET_ERROR) {
+         
+          std::cerr << "Can't connect to server! Quitting" << WSAGetLastError() << std::endl;
+          closesocket(sock);
+          WSACleanup();
+          return 1;
+     }
+  
+    char buf[4096];
+    std::string userInput{};
+    do {
+
+        //prompt user for text
+        std::cout << "> ";
+        std::getline(std::cin, userInput);
+        if (userInput.size() > 0) {
+            //send text
+            int sendResult = send(sock, userInput.c_str(), userInput.size() + 1, 0);
+            if (sendResult != SOCKET_ERROR) 
+            {
+                ZeroMemory(buf, 4096);
+                int bytesReceived = recv(sock, buf, 4096, 0);
+                if (bytesReceived > 0) {
+					std::cout << "SERVER> " << std::string(buf, 0, bytesReceived) << std::endl;
+				}
+
+            }
+            //wait for response
+            //echo response to console
+        }
+    } while (userInput.size() > 0); 
+
+    closesocket(sock);
+    //shutdown winsock
+
+    WSACleanup();
+
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
