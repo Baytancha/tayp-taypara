@@ -1,0 +1,15 @@
+// main waits until thread executes and then joins
+int main() {
+
+    int result = 0;
+
+    std::jthread t1{ [&]() {  std::cout << "What order?\n"; } };
+
+    //t1.join(); // все равно нужно join, чтобы дождаться результата
+
+    std::cout << result;
+
+
+}
+
+ 0What order?
