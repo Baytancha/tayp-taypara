@@ -1,3 +1,15 @@
+how to calculate array size without null teminator:
+
+    int arr[6] = {5, 4, 3, 2, 1, 0};
+    int len = *(&arr + 1) - arr;
+
+    find the difference between address of one element 
+beyond the array and the first element and convert it to int
+
+''arr'' -- is converted to the address of the first element
+''&arr + 1'' -- here pointer arithmetic adjusts to the size of the structure, so we skip the whole array of size 6 and end up at address
+arr[0] + 1 -- we skip by one int (which may be 4 or 8 bytes), because it's the size of the structure
+
 important ptr observation:
 char I[] = "ABC";
 char* x = I;
