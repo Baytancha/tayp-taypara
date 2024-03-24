@@ -1,0 +1,82 @@
+std::mutex mm;
+
+//многопот функция для вычисления факториалов в цикле while (true)
+int factorial(int& result, bool& loop_flag, int pow) {
+
+    static int ii = 1;   //координирует количество перемежающихся циклов между двумя потоками
+    static bool reset = false; //также предотвращает лишние циклы когда ii уже был обнулен
+    if (reset == true) reset = false; //поскольку reset статическая пер., нужно ее обнулять при новом цикле в main 
+    if (loop_flag == true) reset = true; //однако если второй поток только начинает исполнение функции, обнуление 
+    //может привести к лишним циклам, поэтому идет проверка на флаг, который относится к каждому новому циклу из main
+
+    while (ii <= pow) {  
+
+        std::unique_lock<std::mutex> lock(mm);
+
+        if (reset == true) break; //может быть так что первый поток обнулил ii до 1, поэтому нужен дополнительный барьер
+        if (ii > pow) break;
+        result = result * ii;
+        ++ii;
+
+        lock.unlock();
+
+    }
+    //если один поток уже закончил исполнения цикла, он сообщает это второму потоку, который
+    // может либо только начинать исполнение либо ожидать открытия замка в цикле
+    if (ii > pow) { loop_flag = true;  reset = true; ii = 1; } 
+
+    return result;
+}
+
+//асинхронная функция запускает два потока которые нужно закрыть чтобы сохранить результат
+int AsyncFactorial(int& result, bool& loop_flag, int pow) { 
+
+    //передаем ссылки на переменную result, на локальный флаг, а также копию счетчика
+    std::jthread t1(factorial, std::ref(result), std::ref(loop_flag), pow); 
+
+    std::jthread t2(factorial, std::ref(result), std::ref(loop_flag), pow);
+
+    t1.join(); 
+    t2.join();
+    return result;
+
+}
+
+
+
+int main() {
+
+
+    while (true) {
+
+        bool loop_flag{ false };
+
+        int pow = 0;
+        std::cin >> pow;
+        int result = 1;
+
+        std::future<int> backgroundThread = std::async(std::launch::async, AsyncFactorial, std::ref(result), std::ref(loop_flag), pow);
+
+
+        std::cout << "\n" << backgroundThread.get() << "\n";
+
+
+    }
+
+    return 0;
+}
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
