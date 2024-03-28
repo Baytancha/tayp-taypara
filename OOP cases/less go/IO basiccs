@@ -1,0 +1,11 @@
+	var rd string
+	fmt.Scanln(&rd)   --> WHITESPACE IS SKIPPED
+
+
+reading whitespace into string
+
+scanner := bufio.NewScanner(os.Stdin)
+	for scanner.Scan() {
+		rd = scanner.Text()
+		fmt.Println(rd)
+	}
